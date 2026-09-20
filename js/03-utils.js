@@ -51,8 +51,8 @@
     var c = OU.CARD_BY_ID[cardId];
     var F = OU.RARITY_FACTOR[c.r];
     var base = (c.hp * 0.2 + c.atk + c.def * 1.2);
-    var gold = Math.max(80, Math.round(base * 2.6 * Math.pow(level, 1.25) * (F * 0.9)));
-    var dupes = Math.max(1, Math.round(level * (0.8 + F * 0.55)));
+    var gold = Math.max(50, Math.round(base * 1.45 * Math.pow(level, 1.25) * (F * 0.9)));
+    var dupes = Math.max(1, Math.round(level * (0.5 + F * 0.4)));
     return { dupes: dupes, gold: gold };
   }
 
@@ -64,7 +64,7 @@
     var c = OU.CARD_BY_ID[cardId];
     var F = OU.RARITY_FACTOR[c.r];
     var base = (c.hp * 0.2 + c.atk + c.def * 1.2);
-    return Math.round(base * 0.8 * Math.pow(level, 1.15) * (F * 0.75));
+    return Math.round(base * 0.5 * Math.pow(level, 1.15) * (F * 0.75));
   }
 
   function rollRarity(pack) {
@@ -100,7 +100,7 @@
 
   function rewardOf(idx) {
     var s = idx + 1;
-    return { gold: 140 + s * 85, xp: 30 + s * 18 };
+    return { gold: 220 + s * 120, xp: 45 + s * 22 };
   }
 
   function rarityOrder(a, b) {

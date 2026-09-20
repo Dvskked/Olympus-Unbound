@@ -11,13 +11,13 @@
     SAVE_KEY: 'olympus_unbound_v2',
     MAX_LEVEL: 15,
     MAX_TEAM: 5,
-    INITIAL_GOLD: 2000,
+    INITIAL_GOLD: 3000,
     INITIAL_GEMS: 50,
     START_CARDS: ['hop', 'pela', 'delf'],
     TRAIN_XP_NEED: 160,
-    INCOME_BASE: 18,
-    INCOME_PER_STAGE: 8,
-    INCOME_CAP: 600
+    INCOME_BASE: 30,
+    INCOME_PER_STAGE: 12,
+    INCOME_CAP: 1200
   };
 
   OU.RAR = {
@@ -38,48 +38,48 @@
    */
   OU.PACKS = {
     bronze: {
-      cls: 'bronze', name: 'Sobre de Bronce', cost: { gold: 300 }, count: 3,
+      cls: 'bronze', name: 'Sobre de Bronce', cost: { gold: 200 }, count: 3,
       desc: '3 cartas. Ideal para empezar tu colección.', guarantee: 0,
-      odds: [['Normal', '78%'], ['Héroe', '20%'], ['Dios', '1.8%'], ['Titán', '0.2%']],
-      w: { normal: .78, hero: .20, god: .018, titan: .002 }
+      odds: [['Normal', '82%'], ['Héroe', '16.5%'], ['Dios', '1.3%'], ['Titán', '0.2%']],
+      w: { normal: .82, hero: .165, god: .013, titan: .002 }
     },
     silver: {
-      cls: 'silver', name: 'Sobre de Plata', cost: { gold: 650 }, count: 4,
+      cls: 'silver', name: 'Sobre de Plata', cost: { gold: 450 }, count: 4,
       desc: '4 cartas con mejores probabilidades de Héroe.', guarantee: 0,
-      odds: [['Normal', '62%'], ['Héroe', '32%'], ['Dios', '5.4%'], ['Titán', '0.6%']],
-      w: { normal: .62, hero: .32, god: .054, titan: .006 }
+      odds: [['Normal', '70%'], ['Héroe', '27%'], ['Dios', '2.7%'], ['Titán', '0.3%']],
+      w: { normal: .70, hero: .27, god: .027, titan: .003 }
     },
     gold: {
-      cls: 'goldc', name: 'Sobre de Oro', cost: { gold: 1600 }, count: 5,
+      cls: 'goldc', name: 'Sobre de Oro', cost: { gold: 1000 }, count: 5,
       desc: '5 cartas con alta probabilidad de Héroes y Dioses.', guarantee: 0,
-      odds: [['Normal', '50%'], ['Héroe', '37%'], ['Dios', '11.5%'], ['Titán', '1.5%']],
-      w: { normal: .50, hero: .37, god: .115, titan: .015 }
+      odds: [['Normal', '55%'], ['Héroe', '40%'], ['Dios', '4.5%'], ['Titán', '0.5%']],
+      w: { normal: .55, hero: .40, god: .045, titan: .005 }
     },
     epic: {
-      cls: 'epic', name: 'Sobre Épico', cost: { gold: 3500 }, count: 5,
+      cls: 'epic', name: 'Sobre Épico', cost: { gold: 2000 }, count: 5,
       desc: '5 cartas y al menos 1 Héroe garantizado.', guarantee: 1,
-      odds: [['Normal', '42%'], ['Héroe', '38%'], ['Dios', '17%'], ['Titán', '3%']],
-      w: { normal: .42, hero: .38, god: .17, titan: .03 }
+      odds: [['Normal', '45%'], ['Héroe', '47%'], ['Dios', '7.4%'], ['Titán', '0.6%']],
+      w: { normal: .45, hero: .47, god: .074, titan: .006 }
     },
     olympus: {
-      cls: 'olympus', name: 'Sobre Olimpo', cost: { gems: 50 }, count: 5,
+      cls: 'olympus', name: 'Sobre Olimpo', cost: { gems: 40 }, count: 5,
       desc: '5 cartas. Garantiza al menos 1 Héroe. Probabilidad aumentada de Dioses y Titanes.', guarantee: 1,
-      odds: [['Normal', '22%'], ['Héroe', '49.5%'], ['Dios', '22.5%'], ['Titán', '6%']],
-      w: { normal: .22, hero: .495, god: .225, titan: .06 }
+      odds: [['Normal', '28%'], ['Héroe', '56%'], ['Dios', '15%'], ['Titán', '1%']],
+      w: { normal: .28, hero: .56, god: .15, titan: .01 }
     },
     divine: {
-      cls: 'divine', name: 'Sobre Divino', cost: { gems: 120 }, count: 6,
+      cls: 'divine', name: 'Sobre Divino', cost: { gems: 90 }, count: 6,
       desc: '6 cartas. Garantiza al menos 1 Dios. Las mejores probabilidades de Titanes.', guarantee: 2,
-      odds: [['Normal', '12%'], ['Héroe', '42%'], ['Dios', '36%'], ['Titán', '10%']],
-      w: { normal: .12, hero: .42, god: .36, titan: .10 }
+      odds: [['Normal', '15%'], ['Héroe', '50%'], ['Dios', '31%'], ['Titán', '4%']],
+      w: { normal: .15, hero: .50, god: .31, titan: .04 }
     }
   };
 
   OU.TRAIN = {
-    quick:   { name: 'Entrenamiento Rápido', mins: 1,   xp: 30,  gold: 60,   gems: 0 },
-    normal:  { name: 'Entrenamiento Activo', mins: 3,   xp: 100, gold: 190,  gems: 0 },
-    intense: { name: 'Entrenamiento Élite',  mins: 8,   xp: 320, gold: 560,  gems: 1 },
-    epic:    { name: 'Ritual Legendario',    mins: 20,  xp: 900, gold: 1600, gems: 3 }
+    quick:   { name: 'Entrenamiento Rápido', mins: 1,   xp: 45,  gold: 90,   gems: 0 },
+    normal:  { name: 'Entrenamiento Activo', mins: 3,   xp: 150, gold: 280,  gems: 0 },
+    intense: { name: 'Entrenamiento Élite',  mins: 8,   xp: 480, gold: 840,  gems: 2 },
+    epic:    { name: 'Ritual Legendario',    mins: 20,  xp: 1350, gold: 2400, gems: 5 }
   };
 
   OU.CARDS = [
