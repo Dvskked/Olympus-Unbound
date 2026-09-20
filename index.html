@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Olympus Unbound</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#d4af37;
+  --gold2:#f5d878;
+  --blue:#3fb6ff;
+  --purple:#b14dff;
+  --gray:#aeb6c8;
+  --bg1:#070a14;
+  --bg2:#0d1224;
+  --panel:#131a33;
+  --panel2:#0f1528;
+  --line:#262f4f;
+  --text:#e8e6df;
+  --dim:#9aa2b8;
+  --hp:#e33d3d;
+  --hp2:#ff7a6b;
+  --en:#3fb6ff;
+  --en2:#8fe0ff;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(61,90,180,0.18), transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, rgba(212,175,55,0.10), transparent 55%),
+    radial-gradient(1000px 700px at 50% 120%, rgba(177,77,255,0.10), transparent 60%),
+    linear-gradient(160deg,var(--bg1),var(--bg2));
+  background-attachment:fixed;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+#app{max-width:1020px;margin:0 auto;padding-bottom:96px}
+h1,h2,h3,.cinzel{font-family:'Cinzel',Georgia,'Times New Roman',serif}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;color:inherit}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#2a3352;border-radius:8px}
+
+/* ---------- Top bar ---------- */
+#topbar{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px clamp(10px,3vw,24px);
+  background:linear-gradient(180deg, rgba(10,13,26,0.96), rgba(10,13,26,0.86));
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+.logo-block{display:flex;flex-direction:column;line-height:1.05}
+.logo{
+  font-family:'Cinzel',serif;font-weight:900;
+  font-size:clamp(15px,3.6vw,22px);letter-spacing:2px;
+  background:linear-gradient(180deg,#fff6d8,#d4af37 55%,#8a6d1f);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 10px rgba(212,175,55,0.45));
+  white-space:nowrap;
+}
+.logo-sub{font-size:10px;letter-spacing:4px;color:#8494b8;text-transform:uppercase}
+#resRow{display:flex;gap:8px;align-items:center}
+.chip{
+  display:flex;align-items:center;gap:6px;
+  background:linear-gradient(180deg,#1a2140,#121830);
+  border:1px solid var(--line);
+  border-radius:999px;padding:5px 11px;font-size:13px;font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.chip .ic{font-size:15px}
+.chip.gold-chip{border-color:rgba(212,175,55,0.5);color:var(--gold2)}
+.chip.gem-chip{border-color:rgba(63,182,255,0.45);color:var(--blue)}
+.chip .plus{opacity:.75;font-size:12px;padding-left:3px}
+
+/* ---------- Tabs ---------- */
+#tabs{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:50;
+  width:min(520px,100%);
+  display:flex;
+  background:linear-gradient(180deg,rgba(15,21,40,0.92),rgba(10,13,26,0.97));
+  backdrop-filter:blur(10px);
+  border-top:1px solid #2c3557;
+  padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+  box-shadow:0 -6px 30px rgba(0,0,0,0.55);
+}
+.tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:none;padding:6px 2px;border-radius:12px;
+  color:#7b85a3;font-size:10px;font-weight:700;letter-spacing:.5px;
+  transition:color .2s, background .2s;
+}
+.tab .t-ic{font-size:20px;filter:grayscale(0.6) opacity(0.7);transition:transform .2s}
+.tab.active{color:var(--gold2)}
+.tab.active .t-ic{filter:none;transform:translateY(-2px)}
+.tab:active .t-ic{transform:scale(0.9)}
+
+/* ---------- Generic views ---------- */
+.view{padding:16px clamp(10px,3vw,24px) 20px;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sec-title{
+  font-family:'Cinzel',serif;font-size:16px;letter-spacing:2px;color:var(--gold2);
+  margin:18px 0 10px;display:flex;align-items:center;gap:8px;text-transform:uppercase;
+}
+.sec-title:before,.sec-title:after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.5),transparent)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border-radius:12px;padding:11px 18px;font-weight:800;font-size:14px;letter-spacing:.5px;
+  transition:transform .12s, filter .2s;
+}
+.btn:active{transform:scale(0.96)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-gold{background:linear-gradient(180deg,#f5d878,#d4af37 55%,#a8821f);color:#241a02;box-shadow:0 4px 16px rgba(212,175,55,0.35), inset 0 1px 0 rgba(255,255,255,0.5)}
+.btn-blue{background:linear-gradient(180deg,#6cc9ff,#2f9be0);color:#04213a;box-shadow:0 4px 16px rgba(63,182,255,0.3)}
+.btn-ghost{background:#1a2140;border:1px solid var(--line);color:var(--text)}
+.btn-red{background:linear-gradient(180deg,#ff6b5e,#c93a2e);color:#fff;box-shadow:0 4px 14px rgba(227,61,61,0.35)}
+.btn-sm{padding:8px 12px;font-size:12px;border-radius:9px}
+.btn-block{width:100%}
+
+/* ---------- Home ---------- */
+.hero{
+  position:relative;overflow:hidden;border-radius:18px;padding:26px 20px;
+  background:
+    radial-gradient(600px 200px at 20% 0%, rgba(212,175,55,0.22), transparent 60%),
+    linear-gradient(160deg,#1b2347,#10152b 60%,#0c1020);
+  border:1px solid rgba(212,175,55,0.35);
+  box-shadow:0 10px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  text-align:center;
+}
+.hero .glyph{font-size:52px;filter:drop-shadow(0 0 18px rgba(212,175,55,0.7));animation:floatY 3.4s ease-in-out infinite}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hero h1{font-size:clamp(26px,7vw,40px);margin:8px 0 2px;letter-spacing:4px;
+  background:linear-gradient(180deg,#fff7d9,#d4af37 60%,#a8821f);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 16px rgba(212,175,55,0.5))}
+.hero .tagline{color:#9fb0d4;font-size:12px;letter-spacing:3px;text-transform:uppercase}
+.hero-stats{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.hstat{flex:1;min-width:110px;background:rgba(10,14,28,0.6);border:1px solid var(--line);border-radius:12px;padding:10px 6px}
+.hstat .v{font-size:18px;font-weight:800;color:var(--gold2)}
+.hstat .l{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+.xp-bar{height:8px;border-radius:6px;background:#0a0e1c;border:1px solid #2a3352;overflow:hidden;margin-top:8px}
+.xp-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#d4af37,#f5d878);transition:width .4s}
+.big-cta{margin-top:20px;width:100%;padding:14px;font-size:16px}
+
+/* ---------- Stage list ---------- */
+.stage-card{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(160deg,var(--panel),var(--panel2));
+  border:1px solid var(--line);border-radius:16px;padding:14px;
+  margin-bottom:12px;box-shadow:0 6px 20px rgba(0,0,0,0.35);
+  transition:transform .15s,border-color .2s;
+}
+.stage-card.open{border-color:rgba(212,175,55,0.5);cursor:pointer}
+.stage-card.open:hover{border-color:var(--gold);transform:translateY(-2px)}
+.stage-card.current{box-shadow:0 0 0 2px rgba(212,175,55,0.55),0 6px 20px rgba(0,0,0,0.4)}
+.stage-num{
+  width:46px;height:46px;flex:0 0 46px;display:flex;align-items:center;justify-content:center;
+  border-radius:12px;font-family:'Cinzel',serif;font-weight:900;font-size:17px;
+  background:linear-gradient(180deg,#1c2447,#101530);border:1px solid var(--line);color:var(--gold2);
+}
+.stage-info{flex:1;min-width:0}
+.stage-name{font-weight:800;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stage-meta{font-size:11px;color:var(--dim);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+.stage-meta span{display:inline-flex;align-items:center;gap:4px}
+.enemy-preview{display:flex;gap:2px;margin-top:6px}
+.enemy-preview .ep{width:26px;height:26px;border-radius:8px;background:#0a0e1c;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px}
+.stage-lock{font-size:22px;color:#5b6480;padding:0 8px}
+.stage-reward{font-size:12px;font-weight:700;color:#ffe08a;white-space:nowrap}
+.stage-diff{font-size:11px;font-weight:800;letter-spacing:1px}
+.diff-0{color:#7fe08a}.diff-1{color:#ffe08a}.diff-2{color:#ff9d6b}.diff-3{color:#ff6b6b}.diff-4{color:#e85bff}
+
+/* ---------- Squad ---------- */
+.squad-wrap{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.slot{
+  aspect-ratio:2/3;border-radius:16px;position:relative;
+  background:linear-gradient(165deg,#141b36,#0b0f1f);
+  border:1.5px dashed #333d63;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  cursor:pointer;overflow:hidden;transition:transform .15s,border-color .2s;color:#5b6480;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.slot:hover{border-color:var(--gold2)}
+.slot .slot-plus{font-size:30px;line-height:1}
+.slot .slot-txt{font-size:9.5px;letter-spacing:1px;text-transform:uppercase}
+.slot.filled{border-style:solid;cursor:pointer}
+.slot.filled .s-icon{font-size:42px;filter:drop-shadow(0 0 12px var(--glow,rgba(212,175,55,0.5)));animation:floatY 3s ease-in-out infinite}
+.slot .s-lvl{position:absolute;top:6px;right:7px;font-size:10px;font-weight:900;background:rgba(0,0,0,0.55);border:1px solid var(--line);border-radius:6px;padding:1px 5px;color:var(--gold2)}
+.slot .s-name{font-size:9.5px;font-weight:800;text-align:center;line-height:1.1;padding:0 3px}
+.slot .s-role{font-size:8px;letter-spacing:1px;color:var(--dim);text-transform:uppercase}
+.slot .s-bar{position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--hp);border-radius:0 0 16px 16px;transform-origin:left;transition:transform .4s}
+.power-box{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:linear-gradient(160deg,#1b2347,#11162d);border:1px solid rgba(212,175,55,0.4);
+  border-radius:14px;padding:12px 16px;margin-bottom:14px;
+}
+.power-box .pb-label{font-size:10.5px;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
+.power-box .pb-val{font-size:24px;font-weight:900;color:var(--gold2);font-family:'Cinzel',serif}
+
+/* ---------- Collection ---------- */
+.filter-bar{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding:2px}
+.fbtn{flex:0 0 auto;padding:7px 14px;border-radius:999px;background:#151c38;border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--dim);transition:all .15s}
+.fbtn.active{background:linear-gradient(180deg,#f5d878,#d4af37);color:#241a02;border-color:var(--gold)}
+.ccard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px}
+.ccard{
+  border-radius:14px;padding:12px;position:relative;cursor:pointer;overflow:hidden;
+  background:linear-gradient(165deg,#151c38,#0c111f);
+  border:1.5px solid var(--line);
+  box-shadow:0 4px 14px rgba(0,0,0,0.4);
+  transition:transform .15s, box-shadow .2s;
+  animation:popIn .3s ease;
+}
+.ccard:hover{transform:translateY(-3px)}
+@keyframes popIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.ccard .c-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.ccard .c-rarity{font-size:8.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:2px 7px;border-radius:5px}
+.ccard .c-dup{font-size:10px;color:var(--dim);background:rgba(0,0,0,0.4);padding:2px 6px;border-radius:6px;border:1px solid var(--line)}
+.ccard .c-icon-wrap{
+  height:72px;display:flex;align-items:center;justify-content:center;border-radius:10px;margin-bottom:8px;
+  background:radial-gradient(circle at 50% 30%, rgba(255,255,255,0.06), transparent 70%), #0a0e1c;
+  border:1px solid var(--line);
+}
+.ccard .c-icon{font-size:40px;filter:drop-shadow(0 0 12px var(--glow));animation:floatY 3.4s ease-in-out infinite}
+.ccard .c-name{font-size:12.5px;font-weight:800;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ccard .c-lv{text-align:center;font-size:10px;color:var(--dim);margin-top:2px}
+.ccard .c-stats{display:flex;gap:4px;margin-top:8px}
+.ccard .c-stats span{flex:1;font-size:8.6px;font-weight:700;color:var(--dim);background:rgba(0,0,0,0.35);border:1px solid var(--line);border-radius:6px;padding:2px 0;text-align:center}
+.ccard .c-hp{color:#ff8b7d}.ccard .c-atk{color:#ffd257}.ccard .c-def{color:#6fd0ff}
+.rarN{color:var(--gray)!important}.rarH{color:var(--blue)!important}.rarG{color:var(--gold2)!important}.rarT{color:var(--purple)!important}
+.empty-msg{text-align:center;color:var(--dim);padding:44px 10px;font-size:14px}
+
+/* ---------- Shop ---------- */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.pack-card{
+  position:relative;border-radius:18px;padding:18px;text-align:center;cursor:pointer;overflow:hidden;
+  background:linear-gradient(170deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  transition:transform .15s,box-shadow .2s;box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:popIn .3s ease;
+}
+.pack-card:hover{transform:translateY(-4px)}
+.pack-card.bronze{border-color:rgba(150,160,185,0.4)}
+.pack-card.goldc{border-color:rgba(212,175,55,0.55)}
+.pack-card.olympus{border-color:rgba(63,182,255,0.55)}
+.pack-card .pc-ic{font-size:58px;margin:6px 0;animation:floatY 3s ease-in-out infinite;filter:drop-shadow(0 0 16px rgba(255,255,255,0.15))}
+.pack-card .pc-name{font-family:'Cinzel',serif;font-weight:900;font-size:17px;letter-spacing:1px}
+.pack-card .pc-name.bronze{color:var(--gray)}.pack-card .pc-name.goldc{color:var(--gold2)}.pack-card .pc-name.olympus{color:var(--blue)}
+.pack-card .pc-cost{margin:10px 0 8px;font-size:14px;font-weight:800}
+.pack-card .pc-cost .gold{color:var(--gold2)}.pack-card .pc-cost .gem{color:var(--blue)}
+.pack-card .pc-desc{font-size:11px;color:var(--dim);margin-bottom:10px;line-height:1.45}
+.odds{display:flex;flex-direction:column;gap:4px;background:rgba(0,0,0,0.3);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:10.5px}
+.odds .o-row{display:flex;justify-content:space-between}
+.odds .o-l{color:var(--dim)}
+.odds .o-v{font-weight:800}
+.exchange-card{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.ex-item{flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center;cursor:pointer;transition:transform .15s,border-color .2s}
+.ex-item:hover{border-color:var(--blue);transform:translateY(-2px)}
+.ex-item .ei-ic{font-size:22px}
+.ex-item .ei-body{font-size:13px;font-weight:800;margin-top:6px}
+.ex-item .ei-body .g{color:var(--gold2)}
+
+/* ---------- Battle arena ---------- */
+.arena-screen{min-height:calc(100vh - 200px);display:flex;flex-direction:column}
+.arena-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.arena-stage-name{font-family:'Cinzel',serif;font-weight:900;font-size:16px;letter-spacing:1px;color:var(--gold2)}
+.arena-ctrls{display:flex;gap:8px}
+#arenaWrap{position:relative;flex:1}
+.arena{
+  position:relative;border-radius:18px;padding:12px;
+  background:
+    radial-gradient(500px 300px at 50% 40%, rgba(61,90,180,0.15), transparent 70%),
+    linear-gradient(170deg,#151c38,#0c1120);
+  border:1px solid var(--line);
+  min-height:460px;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.row.enermy{margin-bottom:14px}
+.row.ally{margin-top:14px}
+.unit{
+  position:relative;border-radius:12px;padding:5px 4px 30px;text-align:center;
+  background:linear-gradient(170deg,rgba(25,32,58,0.95),rgba(13,17,32,0.95));
+  border:1px solid #2a3352;transition:opacity .5s, transform .5s;
+  min-height:132px;
+}
+.unit.enemy{background:linear-gradient(170deg,rgba(46,24,50,0.95),rgba(20,12,26,0.95));border-color:#44283f}
+.unit.dead{opacity:0;transform:scale(0.6);pointer-events:none}
+.unit.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.unit .u-rarity{position:absolute;top:4px;left:5px;width:6px;height:6px;border-radius:50%;box-shadow:0 0 8px currentColor;background:currentColor}
+.unit .u-icon{font-size:34px;line-height:1.25;margin-top:2px;filter:drop-shadow(0 0 10px var(--glow))}
+.unit .u-name{font-size:9px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.unit .u-lv{font-size:8px;color:var(--dim)}
+.u-bar{height:7px;border-radius:5px;background:#0a0e1c;overflow:hidden;margin:3px 1px 0;border:1px solid rgba(0,0,0,0.5)}
+.u-hpbar .u-fill{background:linear-gradient(90deg,var(--hp),var(--hp2));height:100%;transition:width .35s}
+.u-enbar .u-fill{background:linear-gradient(90deg,var(--en),var(--en2));height:100%;transition:width .35s}
+.u-enbar .u-fill.full{animation:pulseGlow .5s infinite}
+.unit .u-shield-dot{text-align:center;font-size:9px;font-weight:800;color:#7fd6ff}
+.unit .u-buff-dot{text-align:center;font-size:9px;font-weight:800;color:#ffb14d}
+@keyframes pulseGlow{0%,100%{opacity:1}50%{opacity:.5}}
+.fx-layer{position:absolute;inset:0;pointer-events:none;z-index:5}
+.fnum{
+  position:absolute;font-weight:900;font-size:17px;text-shadow:0 2px 6px rgba(0,0,0,0.8);
+  animation:floatUp 1s ease-out forwards;white-space:nowrap;z-index:6;
+}
+.fnum.heal{color:#67e88f}.fnum.shield{color:#7fd6ff}.fnum.buff{color:#ffb14d}
+.fnum.crit{font-size:23px;color:#ffe08a}
+.fnum.player-dmg{color:#ff6b5e}.fnum.enemy-dmg{color:#ff8b5e}
+@keyframes floatUp{0%{transform:translate(-50%,0);opacity:0}12%{opacity:1}100%{transform:translate(-50%,-70px);opacity:0}}
+.banner{
+  position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:8;
+  font-family:'Cinzel',serif;font-weight:900;font-size:clamp(15px,4vw,24px);letter-spacing:1px;
+  color:var(--gold2);text-shadow:0 0 18px rgba(212,175,55,0.8),0 2px 8px rgba(0,0,0,0.9);
+  animation:bannerAnim 1.3s ease forwards;pointer-events:none;text-align:center;white-space:nowrap;
+}
+.banner.b-enemy{color:#ff6b7a;text-shadow:0 0 18px rgba(255,60,80,0.8),0 2px 8px rgba(0,0,0,0.9)}
+@keyframes bannerAnim{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-60%) scale(1)}}
+.vs-line{display:flex;align-items:center;justify-content:center;gap:12px;margin:2px 0;font-family:'Cinzel',serif;font-weight:900;color:#5b6480;font-size:14px;letter-spacing:2px}
+.battle-hint{text-align:center;font-size:11px;color:var(--dim);margin-top:10px}
+.retry-tag{position:absolute;top:8px;right:10px;font-size:10px;color:var(--dim);background:rgba(0,0,0,0.4);padding:3px 8px;border-radius:6px}
+
+/* ---------- Modal ---------- */
+#overlay{
+  position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;
+  background:rgba(4,6,14,0.78);backdrop-filter:blur(6px);padding:14px;overflow-y:auto;
+}
+#overlay.show{display:flex}
+.modal{
+  width:100%;max-width:460px;background:linear-gradient(170deg,#1a2245,#10152b);
+  border:1px solid rgba(212,175,55,0.4);border-radius:20px;padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08);
+  animation:modalIn .3s ease;max-height:92vh;overflow-y:auto;
+}
+@keyframes modalIn{from{transform:scale(.9) translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.modal-close{position:sticky;top:0;float:right;background:#1a2140;border:1px solid var(--line);width:34px;height:34px;border-radius:50%;font-size:16px;color:var(--dim)}
+.modal-close:hover{color:#fff}
+.detail-ig{text-align:center}
+.detail-icon{font-size:74px;display:inline-block;border-radius:18px;padding:14px 22px;background:radial-gradient(circle at 50% 30%,rgba(255,255,255,0.09),transparent 70%),#0a0e1c;border:2px solid var(--line);filter:drop-shadow(0 0 18px var(--glow));animation:floatY 3s ease-in-out infinite}
+.detail-name{font-family:'Cinzel',serif;font-weight:900;font-size:24px;margin-top:10px}
+.badge{display:inline-block;padding:3px 10px;border-radius:7px;font-size:11px;font-weight:800;letter-spacing:1px;margin:6px 3px 0}
+.badge-role{background:#1a2140;border:1px solid var(--line);color:var(--dim)}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0}
+.stat-box{background:#0d1324;border:1px solid var(--line);border-radius:11px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center}
+.stat-box .lb{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.stat-box .va{font-size:16px;font-weight:900}
+.stat-box.hp .va{color:#ff8b7d}.stat-box.atk .va{color:#ffd257}.stat-box.def .va{color:#6fd0ff}.stat-box.spd .va{color:#7fe08a}
+.abil-box{background:linear-gradient(160deg,rgba(212,175,55,0.10),transparent);border:1px solid rgba(212,175,55,0.35);border-radius:12px;padding:11px 13px;margin-bottom:12px}
+.abil-box .ab-name{font-weight:900;color:var(--gold2);font-size:13.5px}
+.abil-box .ab-desc{font-size:12px;color:#c8cddd;margin-top:4px;line-height:1.5}
+.upgrade-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:12px}
+.up-cost{font-size:12.5px;color:var(--dim)}
+.up-cost .ok{color:#67e88f;font-weight:800}
+.up-cost .bad{color:#ff6b6b;font-weight:800}
+.up-preview{font-size:11px;color:var(--dim);margin-top:2px}
+.picker-row{display:flex;align-items:center;gap:12px;background:#0d1324;border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.picker-row:hover{border-color:var(--gold2)}
+.picker-row .pr-icon{font-size:30px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:#0a0e1c;border-radius:10px;border:1px solid var(--line)}
+.picker-row .pr-info{flex:1;min-width:0}
+.picker-row .pr-name{font-weight:800;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.picker-row .pr-meta{font-size:10.5px;color:var(--dim)}
+.picker-row .pr-check{font-size:18px}
+.picker-row.disabled{opacity:.4;cursor:not-allowed}
+.result-title{font-family:'Cinzel',serif;font-weight:900;font-size:26px;text-align:center;letter-spacing:2px}
+.result-title.win{color:var(--gold2);text-shadow:0 0 18px rgba(212,175,55,0.5)}
+.result-title.lose{color:#ff6b6b;text-shadow:0 0 18px rgba(227,61,61,0.5)}
+.reward-grid{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.reward-pill{background:#0d1324;border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-weight:800;font-size:13.5px;animation:popIn .35s ease}
+.reward-pill .r-ic{font-size:15px}
+.r-gold{color:var(--gold2)}.r-gem{color:var(--blue)}.r-xp{color:#7fe08a}
+.lvup{
+  text-align:center;margin-top:12px;padding:10px;border-radius:12px;
+  background:linear-gradient(160deg,rgba(212,175,55,0.18),rgba(212,175,55,0.05));
+  border:1px solid rgba(212,175,55,0.45);font-weight:800;color:var(--gold2);animation:popIn .4s ease;
+}
+
+/* ---------- Pack opening ---------- */
+.pack-stage{width:100%;max-width:470px;text-align:center;animation:modalIn .3s ease}
+.pack-box{
+  width:min(190px,60vw);aspect-ratio:2.6/3.7;margin:18px auto;position:relative;cursor:pointer;
+  border-radius:16px;overflow:hidden;
+  background:linear-gradient(160deg,var(--pc1,#3a3f4f),#20242f);
+  border:2px solid var(--pc2,#6a7285);
+  box-shadow:0 0 40px var(--pcg,rgba(150,160,185,0.35)), inset 0 1px 0 rgba(255,255,255,0.2);
+  animation:floatY 2.4s ease-in-out infinite, packGlow 1.8s ease-in-out infinite;
+  transition:transform .25s;
+}
+.pack-box:active{transform:scale(0.94)}
+@keyframes packGlow{0%,100%{box-shadow:0 0 30px var(--pcg), inset 0 1px 0 rgba(255,255,255,0.2)}50%{box-shadow:0 0 55px var(--pcg), inset 0 1px 0 rgba(255,255,255,0.2)}}
+.bronze{--pc1:#4a4f5e;--pc2:#8b93a7;--pcg:rgba(139,147,167,0.4)}
+.goldc{--pc1:#6d5314;--pc2:#d4af37;--pcg:rgba(212,175,55,0.5)}
+.olympus{--pc1:#0f3761;--pc2:#3fb6ff;--pcg:rgba(63,182,255,0.5)}
+.pack-box .pb-inner{position:absolute;inset:8px;border:1px dashed rgba(255,255,255,0.35);border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.pack-box .pb-glyph{font-family:'Cinzel',serif;font-weight:900;font-size:38px;letter-spacing:2px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,0.6)}
+.pack-box .pb-ray{position:absolute;inset:0;background:conic-gradient(from 0deg, transparent 0 12deg, rgba(255,255,255,0.14) 18deg 30deg, transparent 36deg 120deg, rgba(255,255,255,0.1) 126deg 138deg, transparent 144deg 240deg, rgba(255,255,255,0.12) 246deg 258deg, transparent 264deg 360deg);animation:rot 6s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.pack-box .pb-vib{position:absolute;inset:0;border-radius:16px;background:radial-gradient(circle at 50% 50%, rgba(255,255,255,0.28), transparent 60%);opacity:0;animation:vib .9s ease-in-out infinite}
+.pack-box.shake .pb-vib{opacity:1}
+@keyframes vib{0%,100%{transform:scale(.6);opacity:0}50%{transform:scale(1.15);opacity:.75}}
+.pack-msg{font-size:14px;color:#cdd3e4}
+.pack-msg small{display:block;color:var(--dim);font-size:11.5px;margin-top:5px}
+.reveal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px auto;max-width:470px}
+.reveal-grid.count3{grid-template-columns:repeat(3,1fr);max-width:360px}
+.rv-card{position:relative;aspect-ratio:2/3;border-radius:12px;border:1.5px solid var(--line);overflow:hidden;animation:popIn .3s ease;cursor:pointer}
+.rv-card .rv-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:radial-gradient(circle at 50% 25%, rgba(255,255,255,0.10), transparent 65%),#0c1120;transition:opacity .3s}
+.rv-card .rv-face.rv-back{background:
+  radial-gradient(circle at 50% 45%, rgba(255,255,255,0.12), transparent 55%),
+  linear-gradient(160deg,#2a3352,#171d38)}
+.rv-card .rv-back .rv-glyph{font-family:'Cinzel',serif;font-weight:900;font-size:22px;color:#8a93b5;letter-spacing:1px}
+.rv-card .rv-back .rv-pip{width:22px;height:30px;border-radius:4px;border:2px solid #65708f}
+.rv-card.revealed .rv-back{opacity:0}
+.rv-card .rv-ic{font-size:32px;filter:drop-shadow(0 0 10px var(--glow))}
+.rv-card .rv-n{font-size:8.5px;font-weight:800;text-align:center;padding:0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.rv-card .rv-r{font-size:7px;letter-spacing:1px;font-weight:800;text-transform:uppercase}
+.rv-card.new-tag{position:absolute;top:0;left:0;right:0;background:rgba(63,182,255,0.9);color:#fff;font-size:8px;font-weight:900;letter-spacing:1px;text-align:center;padding:2px 0}
+.rv-card .rv-shine{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,0.65) 50%,transparent 70%);transform:translateX(-160%);animation:shine .8s .1s forwards;}
+@keyframes shine{to{transform:translateX(160%)}}
+.rv-card.flash{animation:flashR .5s ease}
+@keyframes flashR{0%{box-shadow:0 0 0 0 var(--glow)}100%{box-shadow:0 0 40px 14px var(--glow)}}
+.pack-costs{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+
+/* ---------- Toast ---------- */
+#toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:92px;z-index:120;
+  background:rgba(10,13,26,0.95);border:1px solid rgba(212,175,55,0.5);color:var(--text);
+  padding:10px 18px;border-radius:12px;font-size:13px;font-weight:700;
+  box-shadow:0 8px 26px rgba(0,0,0,0.6);transition:opacity .3s,transform .3s;opacity:0;pointer-events:none;
+  max-width:92vw;text-align:center;
+}
+#toast.show{opacity:1;transform:translate(-50%,-6px)}
+
+@media (max-width:560px){
+  .squad-wrap{grid-template-columns:repeat(5,1fr);gap:6px}
+  .slot .s-icon{font-size:32px}
+  .arena{padding:8px}
+  .row{grid-template-columns:repeat(5,1fr);gap:4px}
+  .unit{min-height:112px}
+  .unit .u-icon{font-size:24px}
+  .ccard-grid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:9px}
+  .ccard .c-icon{font-size:32px}.ccard .c-icon-wrap{height:58px}
+  .reveal-grid{gap:5px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="logo-block">
+      <div class="logo">OLYMPUS UNBOUND</div>
+      <div class="logo-sub">M i t o l o g í a · G r i e g a</div>
+    </div>
+    <div id="resRow">
+      <div class="chip gold-chip" title="Tocar para abrir tienda"><span class="ic">🪙</span><span id="goldTxt">0</span></div>
+      <div class="chip gem-chip" title="Tocar para abrir tienda"><span class="ic">💎</span><span id="gemsTxt">0</span></div>
+    </div>
+  </header>
+  <main id="view"></main>
+</div>
+
+<nav id="tabs">
+  <button class="tab active" data-tab="home"><span class="t-ic">⚔️</span>Batalla</button>
+  <button class="tab" data-tab="team"><span class="t-ic">🛡️</span>Mi Equipo</button>
+  <button class="tab" data-tab="collection"><span class="t-ic">📜</span>Colección</button>
+  <button class="tab" data-tab="shop"><span class="t-ic">🏛️</span>Tienda</button>
+</nav>
+
+<div id="overlay"></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+
+const $ = (s,p)=> (p||document).querySelector(s);
+const $$ = (s,p)=> Array.from((p||document).querySelectorAll(s));
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+const rnd = (a,b)=> a + Math.random()*(b-a);
+const rndi = (a,b)=> Math.floor(rnd(a,b+1));
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const clamp = (v,a,b)=> Math.max(a,Math.min(b,v));
+const SAVE_KEY = 'olympus_unbound_v1';
+const MAX_LEVEL = 20;
+
+const CARDS = [
+  {id:'hop',   n:'Hoplita Espartano',  r:'normal', role:'guerrero', ic:'⚔️', hp:440, atk:96,  def:20, spd:72, ab:{n:'Lanza de Bronce', t:'strike', s:1.5}},
+  {id:'gt',    n:'Guardia Troyana',    r:'normal', role:'tanque',   ic:'🛡️', hp:550, atk:55,  def:38, spd:42, ab:{n:'Falange Defensiva', t:'shield', s:1}},
+  {id:'arq',   n:'Arquero Cretense',   r:'normal', role:'guerrero', ic:'🏹', hp:380, atk:108, def:14, spd:84, ab:{n:'Flecha Certera', t:'strike', s:1.8}},
+  {id:'pela',  n:'Peltasta Tracio',    r:'normal', role:'guerrero', ic:'🪓', hp:410, atk:92,  def:16, spd:75, ab:{n:'Jabalina Letal', t:'strike', s:1.5}},
+  {id:'sat',   n:'Sátiro Arremetedor', r:'normal', role:'guerrero', ic:'🐐', hp:360, atk:100, def:12, spd:88, ab:{n:'Embestida Salvaje', t:'strike', s:2.0}},
+  {id:'delf',  n:'Sacerdotisa de Delfos', r:'normal', role:'soporte', ic:'🔮', hp:420, atk:72, def:16, spd:58, ab:{n:'Presagio Curativo', t:'heal', s:1.6}},
+  {id:'gc',    n:'Guardia Cretense',   r:'normal', role:'tanque',   ic:'🏺', hp:520, atk:58,  def:34, spd:44, ab:{n:'Escudo de Cobre', t:'shield', s:1}},
+  {id:'mirm',  n:'Fiel Mirmidón',      r:'normal', role:'guerrero', ic:'🗡️', hp:430, atk:90,  def:18, spd:70, ab:{n:'Estocada Mirmidón', t:'strike', s:1.5}},
+
+  {id:'aqu',   n:'Aquiles',   r:'hero', role:'guerrero', ic:'⚔️', hp:620, atk:150, def:30, spd:88, ab:{n:'Furia del Talón', t:'strike', s:2.6}},
+  {id:'her',   n:'Hércules',  r:'hero', role:'guerrero', ic:'🦁', hp:740, atk:160, def:42, spd:70, ab:{n:'Mano del León de Nemea', t:'strike', s:3.0}},
+  {id:'per',   n:'Perseo',    r:'hero', role:'guerrero', ic:'🗡️', hp:560, atk:140, def:26, spd:92, ab:{n:'Cabeza de Medusa', t:'strike', s:2.4}},
+  {id:'tes',   n:'Teseo',     r:'hero', role:'guerrero', ic:'🧶', hp:580, atk:136, def:28, spd:78, ab:{n:'Hilo del Laberinto', t:'strike', s:2.2}},
+  {id:'uli',   n:'Ulises',    r:'hero', role:'guerrero', ic:'🏹', hp:540, atk:132, def:24, spd:86, ab:{n:'El Caballo de Madera', t:'aoe', s:0.85}},
+  {id:'ata',   n:'Atalanta',  r:'hero', role:'guerrero', ic:'🐆', hp:500, atk:150, def:20, spd:96, ab:{n:'Carrera Veloz', t:'strike', s:2.6}},
+  {id:'orf',   n:'Orfeo',     r:'hero', role:'mago',     ic:'🎶', hp:460, atk:150, def:18, spd:80, ab:{n:'Melodía Hipnótica', t:'aoe', s:0.9}},
+  {id:'and',   n:'Andrómeda', r:'hero', role:'soporte',  ic:'🌟', hp:520, atk:100, def:24, spd:62, ab:{n:'Vínculo Sagrado', t:'heal', s:1.8}},
+  {id:'jas',   n:'Jasón',     r:'hero', role:'guerrero', ic:'🐏', hp:560, atk:132, def:26, spd:76, ab:{n:'Vellocino de Oro', t:'buff', s:1}},
+
+  {id:'zus',   n:'Zeus',      r:'god', role:'mago',     ic:'⚡', hp:560, atk:210, def:22, spd:88, ab:{n:'Rayo del Olimpo', t:'aoe', s:1.2}},
+  {id:'pos',   n:'Poseidón',  r:'god', role:'mago',     ic:'🔱', hp:640, atk:195, def:28, spd:70, ab:{n:'Terremoto Marino', t:'aoe', s:1.0}},
+  {id:'had',   n:'Hades',     r:'god', role:'mago',     ic:'💀', hp:600, atk:205, def:26, spd:74, ab:{n:'Aliento del Inframundo', t:'aoe', s:1.1}},
+  {id:'ate',   n:'Atenea',    r:'god', role:'soporte',  ic:'🦉', hp:560, atk:120, def:30, spd:64, ab:{n:'Sabiduría de Guerra', t:'buff', s:1}},
+  {id:'ars',   n:'Ares',      r:'god', role:'guerrero', ic:'🔥', hp:660, atk:200, def:36, spd:82, ab:{n:'Degüello de Guerra', t:'strike', s:2.8}},
+  {id:'art',   n:'Artemisa',  r:'god', role:'guerrero', ic:'🌙', hp:580, atk:190, def:32, spd:90, ab:{n:'Lluvia de Flechas', t:'aoe', s:0.9}},
+  {id:'hef',   n:'Hefesto',   r:'god', role:'tanque',   ic:'⚒️', hp:920, atk:130, def:60, spd:46, ab:{n:'Forja Celestial', t:'shield', s:1}},
+  {id:'apo',   n:'Apolo',     r:'god', role:'mago',     ic:'☀️', hp:540, atk:200, def:20, spd:86, ab:{n:'Sol Abrasador', t:'aoe', s:1.1}},
+
+  {id:'cro',   n:'Cronos',    r:'titan', role:'mago',    ic:'⏳', hp:760, atk:260, def:34, spd:72, ab:{n:'Devorador del Tiempo', t:'aoe', s:1.3}},
+  {id:'oce',   n:'Océano',    r:'titan', role:'tanque',  ic:'🌊', hp:1150, atk:150, def:72, spd:44, ab:{n:'Abismo de las Aguas', t:'shield', s:1}},
+  {id:'hip',   n:'Hiperión',  r:'titan', role:'guerrero',ic:'🌅', hp:820, atk:250, def:44, spd:80, ab:{n:'Fuego del Sol', t:'strike', s:3.0}},
+  {id:'jap',   n:'Jápeto',    r:'titan', role:'tanque',  ic:'⛓️', hp:1080, atk:140, def:70, spd:46, ab:{n:'Cadenas Primordiales', t:'shield', s:1}},
+  {id:'atl',   n:'Atlas',     r:'titan', role:'tanque',  ic:'🌍', hp:1250, atk:170, def:80, spd:40, ab:{n:'Sostén del Cielo', t:'shield', s:1}},
+  {id:'cri',   n:'Crío',      r:'titan', role:'guerrero',ic:'🦾', hp:790, atk:240, def:40, spd:84, ab:{n:'Tormenta del Norte', t:'aoe', s:1.0}}
+];
+
+const RAR = {
+  normal:{name:'Normal', color:'#aeb6c8', glow:'rgba(174,182,200,0.5)'},
+  hero:  {name:'Héroe',  color:'#3fb6ff', glow:'rgba(63,182,255,0.6)'},
+  god:   {name:'Dios',   color:'#ffd257', glow:'rgba(255,210,87,0.6)'},
+  titan: {name:'Titán',  color:'#b14dff', glow:'rgba(177,77,255,0.65)'}
+};
+const ROLES = {tanque:'Tanque', guerrero:'Guerrero', mago:'Mago', soporte:'Soporte'};
+const RARITY_FACTOR = {normal:1, hero:2, god:4, titan:7 };
+const CARD_BY_ID = Object.fromEntries(CARDS.map(c=>[c.id,c]));
+const CARDS_BY_RAR = {};
+CARDS.forEach(c=>{ (CARDS_BY_RAR[c.r] = CARDS_BY_RAR[c.r]||[]).push(c); });
+
+const PACKS = {
+  bronze:{cls:'bronze', name:'Sobre de Bronce', cost:{gold:300}, count:3,
+    desc:'3 cartas. Ideal para empezar tu colección.',
+    odds:[['Normal','78%'],['Héroe','20%'],['Dios','1.8%'],['Titán','0.2%']],
+    w:{normal:.78, hero:.20, god:.018, titan:.002}},
+  gold:{cls:'goldc', name:'Sobre de Oro', cost:{gold:1000}, count:5,
+    desc:'5 cartas con mayor probabilidad de Héroes y Dioses.',
+    odds:[['Normal','50%'],['Héroe','37%'],['Dios','11.5%'],['Titán','1.5%']],
+    w:{normal:.50, hero:.37, god:.115, titan:.015}},
+  olympus:{cls:'olympus', name:'Sobre Olimpo', cost:{gems:50}, count:5,
+    desc:'5 cartas. Garantiza al menos 1 Héroe. Probabilidad aumentada de Dioses y Titanes.',
+    odds:[['Normal','22%'],['Héroe','49.5%'],['Dios','22.5%'],['Titán','6%']],
+    w:{normal:.22, hero:.495, god:.225, titan:.06}, guarantee:true}
+};
+
+const STAGES = [
+  {n:'Bandidos de la Ruta',       roster:['pela','sat','arq','gt','hop'], level:1},
+  {n:'Piratas del Egeo',          roster:['mirm','hop','arq','pela','gt'], level:2},
+  {n:'Sátiros Alborotadores',     roster:['sat','sat','pela','arq','gc'], level:3},
+  {n:'Orgullo de Troya',          roster:['hop','gt','arq','gc','mirm'], level:4},
+  {n:'Cazadores Legendarios',     roster:['ata','orf','uli','per','and'], level:6},
+  {n:'El Laberinto de Creta',     roster:['tes','per','and','jas','ata'], level:8},
+  {n:'Furia del Olimpo',          roster:['ars','art','apo','hef','ate'], level:10},
+  {n:'Asalto al Olimpo',          roster:['zus','pos','had','art','ate'], level:12},
+  {n:'Puertas del Inframundo',    roster:['had','apo','ars','oce','cro'], level:14},
+  {n:'Conspiración de los Titanes',roster:['cro','hip','jap','atl','cri'], level:16},
+  {n:'La Titanomaquia',           roster:['oce','cro','atl','hip','zus'], level:18},
+  {n:'Cronos, el Devorador',      roster:['cro','cro','atl','oce','hip'], level:20}
+];
+
+function defaultState(){
+  return {gold:2000, gems:50, lvl:1, xp:0, cards:{}, team:[null,null,null,null,null], stage:0};
+}
+let state;
+function load(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(raw){ const s = JSON.parse(raw); if(s && typeof s.gold==='number'){ state = Object.assign(defaultState(), s); return; } }
+  }catch(e){}
+  state = defaultState();
+}
+function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){} }
+window.addEventListener('beforeunload', save);
+
+const fmt = n => Math.round(n).toLocaleString('es-ES');
+function valuesAt(cardId, level){
+  const c = CARD_BY_ID[cardId], g = 1 + (level - 1) * 0.18;
+  return {hp:Math.round(c.hp*g), atk:Math.round(c.atk*g), def:Math.round(c.def*g), spd:c.spd};
+}
+function powerOf(cardId, level){
+  const v = valuesAt(cardId, level);
+  return Math.round(v.hp*0.2 + v.atk + v.def*1.2);
+}
+function abDesc(a, cardId){
+  const c = CARD_BY_ID[cardId];
+  if(a.t==='strike') return `Inflige un golpe devastador que causa ${Math.round(a.s*100)}% del ATK como daño a un enemigo.`;
+  if(a.t==='aoe') return `Golpea a TODOS los enemigos causando ${Math.round(a.s*100)}% del ATK como daño a cada uno.`;
+  if(a.t==='heal') return `Restaura ${Math.round(a.s*100)}% del ATK como vida del aliado más herido.`;
+  if(a.t==='shield') return `Cubre al aliado más vulnerable con un escudo igual a ${Math.round(6*a.s)}x su DEF.`;
+  if(a.t==='buff') return `Aumenta el ATK de todo el equipo un ${Math.round(a.s*30)}% durante 2 turnos.`;
+  return '';
+}
+function upgradeCost(cardId, level){
+  const c = CARD_BY_ID[cardId];
+  const baseGold = Math.round((c.hp*0.2 + c.atk + c.def*1.2) * 2 * level * RARITY_FACTOR[c.r]);
+  const gold = Math.max(50, baseGold);
+  return {dupes:Math.max(1, Math.round(level * (0.5 + RARITY_FACTOR[c.r]*0.5))), gold};
+}
+function rollRarity(pack){
+  const w = pack.w, keys = Object.keys(w);
+  let r = Math.random(), acc = 0;
+  for(const k of keys){ acc += w[k]; if(r <= acc) return k; }
+  return 'normal';
+}
+
+const tabs = ['home','team','collection','shop'];
+let currentTab = 'home';
+function setTab(name){
+  if(battleRunning){ battleRunning = false; }
+  currentTab = name;
+  $$('#tabs .tab').forEach(t=> t.classList.toggle('active', t.dataset.tab===name));
+  render();
+}
+$$('#tabs .tab').forEach(t=> t.addEventListener('click', ()=> setTab(t.dataset.tab)));
+function updateTopRes(){
+  $('#goldTxt').textContent = fmt(state.gold);
+  $('#gemsTxt').textContent = fmt(state.gems);
+}
+
+function toast(msg, ms){
+  const t = $('#toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(()=> t.classList.remove('show'), ms||2200);
+}
+
+function ownedList(){
+  return Object.keys(state.cards);
+}
+function hasCard(id){ return !!state.cards[id]; }
+
+/* ==================== VIEWS ==================== */
+
+function render(){
+  updateTopRes();
+  const v = $('#view');
+  if(currentTab==='home') v.innerHTML = viewHome();
+  else if(currentTab==='team') v.innerHTML = viewTeam();
+  else if(currentTab==='collection') v.innerHTML = viewCollection();
+  else if(currentTab==='shop') v.innerHTML = viewShop();
+  v._on = {};
+  bindCurrent();
+}
+
+function bindCurrent(){
+  const v = $('#view');
+  if(currentTab==='home'){
+    $$('[data-play]', v).forEach(e=> e.addEventListener('click', ()=> startBattle(parseInt(e.dataset.play,10))));
+  }
+  if(currentTab==='team'){
+    $$('.slot', v).forEach(s=> s.addEventListener('click', ()=> openTeamPicker(parseInt(s.dataset.slot,10))));
+  }
+  if(currentTab==='collection'){
+    $$('[data-f]', v).forEach(b=> b.addEventListener('click', ()=>{
+      $$('[data-f]',v).forEach(x=>x.classList.remove('active'));
+      b.classList.add('active'); collFilter = b.dataset.f; renderCollection();
+    }));
+    $$('[data-card]', v).forEach(c=> c.addEventListener('click', ()=> openCardDetail(c.dataset.card)));
+  }
+  if(currentTab==='shop'){
+    $$('[data-pack]', v).forEach(e=> e.addEventListener('click', ()=> buyPack(e.dataset.pack)));
+    $$('[data-ex]', v).forEach(e=> e.addEventListener('click', ()=> doExchange(parseInt(e.dataset.ex,10))));
+  }
+}
+
+function xpNeed(lvl){ return Math.round(80 + lvl*140); }
+function addXp(n){
+  if(n<=0) return;
+  state.xp += n; let gained = 0;
+  while(state.xp >= xpNeed(state.lvl) && state.lvl < 99){
+    state.xp -= xpNeed(state.lvl); state.lvl++; state.gems += 5; gained += 5;
+  }
+  if(gained) setTimeout(()=> toast(`¡${state.lvl} subido a ${gained}💎 gemas de recompensa!`), 700);
+}
+
+function viewHome(){
+  const unique = ownedList().length;
+  const unitIds = state.team.filter(Boolean);
+  const pow = unitIds.reduce((s,id)=> s + powerOf(id, state.cards[id].lvl), 0);
+  const stag = state.stage;
+  const last = STAGES.length - 1;
+  const done = stag >= last;
+  const cur = STAGES[Math.min(stag, last)];
+  const progressPct = Math.min(100, Math.round(xpNeed(state.lvl)===0 ? 0 : state.xp / xpNeed(state.lvl) * 100));
+  return `
+  <div class="hero">
+    <div class="glyph">🏛️</div>
+    <h1>OLYMPUS UNBOUND</h1>
+    <div class="tagline">Forja tu legado entre dioses y titanes</div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="v">${state.lvl}</div><div class="l">Nivel</div>
+        <div class="xp-bar"><div class="xp-fill" style="width:${progressPct}%"></div></div></div>
+      <div class="hstat"><div class="v">${unique}<span style="font-size:11px;color:var(--dim)">/${CARDS.length}</span></div><div class="l">Cartas</div></div>
+      <div class="hstat"><div class="v">${fmt(pow)}</div><div class="l">Poder</div></div>
+      <div class="hstat"><div class="v">${done ? STAGES.length : stag+1}<span style="font-size:11px;color:var(--dim)">/${STAGES.length}</span></div><div class="l">Campaña</div></div>
+    </div>
+    <button class="btn btn-gold big-cta" data-play="${Math.min(stag,last)}">${done ? '⚔️ Volver a desafiar jefes' : '⚔️ Continuar campaña'}</button>
+  </div>
+  <div class="sec-title">${done ? 'Todas las fases completadas' : 'Próxima batalla'}</div>
+  ${stageCard(cur, Math.min(stag,last), true)}
+  <div class="sec-title">Campaña</div>
+  ${STAGES.map((s,i)=> stageCard(s,i, i<=stag)).join('')}
+  <button class="btn btn-ghost btn-block" style="margin-top:6px" onclick="setTab('team')">🛡️ Gestionar mi equipo · 5 héroes</button>
+  `;
+}
+
+function diffClass(idx){
+  if(idx>=9) return 'diff-4'; if(idx>=6) return 'diff-3'; if(idx>=3) return 'diff-2'; if(idx>=1) return 'diff-1'; return 'diff-0';
+}
+function stageCard(s, idx, unlocked){
+  const current = idx === Math.min(state.stage, STAGES.length-1);
+  const enIcons = s.roster.map(id=> `<span class="ep" title="${CARD_BY_ID[id].n}">${CARD_BY_ID[id].ic}</span>`).join('');
+  const goldReward = rewardOf(idx).gold;
+  const lock = unlocked ? '' : '<span class="stage-lock">🔒</span>';
+  return `
+  <div class="stage-card ${unlocked ? 'open'+ (current?' current':'') : ''}" ${unlocked ? `data-play="${idx}"` : ''}>
+    <div class="stage-num">${String(idx+1).padStart(2,'0')}</div>
+    <div class="stage-info">
+      <div class="stage-name">${s.n}</div>
+      <div class="stage-meta">
+        <span>⚔️ ${fmt(goldReward)} oro</span>
+        <span>✨ ${fmt(rewardOf(idx).xp)} XP</span>
+        <span class="stage-diff ${diffClass(idx)}">${idx>=9?'ÉPICA':idx>=6?'ALTA':idx>=3?'MEDIA':'BAJA'}</span>
+      </div>
+      <div class="enemy-preview">${enIcons}</div>
+    </div>
+    ${lock}
+  </div>`;
+}
+
+function rewardOf(idx){
+  const s = idx + 1;
+  return {gold: 140 + s*85, xp: 30 + s*18};
+}
+
+/* ---------- TEAM ---------- */
+function viewTeam(){
+  const slots = state.team.map((id,i)=> teamSlotHTML(id,i)).join('');
+  const pow = state.team.filter(Boolean).reduce((s,id)=> s + powerOf(id, state.cards[id].lvl), 0);
+  const cnt = state.team.filter(Boolean).length;
+  return `
+  <div class="power-box">
+    <div><div class="pb-label">Poder total del equipo</div>
+      <div class="pb-val">${fmt(pow)}</div></div>
+    <div style="text-align:right">
+      <div class="pb-label">Miembros</div>
+      <div class="pb-val" style="font-size:18px;color:var(--text)">${cnt}/5</div>
+    </div>
+  </div>
+  <div class="squad-wrap">${slots}</div>
+  <p class="battle-hint">Toca una ranura para asignar o cambiar una carta de tu colección.</p>
+  ${cnt>0 && STAGES.length>0 ? `<button class="btn btn-gold btn-block" style="margin-top:14px" onclick="setTab('home')">⚔️ Ir a la batalla</button>` : ''}
+  `;
+}
+function teamSlotHTML(id, i){
+  if(!id || !state.cards[id]) return `
+  <div class="slot" data-slot="${i}">
+    <div class="slot-plus">+</div>
+    <div class="slot-txt">Ranura ${i+1}</div>
+  </div>`;
+  const c = CARD_BY_ID[id], lvl = state.cards[id].lvl, v = valuesAt(id, lvl), r = RAR[c.r];
+  return `
+  <div class="slot filled" data-slot="${i}" style="--glow:${r.color};border-color:${r.color}">
+    <div class="s-lvl">NV ${lvl}</div>
+    <div class="s-icon">${c.ic}</div>
+    <div class="s-name">${c.n}</div>
+    <div class="s-role">${ROLES[c.role]}</div>
+    <div style="font-size:8px;color:var(--dim);margin-top:2px">💪 ${fmt(v.hp)} · ⚔️ ${fmt(v.atk)} · 🛡️ ${fmt(v.def)}</div>
+    <div class="s-bar" style="transform:scaleX(${clamp(v.hp/1500,0.15,1)})"></div>
+  </div>`;
+}
+
+function openTeamPicker(slotIdx){
+  const owned = ownedList();
+  const inTeam = new Set(state.team.filter(Boolean));
+  const rows = owned.sort((a,b)=> rarityOrder(a,b)).map(id=>{
+    const c = CARD_BY_ID[id], lvl = state.cards[id].lvl, r = RAR[c.r];
+    const on = inTeam.has(id);
+    return `
+    <div class="picker-row ${on?'disabled':''}" data-pick="${id}" ${on?'data-nosel="1"':''}>
+      <div class="pr-icon" style="border-color:${r.color}">${c.ic}</div>
+      <div class="pr-info">
+        <div class="pr-name" style="color:${r.color}">${c.n}</div>
+        <div class="pr-meta">${RAR[c.r].name} · NV ${lvl} · ${ROLES[c.role]} · Poder ${fmt(powerOf(id,lvl))}</div>
+      </div>
+      ${on ? '<div class="pr-check" style="color:var(--dim)">En equipo ✓</div>' : '<div class="pr-check" style="color:var(--gold2)">Asignar ➜</div>'}
+    </div>`;
+  }).join('');
+  openModal(`
+    <div class="sec-title" style="margin-top:8px">Asignar ranura ${slotIdx+1}</div>
+    ${owned.length? rows : '<div class="empty-msg">Aún no tienes cartas. Abre sobres en la tienda 🏛️</div>'}
+    <div style="display:flex;gap:8px;margin-top:12px">
+      ${state.team[slotIdx] ? '<button class="btn btn-red btn-sm" id="removePick">✖ Quitar carta</button>' : ''}
+      <button class="btn btn-gold btn-block" id="closePick">Listo</button>
+    </div>`, true);
+  $$('[data-pick]', $('#overlay')).forEach(r=> r.addEventListener('click', ()=>{
+    if(r.dataset.nosel) return;
+    state.team[slotIdx] = r.dataset.pick; save(); closeModal(); setTab('team');
+  }));
+  const rm = $('#removePick'); if(rm) rm.addEventListener('click', ()=>{ state.team[slotIdx]=null; save(); closeModal(); setTab('team'); });
+  const cl = $('#closePick'); if(cl) cl.addEventListener('click', closeModal);
+}
+function rarityOrder(a,b){
+  const o = {normal:0, hero:1, god:2, titan:3};
+  const d = o[CARD_BY_ID[b].r] - o[CARD_BY_ID[a].r];
+  return d || (a<b?1:-1);
+}
+
+/* ---------- COLLECTION ---------- */
+let collFilter = 'all';
+function viewCollection(){
+  const cards = ownedList();
+  if(!cards.length){
+    return `<div class="empty-msg">📜 Tu colección está vacía.<br><br><button class="btn btn-gold" onclick="setTab('shop')">Abrir tu primer sobre</button></div>`;
+  }
+  const filters = [['all','Todas'], ['normal','Normales'], ['hero','Héroes'], ['god','Dioses'], ['titan','Titanes']];
+  const fbar = `<div class="filter-bar">${filters.map(([k,l])=>`<button class="fbtn ${collFilter===k?'active':''}" data-f="${k}">${l}</button>`).join('')}</div>`;
+  const grid = cards
+    .map(id=>[id, CARD_BY_ID[id]])
+    .sort((a,b)=> rarityOrder(a[0],b[0]))
+    .filter(([,c])=> collFilter==='all' || c.r===collFilter)
+    .map(([id,c])=> collectionCardHTML(id,c)).join('');
+  return fbar + (grid? `<div class="ccard-grid">${grid}</div>` : '<div class="empty-msg">Sin cartas en esta categoría.</div>');
+}
+function collectionCardHTML(id, c){
+  const rc = state.cards[id], r = RAR[c.r], v = valuesAt(id, rc.lvl);
+  return `
+  <div class="ccard _rar-${c.r}" data-card="${id}" style="--rar-b:${r.color};--glow:${r.glow};border-color:${r.color};box-shadow:0 4px 14px ${r.glow}33">
+    <div class="c-top">
+      <span style="color:${r.color};border:1px solid ${r.color};background:rgba(0,0,0,0.4);padding:2px 7px;border-radius:5px;font-size:8.5px;font-weight:900;letter-spacing:1.5px">${r.name.toUpperCase()}</span>
+      <span class="c-dup">${rc.dup ? `+${rc.dup} dup` : 'Única'}</span>
+    </div>
+    <div class="c-icon-wrap" style="border-color:${r.color}55"><div class="c-icon">${c.ic}</div></div>
+    <div class="c-name">${c.n}</div>
+    <div class="c-lv">Nivel ${rc.lvl}${rc.lvl<MAX_LEVEL?` / ${MAX_LEVEL}`:' · MÁX'}</div>
+    <div class="c-stats">
+      <span class="c-hp">♥ ${fmt(v.hp)}</span>
+      <span class="c-atk">⚔ ${fmt(v.atk)}</span>
+      <span class="c-def">⛨ ${fmt(v.def)}</span>
+    </div>
+  </div>`;
+}
+function renderCollection(){
+  $('#view').innerHTML = viewCollection(); bindCurrent();
+}
+
+function openCardDetail(id){
+  const c = CARD_BY_ID[id], rc = state.cards[id], r = RAR[c.r], v = valuesAt(id, rc.lvl);
+  const maxed = rc.lvl >= MAX_LEVEL;
+  const cost = upgradeCost(id, rc.lvl);
+  const canUp = !maxed && rc.dup >= cost.dupes && state.gold >= cost.gold;
+  const next = maxed ? null : valuesAt(id, rc.lvl+1);
+  const costHtml = maxed ? '<div class="up-cost" style="color:var(--gold2)">NIVEL MÁXIMO ALCANZADO</div>' : `
+    <div>
+      <div class="up-cost">Requiere <span class="${rc.dup>=cost.dupes?'ok':'bad'}">${cost.dupes} duplicado(s)</span> · Tienes <span class="${rc.dup>=cost.dupes?'ok':'bad'}">${rc.dup}</span></div>
+      <div class="up-cost">Costo en oro: <span class="${state.gold>=cost.gold?'ok':'bad'}">🪙 ${fmt(cost.gold)}</span> · Tienes 🪙 ${fmt(state.gold)}</div>
+      ${next ? `<div class="up-preview">HP ${fmt(v.hp)}→${fmt(next.hp)} · ATK ${fmt(v.atk)}→${fmt(next.atk)} · DEF ${fmt(v.def)}→${fmt(next.def)}</div>` : ''}
+    </div>
+    <button class="btn btn-gold btn-sm" ${canUp?'':'disabled'} id="upBtn">⬆ Subir a NV ${rc.lvl+1}</button>`;
+  openModal(`
+    <div class="detail-ig">
+      <div class="detail-icon" style="--glow:${r.glow};border-color:${r.color}">${c.ic}</div>
+      <div class="detail-name" style="color:${r.color}">${c.n}</div>
+      <span class="badge" style="color:${r.color};border:1px solid ${r.color};background:rgba(0,0,0,0.4)">${r.name}</span>
+      <span class="badge badge-role">${ROLES[c.role]}</span>
+      <span class="badge" style="background:#151c38;border:1px solid var(--line);color:var(--gold2)">NV ${rc.lvl}${maxed?' · MÁX':''}</span>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box hp"><span class="lb">Vida</span><span class="va">${fmt(v.hp)}</span></div>
+      <div class="stat-box atk"><span class="lb">Ataque</span><span class="va">${fmt(v.atk)}</span></div>
+      <div class="stat-box def"><span class="lb">Defensa</span><span class="va">${fmt(v.def)}</span></div>
+      <div class="stat-box spd"><span class="lb">Velocidad</span><span class="va">${v.spd}</span></div>
+    </div>
+    <div class="abil-box">
+      <div class="ab-name">✨ ${c.ab.n}</div>
+      <div class="ab-desc">${abDesc(c.ab, id)}</div>
+    </div>
+    <div class="upgrade-row">${costHtml}</div>
+  `, true);
+  const up = $('#upBtn'); if(up) up.addEventListener('click', ()=>{
+    if(state.gold < cost.gold || rc.dup < cost.dupes) return toast('No tienes suficientes recursos');
+    state.gold -= cost.gold; rc.dup -= cost.dupes; rc.lvl++; save();
+    toast(`⬆ ${c.n} subió a nivel ${rc.lvl}`);
+    openCardDetail(id); renderCollection();
+  });
+}
+
+/* ---------- SHOP ---------- */
+function viewShop(){
+  const packs = Object.entries(PACKS).map(([k,p])=>{
+    const cls = k==='olympus'? 'olympus': k==='gold'?'goldc':'bronze';
+    const cost = p.cost.gold ? `<span class="gold">🪙 ${fmt(p.cost.gold)}</span>` : `<span class="gem">💎 ${fmt(p.cost.gems)}</span>`;
+    const oddsRows = p.odds.map(([l,v])=>`<div class="o-row"><span class="o-l">${l}</span><span class="o-v" style="color:${l==='Titán'?RAR.titan.color: l==='Dios'?RAR.god.color: l==='Héroe'?RAR.hero.color:'var(--gray)'}">${v}</span></div>`).join('');
+    return `
+    <div class="pack-card ${cls}" data-pack="${k}">
+      <div class="pc-ic">🎁</div>
+      <div class="pc-name ${cls}">${p.name}</div>
+      <div class="pc-cost">${cost}</div>
+      <div class="pc-desc">${p.desc} · ${p.count} cartas.</div>
+      <div class="odds">${oddsRows}</div>
+    </div>`;
+  }).join('');
+  return `
+  <div class="sec-title">Tienda de Sobres</div>
+  <div class="shop-grid">${packs}</div>
+  <div class="sec-title">Canje de gemas</div>
+  <div class="exchange-card">
+    <div class="ex-item" data-ex="10"><div class="ei-ic">💎→🪙</div><div class="ei-body">10 gemas = <span class="g">1.200 oro</span></div></div>
+    <div class="ex-item" data-ex="25"><div class="ei-ic">💎→🪙</div><div class="ei-body">25 gemas = <span class="g">3.000 oro</span></div></div>
+    <div class="ex-item" data-ex="50"><div class="ei-ic">💎→🪙</div><div class="ei-body">50 gemas = <span class="g">6.000 oro</span></div></div>
+  </div>
+  <p class="battle-hint">Las gemas se obtienen al completar campaña y subir de nivel.</p>
+  `;
+}
+function doExchange(gems){
+  const gold = gems * 120;
+  if(state.gems < gems) return toast('No tienes suficientes gemas 💎');
+  state.gems -= gems; state.gold += gold; save(); updateTopRes();
+  toast(`Canjeaste ${gems}💎 por ${fmt(gold)}🪙`);
+  render();
+}
+
+/* ---------- MODAL ---------- */
+function openModal(html, closable){
+  const ov = $('#overlay');
+  ov.innerHTML = `<div class="modal">${closable?'<button class="modal-close" id="moClose">✕</button>':''}${html}</div>`;
+  ov.classList.add('show');
+  const c = $('#moClose'); if(c) c.addEventListener('click', closeModal);
+  const m = $('.modal', ov); if(m) m.addEventListener('click', e=> e.stopPropagation());
+  ov.onclick = closable ? closeModal : ()=>{};
+}
+function closeModal(){ $('#overlay').classList.remove('show'); $('#overlay').innerHTML=''; }
+
+/* ---------- PACK OPENING ---------- */
+function buyPack(packKey){
+  const p = PACKS[packKey];
+  if(p.cost.gold!==undefined){ if(state.gold < p.cost.gold) return toast('No tienes suficiente oro 🪙'); state.gold -= p.cost.gold; }
+  else { if(state.gems < p.cost.gems) return toast('No tienes suficientes gemas 💎'); state.gems -= p.cost.gems; }
+  save(); updateTopRes();
+  const pulls = generatePulls(p);
+  pulls.forEach(pid=>{ if(!state.cards[pid]) state.cards[pid]={lvl:1,dup:0}; else state.cards[pid].dup++; });
+  save();
+  showPackOpening(p, pulls);
+}
+function generatePulls(p){
+  const arr = [];
+  for(let i=0;i<p.count;i++) arr.push(rollCard(p));
+  if(p.guarantee && !arr.some(id=> RARE_ORDER[CARD_BY_ID[id].r] >= RARE_ORDER.hero)){
+    arr[p.count-1] = rollRarityCard('hero');
+  }
+  return arr;
+}
+const RARE_ORDER = {normal:0, hero:1, god:2, titan:3};
+function rollCard(p){
+  const r = rollRarity(p);
+  return rollRarityCard(r);
+}
+function rollRarityCard(r){
+  const pool = CARDS_BY_RAR[r];
+  return pick(pool).id;
+}
+
+let openingBusy = false;
+async function showPackOpening(p, pulls){
+  openingBusy = true;
+  const cls = p.cls;
+  openModal(`
+    <div class="pack-stage">
+      <div class="pc-name cinzel" style="font-size:20px;font-weight:900;letter-spacing:2px;color:var(--gold2)">${p.name}</div>
+      <div class="pack-box ${cls}" id="packBox">
+        <div class="pb-ray"></div>
+        <div class="pb-inner"><div class="pb-glyph">⚡</div></div>
+        <div class="pb-vib"></div>
+      </div>
+      <div class="pack-msg" id="packMsg">Toca el sobre para abrirlo</div>
+      <div class="reveal-grid ${p.count===3?'count3':''}" id="revealGrid"></div>
+      <div class="pack-costs" id="packCosts"></div>
+    </div>`, true);
+  const box = $('#packBox'), msg = $('#packMsg'), grid = $('#revealGrid');
+  await sleep(500);
+  box.classList.add('shake');
+  await sleep(900);
+  box.style.animation = 'none';
+  box.style.transform = 'scale(0)';
+  box.style.transition = 'transform .45s ease';
+  msg.textContent = '¡Se revelan los augurios del destino...!';
+  await sleep(600);
+  const slots = [];
+  pulls.forEach((pid, i)=>{
+    const el = document.createElement('div');
+    el.className = 'rv-card';
+    el.style.setProperty('--glow', RAR[CARD_BY_ID[pid].r].glow);
+    el.dataset.new = isNew(pid) ? '1' : '0';
+    el.innerHTML = `
+      <div class="rv-face rv-back"><div class="rv-pip"></div><div class="rv-glyph">O</div></div>
+      <div class="rv-face rv-front" style="border:1px solid ${RAR[CARD_BY_ID[pid].r].color}">
+        <div class="rv-ic">${CARD_BY_ID[pid].ic}</div>
+        <div class="rv-n" style="color:${RAR[CARD_BY_ID[pid].r].color}">${CARD_BY_ID[pid].n}</div>
+        <div class="rv-r" style="color:${RAR[CARD_BY_ID[pid].r].color}">${RAR[CARD_BY_ID[pid].r].name}</div>
+      </div>`;
+    grid.appendChild(el); slots.push(el);
+  });
+  for(let i=0;i<slots.length;i++){
+    await sleep(420);
+    slots[i].classList.add('revealed','flash');
+    if(slots[i].dataset.new==='1'){
+      const tag = document.createElement('div'); tag.className='new-tag'; tag.textContent='NUEVA'; slots[i].appendChild(tag);
+    }
+    const sh = document.createElement('div'); sh.className='rv-shine'; slots[i].appendChild(sh);
+    playPop();
+  }
+  msg.innerHTML = '¡Recogidas añadidas a tu colección!';
+  const btn = document.createElement('button');
+  btn.className = 'btn btn-gold btn-block'; btn.id='collectBtn'; btn.style.marginTop='14px';
+  btn.textContent = 'Recoger y continuar';
+  $('#packCosts').appendChild(btn);
+  btn.addEventListener('click', ()=>{ closeModal(); setTab(currentTab); });
+  openingBusy = false;
+}
+
+function duplicatesOf(id){ return state.cards[id] ? state.cards[id].dup : 0; }
+function isNew(id){ return state.cards[id] && state.cards[id].dup===0; }
+
+let audioCtx;
+function playPop(){
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type='triangle'; o.frequency.value= 500 + Math.random()*300;
+    g.gain.setValueAtTime(0.12, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.16);
+    o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.16);
+  }catch(e){}
+}
+function playHit(){
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type='sawtooth'; o.frequency.value= 180 + Math.random()*60; o.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime+0.12);
+    g.gain.setValueAtTime(0.14, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.13);
+    o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.14);
+  }catch(e){}
+}
+
+/* ==================== BATTLE ==================== */
+let battleFast = 1;
+let battleRunning = false;
+
+function makeUnit(cardId, level, side, scale){
+  const c = CARD_BY_ID[cardId];
+  const v = valuesAt(cardId, level);
+  const m = scale || 1;
+  const hp = Math.round(v.hp * m), atk = Math.round(v.atk * m), def = Math.round(v.def * m);
+  return {
+    uid: Math.random().toString(36).slice(2),
+    cardId, name:c.n, ic:c.ic, r:c.r, role:c.role, ab:c.ab,
+    level, side, baseHp:hp, baseAtk:atk,
+    hp, maxHp:hp, atk, def, spd:v.spd,
+    energy:40, shield:0, dead:false, buffAtk:0, buffTurns:0
+  };
+}
+
+function startBattle(idx){
+  if(!state.team.some(Boolean)){ toast('Asigna cartas a tu equipo primero 🛡️'); setTab('team'); return; }
+  if(openingBusy) return;
+  const stage = STAGES[idx];
+  const myUnits = state.team.filter(Boolean).map(id=> makeUnit(id, state.cards[id].lvl, 'p'));
+  const scale = 1 + idx*0.05;
+  const enUnits = stage.roster.map(id=> makeUnit(id, stage.level, 'e', scale));
+  battleScreen(stage, idx, myUnits, enUnits);
+  runBattle(idx, myUnits, enUnits).catch(e=>{ console.error(e); toast('Error de combate'); });
+}
+
+function battleScreen(stage, idx, myUnits, enUnits){
+  currentTab = 'battle';
+  $$('#tabs .tab').forEach(t=> t.classList.remove('active'));
+  const v = $('#view');
+  v.innerHTML = `
+  <div class="arena-screen">
+    <div class="arena-head">
+      <div>
+        <div class="arena-stage-name">${stage.n}</div>
+        <div style="font-size:11px;color:var(--dim)">Fase ${idx+1} de ${STAGES.length} · Recompensa: 🪙 ${fmt(rewardOf(idx).gold)} · ✨ ${fmt(rewardOf(idx).xp)} XP</div>
+      </div>
+      <div class="arena-ctrls">
+        <button class="btn btn-ghost btn-sm" id="speedBtn">⏩ x1</button>
+        <button class="btn btn-red btn-sm" id="quitBtn">✖ Salir</button>
+      </div>
+    </div>
+    <div id="arenaWrap">
+      <div class="arena" id="arena">
+        <div class="row enermy" id="enemyRow"></div>
+        <div class="vs-line">VS</div>
+        <div class="row ally" id="allyRow"></div>
+        <div class="fx-layer" id="fx"></div>
+      </div>
+    </div>
+    <div class="battle-hint">Cada golpe carga la energía (barra azul). Al 100% se libera el poder especial ✨</div>
+  </div>`;
+  myUnits.forEach(u=> $('#allyRow').appendChild(unitEl(u)));
+  enUnits.forEach(u=> $('#enemyRow').appendChild(unitEl(u)));
+  $('#speedBtn').addEventListener('click', ()=>{
+    battleFast = battleFast===1 ? 2 : 1;
+    $('#speedBtn').textContent = '⏩ x' + battleFast;
+  });
+  $('#quitBtn').addEventListener('click', ()=>{ if(confirm('¿Abandonar la batalla?')){ battleRunning=false; setTab('home'); } });
+  battleRunning = true;
+}
+
+function unitEl(u){
+  const div = document.createElement('div');
+  div.className = 'unit ' + (u.side==='e'?'enemy':'ally');
+  div.dataset.uid = u.uid;
+  div.style.setProperty('--glow', RAR[u.r].glow);
+  div.innerHTML = `
+    <span class="u-rarity" style="color:${RAR[u.r].color}"></span>
+    <div class="u-icon">${u.ic}</div>
+    <div class="u-name">${u.name}</div>
+    <div class="u-lv">NV ${u.level} · ${ROLES[u.role]}</div>
+    <div class="u-bar u-hpbar"><div class="u-fill" style="width:100%"></div></div>
+    <div class="u-bar u-enbar"><div class="u-fill" style="width:${u.energy}%"></div></div>
+    <div class="u-shield-dot"></div>
+    <div class="u-buff-dot"></div>
+  `;
+  return div;
+}
+
+function unitElOf(u){
+  return $(`[data-uid="${u.uid}"]`);
+}
+
+function setHp(u){
+  const el = unitElOf(u); if(!el) return;
+  const pct = Math.max(0, u.hp/u.maxHp*100);
+  $('.u-hpbar .u-fill', el).style.width = pct + '%';
+  $('.u-hpbar .u-fill', el).style.background = pct>50? 'linear-gradient(90deg,var(--hp),var(--hp2))' : 'linear-gradient(90deg,#9d2020,#e33d3d)';
+  const sh = $('.u-shield-dot', el);
+  sh.textContent = u.shield>0 ? `🛡 ${u.shield}` : '';
+  const bu = $('.u-buff-dot', el);
+  bu.textContent = u.buffAtk>0 ? `⚡ +${Math.round(u.buffAtk)} ATK` : '';
+}
+function setEnergy(u){
+  const el = unitElOf(u); if(!el) return;
+  const f = $('.u-enbar .u-fill', el);
+  f.style.width = Math.min(100, u.energy) + '%';
+  f.classList.toggle('full', u.energy>=100);
+}
+
+function floatNum(u, msg, cls, crit){
+  const arena = $('#arena'), fx = $('#fx');
+  if(!arena || !fx) return;
+  const aRect = arena.getBoundingClientRect();
+  const uRect = unitElOf(u).getBoundingClientRect();
+  const x = uRect.left - aRect.left + uRect.width/2 + rnd(-12,12);
+  const y = uRect.top - aRect.top + rnd(-4,10);
+  const n = document.createElement('div');
+  n.className = 'fnum ' + cls + (crit?' crit':'');
+  n.textContent = msg;
+  n.style.left = x + 'px'; n.style.top = y + 'px';
+  fx.appendChild(n);
+  setTimeout(()=> n.remove(), 1050);
+}
+function banner(msg, isEnemy){
+  const fx = $('#fx'); if(!fx) return; if($('.banner', fx)) return;
+  const b = document.createElement('div');
+  b.className = 'banner' + (isEnemy?' b-enemy':'');
+  b.textContent = msg;
+  fx.appendChild(b);
+  setTimeout(()=> b.remove(), 1300);
+}
+function shakeUnit(u){
+  const el = unitElOf(u); if(!el) return;
+  el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+}
+function killUnit(u){
+  u.dead = true;
+  const el = unitElOf(u);
+  if(el){ el.classList.add('dead'); }
+}
+const aliveCount = units => units.filter(u=>!u.dead).length;
+
+function randomAlive(units){
+  const a = units.filter(u=>!u.dead && u.shield<=0);
+  const b = units.filter(u=>!u.dead);
+  const pool = a.length? a : b;
+  return pool.length? pick(pool) : null;
+}
+
+function calcDamage(att, def2, mult){
+  const variance = rnd(0.85, 1.15);
+  let dmg = Math.max(1, Math.round(att.atk * mult * (1 + (att.buffAtk||0)/ (att.baseAtk||1)) * variance - def2.def * 0.5));
+  return dmg;
+}
+
+async function dealDamage(att, tgt, dmg, label){
+  if(tgt.dead) return 0;
+  shakeUnit(tgt);
+  let absorbed = Math.min(tgt.shield, dmg);
+  let real = dmg - absorbed;
+  tgt.shield = Math.max(0, tgt.shield - absorbed);
+  tgt.hp = Math.max(0, tgt.hp - real);
+  floatNum(tgt, '-'+fmt(real), att.side==='p'? 'enemy-dmg':'player-dmg', dmg> att.atk*1.5);
+  if(absorbed>0) floatNum(tgt, '🛡'+absorbed, 'shield');
+  playHit();
+  if(!att.dead) att.energy = Math.min(100, att.energy + 22);
+  if(!tgt.dead) tgt.energy = Math.min(100, tgt.energy + 12);
+  setHp(tgt); setEnergy(att); setEnergy(tgt);
+  if(tgt.hp<=0){ killUnit(tgt); }
+  await sleep(360 / battleFast);
+  return real;
+}
+
+async function basicAttack(u){
+  const foes = u.side==='p' ? state._enUnits : state._myUnits;
+  const t = randomAlive(foes);
+  if(!t) return;
+  const dmg = calcDamage(u, t, 1);
+  await dealDamage(u, t, dmg, u.name);
+}
+
+async function useAbility(u){
+  const a = u.ab;
+  banner(`${u.ic} ${a.n}!`, u.side==='e');
+  if(!u.dead) u.energy = 0;
+  const foes = u.side==='p' ? state._enUnits : state._myUnits;
+  const allies = u.side==='p' ? state._myUnits : state._enUnits;
+  await sleep(420 / battleFast);
+  if(a.t==='strike'){
+    const t = randomAlive(foes);
+    if(t){ const mult = a.s; const dmg = calcDamage(u, t, mult); await dealDamage(u, t, dmg, a.n); }
+  }
+  else if(a.t==='aoe'){
+    const alive = foes.filter(f=>!f.dead);
+    for(const t of alive){ const dmg = calcDamage(u, t, a.s); await dealDamage(u, t, dmg, a.n); }
+  }
+  else if(a.t==='heal'){
+    const candidates = allies.filter(f=>!f.dead);
+    if(candidates.length){
+      const t = candidates.reduce((m,c)=> c.hp/c.maxHp < m.hp/m.maxHp ? c : m);
+      const heal = Math.round(u.atk * a.s);
+      t.hp = Math.min(t.maxHp, t.hp + heal);
+      floatNum(t, '+'+heal, 'heal'); setHp(t);
+      banner(`💚 ${t.name} recupera ${heal}`, false);
+    }
+  }
+  else if(a.t==='shield'){
+    const candidates = allies.filter(f=>!f.dead && f!==u);
+    const t = (candidates.length? candidates.reduce((m,c)=> c.hp/c.maxHp < m.hp/m.maxHp ? c : m) : u);
+    const amount = Math.round(t.def * 6 * a.s);
+    t.shield += amount;
+    floatNum(t, '🛡'+amount, 'shield'); setHp(t);
+  }
+  else if(a.t==='buff'){
+    const boost = Math.round(u.baseAtk * 0.3 * a.s);
+    allies.filter(f=>!f.dead).forEach(f=>{ f.buffAtk = boost; f.buffTurns = 2; setHp(f); });
+  }
+  setEnergy(u);
+  await sleep(320 / battleFast);
+}
+
+async function runBattle(idx, myUnits, enUnits){
+  state._myUnits = myUnits; state._enUnits = enUnits;
+  const order = [...myUnits, ...enUnits].sort((a,b)=> (b.spd - a.spd) || (a.side==='p'?1:-1));
+  let guard = 0;
+  while(battleRunning && aliveCount(myUnits)>0 && aliveCount(enUnits)>0 && guard++ < 400){
+    for(const u of order){
+      if(!battleRunning) break;
+      if(u.dead) continue;
+      if(u.energy>=100){ await useAbility(u); }
+      else await basicAttack(u);
+      if(aliveCount(myUnits)<=0 || aliveCount(enUnits)<=0) break;
+      await sleep(60 / battleFast);
+    }
+    order.forEach(u=>{ if(!u.dead && u.buffTurns>0){ u.buffTurns--; if(u.buffTurns<=0) u.buffAtk=0; setHp(u);} });
+  }
+  state._myUnits = null; state._enUnits = null;
+  if(!battleRunning) return;
+  const won = aliveCount(enUnits)<=0;
+  finishBattle(idx, won);
+}
+
+function finishBattle(idx, won){
+  battleRunning = false;
+  const stage = STAGES[idx];
+  if(won){
+    const rw = rewardOf(idx);
+    const firstClear = idx === state.stage;
+    const gemChance = firstClear ? 1 : 0.45;
+    const gems = gemChance>=Math.random()? rndi(firstClear?3:1, firstClear?6:3) : 0;
+    state.gold += rw.gold; addXp(rw.xp); if(gems>0) state.gems += gems;
+    if(firstClear && idx < STAGES.length-1) state.stage = idx+1;
+    save();
+    openModal(`
+      <div class="result-title win">VICTORIA</div>
+      <div style="text-align:center;color:var(--dim);font-size:13px;margin-top:6px">Has derrotado a «${stage.n}»</div>
+      <div class="reward-grid">
+        <div class="reward-pill r-gold"><span class="r-ic">🪙</span> +${fmt(rw.gold)} oro</div>
+        <div class="reward-pill r-xp"><span class="r-ic">✨</span> +${rw.xp} XP</div>
+        ${gems>0? `<div class="reward-pill r-gem"><span class="r-ic">💎</span> +${gems} gemas</div>`:''}
+      </div>
+      ${firstClear? `<div style="text-align:center;font-size:12px;color:#7fe08a;margin-bottom:6px">¡Fase superada por primera vez!</div>`:''}
+      ${idx < STAGES.length-1 ? `<button class="btn btn-gold btn-block" id="nextBtn">⚔️ Fase ${idx+2}: ${STAGES[idx+1].n}</button>` : `<div class="lvup">🏆 ¡Has conquistado todas las fases de Olympus Unbound!</div>`}
+      <button class="btn btn-ghost btn-block" style="margin-top:8px" id="againBtn">🔁 Reintentar fase</button>
+    `);
+    const nx = $('#nextBtn'); if(nx) nx.addEventListener('click', ()=>{ closeModal(); startBattle(idx+1); });
+    const ag = $('#againBtn'); if(ag) ag.addEventListener('click', ()=>{ closeModal(); startBattle(idx); });
+  } else {
+    const rw = rewardOf(idx);
+    openModal(`
+      <div class="result-title lose">DERROTA</div>
+      <div style="text-align:center;color:var(--dim);font-size:13px;margin-top:6px">«${stage.n}» ha sido demasiado para tu equipo</div>
+      <div class="reward-grid">
+        <div class="reward-pill r-gold">🪙 Consuelo</div>
+        <div class="reward-pill r-xp">✨ +${Math.round(rw.xp*0.2)} XP</div>
+      </div>
+      <div class="lvup" style="color:#ff9d6b">💪 Sube de nivel tus cartas y vuelve a intentarlo.</div>
+      <button class="btn btn-gold btn-block" id="retryBtn">⚔️ Reintentar</button>
+      <button class="btn btn-ghost btn-block" style="margin-top:8px" id="backBtn">🏛️ Volver</button>
+    `);
+    addXp(Math.round(rw.xp*0.2)); save();
+    const rt = $('#retryBtn'); if(rt) rt.addEventListener('click', ()=>{ closeModal(); startBattle(idx); });
+    const bk = $('#backBtn'); if(bk) bk.addEventListener('click', ()=>{ closeModal(); setTab('home'); });
+  }
+  updateTopRes();
+}
+
+/* ==================== INIT ==================== */
+load();
+setTab('home');
+</script>
+</body>
+</html>
