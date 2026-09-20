@@ -14,13 +14,15 @@ Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con
 |---|---|
 | 🖼️ **102 cartas con arte local** | Ilustraciones de tu carpeta `img/` (`img/<id>.png|jpg|webp`) para cada criatura, héroe, dios, titán y primordial (con fallback a emoji) |
 | 🃏 **5 rangos de cartas** | Normales, Héroes, Dioses, Titanes y Primordiales, cada uno con su propio **aura**: gris sencilla (Normal), azul radiante (Héroe), dorada muy visible (Dios), rojo/negro peculiar (Titán) y blanca cegadora palpitante (Primordial) — además de brillos y probabilidades diferenciadas |
-| 🎁 **7 sobres** | Bronce, Plata, Oro, Épico, Olimpo, Divino y Cósmico con animaciones de apertura y garantías por rareza. Los **Primordiales** solo aparecen en el Cósmico |
+| 🎁 **7 sobres** | Bronce, Plata, Oro, Épico, Olimpo, Divino y Cósmico con animación de apertura **carta por carta** y garantías por rareza. Los **Primordiales** solo aparecen en el Cósmico |
 | 📖 **Índice de Leyendas** | Muestra TODAS las cartas del juego (desbloqueadas y por desbloquear) ordenadas de la más poderosa a la más débil, con filtros por rareza y estado |
-| 🎮 **Minijuegos** | 3 modos para ganar oro y gemas al instante: el Oráculo (7 monedas), el Desafío del Dios (piedra, papel o tijera) y la Ruleta del Destino (¡un giro gratis por día!) |
-| 🪙 **Economía doble + pasiva** | Oro y Gemas, más un **Ágora** que genera oro pasivo por minuto (con reloj offline) |
-| 🏋️ **Modo Entrenamiento** | Entrena una carta en tiempo real (1, 3, 8, 20 o 60 min) para ganar XP, oro y gemas sin gastar duplicados |
+| 🎮 **5 minijuegos** | El Oráculo (7 monedas), el Desafío del Dios (piedra, papel o tijera), la Ruleta del Destino (¡un giro gratis por día!), el Dado de Zeus y la Memoria de Orfeo |
+| 🏪 **Bazar con ofertas rotativas** | 4 ofertas que se renuevan cada **12 horas** (cartas, oro, gemas, XP, refinamiento de Hefesto y potenciadores de Ágora) comprables con oro o gemas |
+| 🪙 **Economía dorada** | Ágora que genera mucho más oro pasivo por minuto (con reloj offline), recompensas de batalla crecientes y mejora cada vez más cara según progresas |
+| 🏋️ **Modo Entrenamiento** | Entrena **hasta 3 cartas a la vez** (1, 3, 8, 20 o 60 min) para ganar XP, oro y gemas sin gastar duplicados; acelera al instante gastando gemas |
+| 💎 **Gemas con utilidad** | Acelerar entrenamientos, refrescar el Bazar al instante, canjear por oro, sobras premium y recompensas de la Memoria de Orfeo |
 | 📜 **Colección** | Inventario completo, contador de duplicados, subida de nivel con oro + duplicados, subida solo con oro (sin duplicados) y subida por XP de entrenamiento |
-| 🛡️ **Mi Equipo** | 5 ranuras de batalla y poder total calculado en tiempo real |
+| 🛡️ **Mi Equipo** | 5 ranuras de batalla y poder total calculado en tiempo real, con el botón **"Equipar los mejores"** para auto-rellenar el equipo más fuerte |
 | ⚔️ **Modo Batalla** | Auto-battler visual con fichas circulares, barras de vida/energía, poderes especiales, números voladores y **30 fases** de campaña |
 | 📈 **Progresión más dura** | Nivel máximo 30, costos crecientes por nivel y rareza |
 | 💾 **Guardado** | Todo el progreso persistido con `localStorage` (clave `olympus_unbound_v2`) |
@@ -31,14 +33,15 @@ Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con
 ## 🎮 Cómo jugar
 
 1. **Compra sobres** 🏛️ en la Tienda para conseguir cartas (empiezas con 🪙 3.000 y 💎 50, además de 3 cartas de arranque).
-2. **Asigna cartas** a "Mi Equipo" 🛡️ (máximo 5 integrantes) tocando cada ranura.
+2. **Asigna cartas** a "Mi Equipo" 🛡️ (máximo 5 integrantes) tocando cada ranura, o usa **"Equipar los mejores"** para auto-rellenarlo con tus cartas más fuertes.
 3. **Combate** ⚔️ en la campaña y vence las 30 fases de dificultad creciente.
-4. **Entrena** 🏋️ una carta antes de una batalla difícil: vuelve cuando el reloj acabe y recoge XP, 🪙 y a veces 💎.
+4. **Entrena** 🏋️ hasta 3 cartas a la vez antes de una batalla difícil: vuelve cuando el reloj acabe y recoge XP, 🪙 y a veces 💎 (o acelera al instante gastando gemas).
 5. **Recoge el Ágora** 💰 cada vez que estés fuera: el oro pasivo se acumula hasta un tope.
 6. **Mejora tus cartas** 📜 consumiendo duplicados + oro, o con XP de entrenamiento (¡no gasta duplicados!), o pagando solo oro como acceso directo.
-7. **Gana oro rápido** 🎮 en los Minijuegos: el Oráculo (apuesta x1.9), el Desafío del Dios o la Ruleta del Destino con su giro gratis diario.
-8. **Completa tu Índice** 📖 consultando qué cartas te faltan, de la más fuerte a la más débil.
-9. **Cada carta** tiene un rol (Tanque, Guerrero, Mago o Soporte) y una habilidad especial que se activa al llenar la barra de energía 💫.
+7. **Visita el Bazar** 🏪 cada pocas horas: 4 ofertas que se renuevan cada 12 h, comprables con oro o gemas (refresco manual: 💎 8).
+8. **Gana oro rápido** 🎮 en los Minijuegos: el Oráculo, el Desafío del Dios, la Ruleta con su giro gratis diario, el Dado de Zeus y la Memoria de Orfeo.
+9. **Completa tu Índice** 📖 consultando qué cartas te faltan, de la más fuerte a la más débil.
+10. **Cada carta** tiene un rol (Tanque, Guerrero, Mago o Soporte) y una habilidad especial que se activa al llenar la barra de energía 💫.
 
 ### Probabilidades de los sobres
 
@@ -52,7 +55,7 @@ Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con
 | **Divino** | 💎 90 | 6 | 12% | 53.4% | 32.2% | 2.4% | — | ≥1 Dios |
 | **Cósmico** | 💎 160 | 6 | 10% | 42% | 34% | 10% | 4% | ≥1 Dios |
 
-Las gemas también pueden canjearse por oro: 💎 10 → 🪙 1.200 · 💎 25 → 🪙 3.000 · 💎 50 → 🪙 6.000.
+Las gemas también pueden canjearse por oro: 💎 10 → 🪙 1.500 · 💎 25 → 🪙 3.900 · 💎 50 → 🪙 8.000, usarse para refrescar el Bazar (💎 8) o para terminar al instante un entrenamiento.
 
 ### Entrenamiento (descripción de sesiones)
 
@@ -64,7 +67,24 @@ Las gemas también pueden canjearse por oro: 💎 10 → 🪙 1.200 · 💎 25 �
 | Legendario | 20 min | 1.350 | 2.400 | 5 |
 | Primordial | 60 min | 4.800 | 8.000 | 12 |
 
-El progreso de entrenamiento se basa en timestamps, así que **sigue avanzando aunque cierres el juego** (igual que el Ágora).
+El progreso de entrenamiento se basa en timestamps, así que **sigue avanzando aunque cierres el juego** (igual que el Ágora). Puedes entrenar **hasta 3 cartas a la vez**.
+
+
+
+### 🏪 Bazar (ofertas de 12 h)
+
+Cada 12 horas se generan 4 ofertas nuevas con un coste mixto (🪙 oro o 💎 gemas):
+
+| Oferta | Efecto |
+|---|---|
+| 🎴 Carta rara | Consigue una carta de una rareza sorteada (más barata que un sobre) |
+| 🪙 Lote de oro | Intercambio directo de gemas por oro (o viceversa según precio) |
+| 💎 Lote de gemas | Oro convertido en gemas |
+| 📚 Paquete de XP | +XP a **todas** tus cartas de golpe |
+| 🔨 Refinamiento de Hefesto | Elige qué carta sube 1 nivel al instante |
+| 🌾 Potenciador de Ágora | +50% de ingreso pasivo durante 12 h |
+
+El temporizador de renovación es visible en la cabecera del Bazar; puedes adelantarlo pagando 💎 8.
 
 ---
 
@@ -155,14 +175,14 @@ Olympus Unbound/
 │   ├── 02-state.js     # Estado, guardado/carga, timestamps, ingreso pasivo (OU.STATE)
 │   ├── 03-utils.js     # Cálculos: nivel, costos, probabilidades, formato (OU.UTIL)
 │   ├── 04-ui.js        # Arte, chips, toast, modales (OU.UI)
-│   ├── 05-shop.js      # Tienda, apertura de sobres, canje de gemas (OU.SHOP)
+│   ├── 05-shop.js      # Tienda, sobres, canje de gemas y Bazar de 12 h (OU.SHOP)
 │   ├── 06-collection.js# Colección, filtros, detalle y mejoras (OU.COLLECTION)
-│   ├── 07-team.js      # Equipo y selector de ranuras (OU.TEAM)
+│   ├── 07-team.js      # Equipo, selector de ranuras y "Equipar los mejores" (OU.TEAM)
 │   ├── 08-battle.js    # Motor de combate y campaña (OU.BATTLE)
-│   ├── 09-training.js  # Ágora + entrenamiento en tiempo real (OU.TRAIN)
+│   ├── 09-training.js  # Ágora + entrenamiento de hasta 3 cartas (OU.TRAIN)
 │   ├── 10-main.js      # Pestañas, render y arranque (OU.MAIN)
 │   ├── 11-index.js     # Índice de Leyendas: todas las cartas por poder (OU.INDEX)
-│   └── 12-games.js     # Minijuegos: Oráculo, Desafío del Dios y Ruleta (OU.GAMES)
+│   └── 12-games.js     # 5 minijuegos: Oráculo, RPS, Ruleta, Dado de Zeus y Memoria (OU.GAMES)
 ├── tests/
 │   └── run-all.js      # Suite de pruebas (Node: DOM simulado)
 ├── tsconfig.json       # Chequeo TypeScript sobre el JS (npx tsc)
@@ -182,7 +202,9 @@ npm run check     # npx tsc — valida tipos sobre los módulos JS
 
 ## 🛣️ Roadmap (ideas)
 
-- [x] **Minijuegos** para ganar oro y gemas al instante (Oráculo, RPS, Ruleta).
+- [x] **Minijuegos** para ganar oro y gemas al instante (Oráculo, RPS, Ruleta, Dado, Memoria).
+- [x] **Bazar** con ofertas rotativas cada 12 horas y compras con oro/gemas.
+- [x] **Entrenamiento** de hasta 3 cartas a la vez y gemas con más utilidad.
 - [ ] Modo PvP contra equipos de otros reinos.
 - [ ] Eventos diarios y misiones con recompensas.
 - [ ] BGM de ambientación y más efectos de sonido.
