@@ -40,9 +40,9 @@
       '</div>' +
       OU.TRAIN.incomeBannerHTML() +
       '<div class="sec-title">' + (done ? 'Todas las fases completadas' : 'Próxima batalla') + '</div>' +
-      stageCard(cur, Math.min(stag, last), true) +
+      stageCardHTML(cur, Math.min(stag, last), true) +
       '<div class="sec-title">Campaña</div>' +
-      OU.STAGES.map(function (s, i) { return stageCard(s, i, i <= stag); }).join('') +
+      OU.STAGES.map(function (s, i) { return stageCardHTML(s, i, i <= stag); }).join('') +
       '<button class="btn btn-ghost btn-block" style="margin-top:6px" onclick="OU.MAIN.setTab(\'training\')">🏋️ Entrenamiento y ganancia pasiva 💰</button>';
   }
 

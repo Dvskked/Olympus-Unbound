@@ -119,7 +119,7 @@
   function openTrainPicker(cardId) {
     var st = OU.STATE.state;
     var c = OU.CARD_BY_ID[cardId], r = OU.RAR[c.r];
-    var types = Object.keys(OU.TRAIN).map(function (k) {
+    var types = Object.keys(OU.TRAIN).filter(function (k) { return OU.TRAIN[k] && typeof OU.TRAIN[k].mins === 'number'; }).map(function (k) {
       var p = OU.TRAIN[k];
       return '<button class="btn btn-ghost btn-block train-opt" data-type="' + k + '" style="margin-bottom:8px">' +
         '<span style="font-weight:900;color:var(--gold2)">' + p.name + '</span><br>' +
@@ -218,13 +218,15 @@
     }, 20000);
   }
 
-  OU.TRAIN = {
-    incomeBannerHTML: incomeBannerHTML,
-    bindIncome: bindIncome,
-    viewTraining: viewTraining,
-    bindTraining: bindTraining,
-    startTraining: startTraining,
-    collectTraining: collectTraining,
-    startTimer: startTimer
-  };
+  // DUPLICADO: OU.TRAIN ya existe (config de tipos) en 01-data.js.
+  // Fusionamos la API de este módulo sobre la config para no perder los tipos.
+  var T = OU.TRAIN || {};
+  T.incomeBannerHTML = incomeBannerHTML;
+  T.bindIncome = bindIncome;
+  T.viewTraining = viewTraining;
+  T.bindTraining = bindTraining;
+  T.startTraining = startTraining;
+  T.collectTraining = collectTraining;
+  T.startTimer = startTimer;
+  OU.TRAIN = T;
 })();
