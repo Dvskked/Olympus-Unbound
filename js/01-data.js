@@ -11,13 +11,18 @@
     SAVE_KEY: 'olympus_unbound_v2',
     MAX_LEVEL: 30,
     MAX_TEAM: 5,
+    MAX_TRAIN: 3,
     INITIAL_GOLD: 3000,
     INITIAL_GEMS: 50,
     START_CARDS: ['hop', 'pela', 'delf'],
     TRAIN_XP_NEED: 160,
-    INCOME_BASE: 35,
-    INCOME_PER_STAGE: 14,
-    INCOME_CAP: 4000
+    INCOME_BASE: 70,
+    INCOME_PER_STAGE: 30,
+    INCOME_CAP: 20000,
+    SHOP_REFRESH_MS: 12 * 60 * 60 * 1000,
+    SHOP_REFRESH_GEMS: 8,
+    BOOST_MULT: 1.5,
+    BOOST_MS: 12 * 60 * 60 * 1000
   };
 
   OU.RAR = {

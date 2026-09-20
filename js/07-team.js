@@ -18,8 +18,9 @@
       '<div><div class="pb-label">Poder total del equipo</div><div class="pb-val">' + U.fmt(pow) + '</div></div>' +
       '<div style="text-align:right"><div class="pb-label">Miembros</div><div class="pb-val" style="font-size:18px;color:var(--text)">' + cnt + '/' + OU.CONST.MAX_TEAM + '</div></div>' +
       '</div>' +
+      '<button class="btn btn-blue btn-block" id="equipBest" style="margin-bottom:14px">⚡ Equipar los mejores</button>' +
       '<div class="squad-wrap">' + slots + '</div>' +
-      '<p class="battle-hint">Toca una ranura para asignar o cambiar una carta de tu colección.</p>' +
+      '<p class="battle-hint">Toca una ranura para asignar o cambiar una carta. «Equipar los mejores» completa el equipo con tus cartas de mayor poder.</p>' +
       (cnt > 0 && OU.STAGES.length > 0 ? '<button class="btn btn-gold btn-block" style="margin-top:14px" onclick="OU.MAIN.setTab(\'home\')">⚔️ Ir a la batalla</button>' : '');
   }
 
@@ -84,15 +85,33 @@
     if (cl) cl.addEventListener('click', I.closeModal);
   }
 
+  function equipBest() {
+    var st = OU.STATE.state;
+    var owned = OU.STATE.ownedList();
+    if (!owned.length) return I.toast('Aún no tienes cartas en la colección');
+    owned.sort(function (a, b) {
+      return U.powerOf(b, st.cards[b].lvl) - U.powerOf(a, st.cards[a].lvl);
+    });
+    var n = Math.min(OU.CONST.MAX_TEAM, owned.length);
+    st.team = new Array(OU.CONST.MAX_TEAM).fill(null);
+    for (var i = 0; i < n; i++) st.team[i] = owned[i];
+    OU.STATE.save();
+    I.toast('⚡ Equipo completado con tus ' + n + ' cartas más poderosas');
+    OU.MAIN.render();
+  }
+
   function bindTeam(root) {
     U.$$('.slot', root).forEach(function (s) {
       s.addEventListener('click', function () { openTeamPicker(parseInt(s.dataset.slot, 10)); });
     });
+    var eq = U.$('#equipBest', root);
+    if (eq) eq.addEventListener('click', equipBest);
   }
 
   OU.TEAM = {
     viewTeam: viewTeam,
     bindTeam: bindTeam,
-    openTeamPicker: openTeamPicker
+    openTeamPicker: openTeamPicker,
+    equipBest: equipBest
   };
 })();

@@ -147,30 +147,43 @@ function check(name, cond, extra) {
   })());
 
   // Entrenamiento: iniciar y recolectar (con nivel de carta)
-  check('training flow', (() => {
+  check('training flow (multi-slot)', (() => {
     const id = CONST.START_CARDS[0];
-    st.trainCard = null; st.trainType = null; st.trainUntil = 0;
+    st.trainSlots = [];
     const gold0 = st.gold;
     const lvl0 = st.cards[id].lvl;
-    o.TRAIN.startTraining(id, 'quick');
-    const started = st.trainCard === id && st.trainUntil > Date.now();
-    st.trainUntil = Date.now() - 1; // ya terminó
+    const started = o.TRAIN.startTraining(id, 'quick') === true;
+    const slots = st.trainSlots || [];
+    const placed = slots.length === 1 && slots[0].cardId === id && slots[0].until > Date.now();
+    slots[0].until = Date.now() - 1; // ya terminó
     o.TRAIN.collectTraining();
     const rewarded = st.gold > gold0;
-    const cleared = st.trainCard === null;
+    const cleared = st.trainSlots.length === 0;
     const lvlKept = st.cards[id].lvl >= lvl0;
-    return started && rewarded && cleared && lvlKept;
+    return started && placed && rewarded && cleared && lvlKept;
   })(), 'quick=' + JSON.stringify(o.TRAIN.quick));
+
+  // Entrenamiento: máximo 3 ranuras concurrentes
+  check('training max 3 concurrent slots', (() => {
+    st.trainSlots = [];
+    o.TRAIN.startTraining('hop', 'quick');
+    o.TRAIN.startTraining('gt', 'quick');
+    o.TRAIN.startTraining('arq', 'quick');
+    const three = st.trainSlots.length === 3;
+    const blocked = o.TRAIN.startTraining('sat', 'quick') === false;
+    st.trainSlots = []; o.STATE.save();
+    return three && blocked;
+  })(), 'max=' + o.CONST.MAX_TRAIN);
 
   // Entrenamiento que cruza el tope de XP → sube de nivel sin duplicados
   check('training crosses xp threshold → level up', (() => {
     const id = CONST.START_CARDS[0];
-    st.trainCard = null; st.trainType = null; st.trainUntil = 0;
+    st.trainSlots = [];
     const c = st.cards[id];
     c.lvl = 1; c.xp = U.trainCost(id, 1) - 1; // justo debajo del tope
     const lvl0 = c.lvl;
-    o.TRAIN.startTraining(id, 'epic'); // +900 XP
-    st.trainUntil = Date.now() - 1;
+    o.TRAIN.startTraining(id, 'epic'); // +XP
+    st.trainSlots[0].until = Date.now() - 1;
     o.TRAIN.collectTraining();
     return c.lvl > lvl0;
   })(), 'lvl now=' + st.cards[CONST.START_CARDS[0]].lvl);
@@ -247,6 +260,66 @@ function check(name, cond, extra) {
     st.mgStats.wheel.lastFree = '';
     o.STATE.save();
     return wasFree && nowNotFree;
+  })());
+
+  // Bazar: genera ofertas y se renueva al pasar 12 h
+  check('bazaar generates offers', (() => {
+    st.shopItems = [];
+    o.SHOP.ensureBazaar();
+    return st.shopItems.length > 0 && st.shopRefresh > Date.now();
+  })(), 'items=' + o.STATE.state.shopItems.length);
+  check('bazaar refreshes when expired', (() => {
+    st.shopItems = [];
+    st.shopRefresh = Date.now() - 1000;
+    o.SHOP.ensureBazaar();
+    return st.shopItems.length > 0 && st.shopRefresh > Date.now();
+  })());
+  check('bazaar gold lot purchase adds gold', (() => {
+    const idx = o.STATE.state.shopItems.findIndex(x => x && x.t === 'gold');
+    if (idx < 0) return true; // sin oferta de oro, no hay nada que probar
+    const g = o.STATE.state.shopItems[idx].g;
+    const cost = o.STATE.state.shopItems[idx].cost.gems;
+    o.STATE.state.gems = cost + 5;
+    const before = o.STATE.state.gold;
+    o.SHOP.buyOffer(idx);
+    return o.STATE.state.gold === before + g && !o.STATE.state.shopItems[idx];
+  })());
+
+  // Equipo: equipar los mejores por poder
+  check('equip best fills team by power', (() => {
+    const owned = Object.keys(o.STATE.state.cards);
+    if (owned.length < 2) return true;
+    o.TEAM.equipBest();
+    const t = o.STATE.state.team.filter(Boolean);
+    const sorted = owned.slice().sort((a, b) => o.UTIL.powerOf(b, o.STATE.state.cards[b].lvl) - o.UTIL.powerOf(a, o.STATE.state.cards[a].lvl));
+    return t.length === Math.min(o.CONST.MAX_TEAM, owned.length) && t[0] === sorted[0];
+  })(), 'team=' + o.STATE.state.team.join(','));
+
+  // Nuevos minijuegos
+  check('dice play multipliers consistent', (() => {
+    for (let i = 0; i < 2000; i++) {
+      const r = o.GAMES.dicePlay();
+      if (!Number.isInteger(r.d1) || r.d1 < 1 || r.d1 > 6 || !Number.isInteger(r.d2) || r.d2 < 1 || r.d2 > 6) return false;
+      if (r.sum === 7 && r.mult !== 3) return false;
+      if ((r.sum === 2 || r.sum === 12) && r.mult !== 4) return false;
+      if (r.mult === 0 && r.sum % 2 !== 1) return false;
+      if (r.mult === 1.6 && (r.sum % 2 !== 0 || r.sum === 7 || r.sum === 2 || r.sum === 12)) return false;
+      if (r.sum !== r.d1 + r.d2) return false;
+    }
+    return true;
+  })());
+  check('memory deck balanced pairs', (() => {
+    const d = o.GAMES.memDeck();
+    const okLen = d.length === 12;
+    const unique = new Set(d.map(t => t.sym)).size === 6;
+    const counts = {};
+    d.forEach(t => { counts[t.sym] = (counts[t.sym] || 0) + 1; });
+    const allTwo = Object.values(counts).every(n => n === 2);
+    return okLen && unique && allTwo;
+  })());
+  check('memory match only equal pairs', (() => {
+    const a = { sym: '⚡' }, b = { sym: '⚡' }, c = { sym: '🔥' };
+    return o.GAMES.memMatch(a, b) && !o.GAMES.memMatch(a, c) && !o.GAMES.memMatch(a, a);
   })());
 
   console.log(fails === 0 ? '\nALL PASSED' : `\n${fails} FAILURES`);

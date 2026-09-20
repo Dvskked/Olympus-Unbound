@@ -17,11 +17,15 @@
       cards: {},
       team: new Array(OU.CONST.MAX_TEAM).fill(null),
       stage: 0,
-      trainCard: null,          // id en entrenamiento
-      trainUntil: 0,            // timestamp de fin
-      trainType: null,
+      trainSlots: [],
+      trainCard: null,          // legacy: id en entrenamiento (pre-multi)
+      trainUntil: 0,            // legacy: timestamp de fin
+      trainType: null,          // legacy: tipo
       incomeLast: Date.now(),   // último cobro de ingreso pasivo
       incomeAcc: 0,             // oro acumulado pendiente de recoger
+      shopRefresh: 0,           // timestamp de renovación de ofertas
+      shopItems: [],            // ofertas actuales del Bazar
+      boostUntil: 0,            // multiplicador de ingreso activo hasta aquí
       seen: {}                  // ids descubiertos (aunque se vendan)
     };
   }
@@ -41,6 +45,19 @@
       state.team = t;
     }
     if (!state.seen) state.seen = {};
+    if (!Array.isArray(state.trainSlots)) state.trainSlots = [];
+    // Migración desde el entrenamiento único de versiones anteriores.
+    if (state.trainCard && state.trainCard !== null && (!state.trainSlots.length)) {
+      state.trainSlots.push({
+        cardId: state.trainCard,
+        type: state.trainType || 'quick',
+        until: state.trainUntil || 0
+      });
+    }
+    state.trainCard = null;
+    state.trainUntil = 0;
+    state.trainType = null;
+    if (!Array.isArray(state.shopItems)) state.shopItems = [];
   }
 
   function load() {

@@ -45,15 +45,16 @@
 
   /**
    * Costo para subir de nivel con duplicados + oro.
-   * Ahora es MÁS BARATO que antes (sobre todo en rarezas altas): subir a
-   * dioses y titanes ya no cuesta una fortuna. Nivel 30 es el tope máximo.
+   * A medida que la carta sube de nivel se encarece MUCHO más rápido
+   * (crecimiento cuasi exponencial): las últimas mejoras son las más caras.
    */
   function upgradeCost(cardId, level) {
     var c = OU.CARD_BY_ID[cardId];
     var F = OU.RARITY_FACTOR[c.r];
     var base = (c.hp * 0.2 + c.atk + c.def * 1.2);
-    var gold = Math.max(40, Math.round(base * (1.6 + level * 0.5) * (0.5 + F * 0.2)));
-    var dupes = Math.max(1, Math.round(level * (0.2 + F * 0.16)));
+    var lvlFactor = Math.pow(1.035, level) * (1.35 + level * 0.52);
+    var gold = Math.max(40, Math.round(base * lvlFactor * (0.5 + F * 0.26)));
+    var dupes = Math.max(1, Math.round(level * (0.6 + F * 0.18)));
     return { dupes: dupes, gold: gold };
   }
 
@@ -64,7 +65,7 @@
    */
   function goldOnlyCost(cardId, level) {
     var st = upgradeCost(cardId, level);
-    var mult = 2.2 + Math.min(level, 20) * 0.06;
+    var mult = 2.1 + Math.min(level, 24) * 0.09;
     return Math.max(150, Math.round(st.gold * mult));
   }
 
@@ -113,8 +114,8 @@
   function rewardOf(idx) {
     var s = idx + 1;
     return {
-      gold: Math.round(180 + s * 90 + s * s * 5),
-      xp: Math.round(40 + s * 20 + s * s * 2)
+      gold: Math.round(260 + s * 150 + s * s * 8),
+      xp: Math.round(60 + s * 30 + s * s * 3)
     };
   }
 

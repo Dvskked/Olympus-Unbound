@@ -62,6 +62,7 @@
     window.addEventListener('beforeunload', OU.STATE.save);
     U.$('#resRow').addEventListener('click', function () { setTab('shop'); });
     OU.TRAIN.startTimer();
+    OU.SHOP.startShopTimer();
     setInterval(function () {
       OU.STATE.tickIncome();
     }, 30000); // guardado periódico del ingreso pasivo
