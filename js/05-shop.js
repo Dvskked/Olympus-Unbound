@@ -81,7 +81,7 @@
     var cls = p.cls;
     I.openModal(
       '<div class="pack-stage">' +
-      '<div class="pc-name cinzel" style="font-size:20px;font-weight:900;letter-spacing:2px;color:var(--gold2)">' + p.name + '</div>' +
+      '<div class="pc-name" style="font-size:20px;font-weight:800;letter-spacing:0.5px;color:var(--gold2)">' + p.name + '</div>' +
       '<div class="pack-box ' + cls + '" id="packBox">' +
       '<div class="pb-ray"></div><div class="pb-inner"><div class="pb-glyph">⚡</div></div><div class="pb-vib"></div>' +
       '</div>' +

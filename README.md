@@ -2,7 +2,7 @@
 
 **Un juego de cartas y colección de mitología griega** — jugable directamente en el navegador, sin instalación ni servidor.
 
-Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con arte real de Wikipedia, modo entrenamiento, economía pasiva y estética oscura de mármol y oro inspirada en títulos como *Dungeon Crusher* y *AFK Arena*.
+Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con arte local de tu carpeta `img/`, modo entrenamiento, economía pasiva y estética minimalista oscura inspirada en títulos como *Dungeon Crusher* y *AFK Arena*.
 
 > 🎮 **Juega ahora:** abre `index.html` en cualquier navegador moderno (móvil o desktop). Tu progreso se guarda automáticamente con `localStorage`.
 
@@ -12,7 +12,7 @@ Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con
 
 | Sistema | Descripción |
 |---|---|
-| 🖼️ **31 cartas con arte real** | Ilustraciones locales (carpeta `img/`) o de Wikipedia para cada criatura, héroe, dios y titán (con fallback a emoji) |
+| 🖼️ **31 cartas con arte local** | Ilustraciones de tu carpeta `img/` (`img/<id>.png|jpg|webp`) para cada criatura, héroe, dios y titán (con fallback a emoji) |
 | 🃏 **4 rangos de cartas** | Normales, Héroes, Dioses y Titanes con brillos y probabilidades diferenciadas |
 | 🎁 **6 sobres** | Bronce, Plata, Oro, Épico, Olimpo y Divino con animaciones de apertura y garantías por rareza |
 | 🪙 **Economía doble + pasiva** | Oro y Gemas, más un **Ágora** que genera oro pasivo por minuto (con reloj offline) |
@@ -95,8 +95,8 @@ El progreso de entrenamiento se basa en timestamps, así que **sigue avanzando a
 - Código organizado en un namespace global `window.OU` con IIFEs cargados en orden vía etiquetas `<script>` (compatible con `file://` — sin ES modules).
 - **Listo para TypeScript**: configuración `tsconfig.json` + JSDoc en cada módulo. Ejecuta `npx tsc` (o `npm run check`) para validar tipos.
 - Pack de test `node tests/run-all.js` (`npm test`) valida datos, probabilidades, mecánicas y el motor de combate con DOM simulado.
-- Tipografía *Cinzel* (Google Fonts) con fallback a serif si no hay conexión.
-- Arte de las cartas en cadena de fallbacks: primero la carpeta local `img/` (crea `img/<id>.png`, `.jpg` o `.webp`), luego Wikimedia/Wikipedia, y por último emojis.
+- Tipografía *sans-serif* del sistema (sin dependencias externas).
+- Arte de las cartas en cadena de fallbacks: primero la carpeta local `img/` (crea `img/<id>.png`, `.jpg` o `.webp`), y si no existe, se muestra el emoji de la carta.
 - Persistencia mediante `localStorage` (clave `olympus_unbound_v2`).
 
 ---
@@ -115,7 +115,7 @@ npx serve .
 # y visita http://localhost:3000
 ```
 
-> **Nota:** el arte de las cartas se busca primero en la carpeta `img/` (offline); si no existe la imagen local, se descarga de Wikipedia y la fuente *Cinzel* proviene de Google Fonts — ambos requieren conexión a internet la primera vez. Sin conexión, el juego usa emojis y fuente serif; todo lo demás funciona 100% offline.
+> **Nota:** el arte de las cartas se busca primero en la carpeta `img/` (offline, `img/<id>.png|jpg|webp`); si no existe la imagen local, el juego usa emoji. Todo funciona 100% offline, sin fuentes ni recursos externos.
 
 ---
 
@@ -125,7 +125,7 @@ npx serve .
 Olympus Unbound/
 ├── index.html          # Esqueleto: carga CSS + módulos JS en orden
 ├── css/
-│   └── style.css       # Tema oscuro: mármol, oro y azul olímpico (una sola fuente: Cinzel)
+│   └── style.css       # Tema minimalista: una sola fuente sans, paleta oscura limpia
 ├── img/                # (Opcional) arte local de cartas: img/<id>.png|jpg|webp
 ├── js/                 # Módulos (namespace global window.OU)
 │   ├── 00-img.js       # Mapa de arte real por carta (OU.IMG)
@@ -167,9 +167,9 @@ npm run check     # npx tsc — valida tipos sobre los módulos JS
 
 ---
 
-## 🙏 Créditos de arte
+## 🎨 Arte
 
-Las ilustraciones de las cartas provienen de **Wikimedia Commons / Wikipedia** y son obra de sus respectivos autores (dominio público o licencias libres), accedidas a través de la API REST de Wikipedia. Fallbacks emoji: Twemoji / sistema operativo.
+Las ilustraciones de las cartas se cargan desde la carpeta local `img/` (`img/<id>.png`, `.jpg` o `.webp`). Sin conexión ni imágenes, el juego usa emojis; todo lo demás funciona 100% offline.
 
 ---
 
