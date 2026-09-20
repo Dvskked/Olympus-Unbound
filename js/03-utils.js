@@ -111,8 +111,8 @@
   function xpNeed(lvl) { return Math.round(80 + lvl * 140); }
 
   function imgAlt(cardId) {
-    var c = OU.CARD_BY_ID[cardId];
-    return OU.IMG[cardId] || c.ic;
+    var chain = OU.IMG[cardId];
+    return (chain && chain.length) ? chain[chain.length - 1] : OU.CARD_BY_ID[cardId].ic;
   }
 
   OU.UTIL = {

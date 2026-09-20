@@ -9,15 +9,38 @@
   var OU = window.OU = window.OU || {};
   var U = OU.UTIL;
 
-  /** Renderiza el arte de una carta. Devuelve <img> con fallback a emoji. */
+  /** Renderiza el arte de una carta con fallback en cadena (local→web→emoji). */
   function artHTML(cardId, sizeCls) {
     var c = OU.CARD_BY_ID[cardId];
-    var url = OU.IMG[cardId];
-    if (url) {
-      return '<img class="card-art ' + (sizeCls || '') + '" src="' + url + '" alt="' + c.n + '" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">' +
-        '<span class="card-emo" style="display:none">' + c.ic + '</span>';
+    var chain = OU.IMG[cardId] || [];
+    if (!chain.length) {
+      return '<span class="card-emo" style="display:flex">' + c.ic + '</span>';
     }
-    return '<span class="card-emo" style="display:flex">' + c.ic + '</span>';
+    var src = chain[0];
+    var rest = chain.slice(1);
+    var fb;
+    if (rest.length) {
+      fb = ' data-fb="' + encodeURIComponent(JSON.stringify(rest)) + '" onerror="window.OU.UI.imgNext(this)"';
+    } else {
+      fb = ' onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"';
+    }
+    return '<img class="card-art ' + (sizeCls || '') + '" src="' + src + '" alt="' + c.n + '" loading="lazy"' + fb + '>' +
+      '<span class="card-emo" style="display:none">' + c.ic + '</span>';
+  }
+
+  /** Avanza la cadena de imágenes al siguiente candidato; al final muestra el emoji. */
+  function imgNext(img) {
+    var raw = decodeURIComponent(img.getAttribute('data-fb') || '');
+    var rest = [];
+    try { rest = JSON.parse(raw); } catch (e) { rest = []; }
+    if (!rest.length) {
+      img.style.display = 'none';
+      var s = img.nextSibling;
+      if (s) s.style.display = 'flex';
+      return;
+    }
+    img.src = rest[0];
+    img.setAttribute('data-fb', encodeURIComponent(JSON.stringify(rest.slice(1))));
   }
 
   function rarityHTML(c, r) {
@@ -70,6 +93,7 @@
     toast: toast,
     openModal: openModal,
     closeModal: closeModal,
-    cardBadge: cardBadge
+    cardBadge: cardBadge,
+    imgNext: imgNext
   };
 })();
