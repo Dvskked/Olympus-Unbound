@@ -45,14 +45,14 @@
 
   /**
    * Costo para subir de nivel con duplicados + oro.
-   * A medida que la carta sube de nivel se encarece MUCHO más rápido
-   * (crecimiento cuasi exponencial): las últimas mejoras son las más caras.
+   * Crecimiento moderadamente exponencial: las últimas mejoras son las más
+   * caras, pero el juego ofrece 100 niveles de recorrido sin pared final.
    */
   function upgradeCost(cardId, level) {
     var c = OU.CARD_BY_ID[cardId];
     var F = OU.RARITY_FACTOR[c.r];
     var base = (c.hp * 0.2 + c.atk + c.def * 1.2);
-    var lvlFactor = Math.pow(1.035, level) * (1.35 + level * 0.52);
+    var lvlFactor = Math.pow(1.025, level) * (1.35 + level * 0.18);
     var gold = Math.max(40, Math.round(base * lvlFactor * (0.5 + F * 0.26)));
     var dupes = Math.max(1, Math.round(level * (0.6 + F * 0.18)));
     return { dupes: dupes, gold: gold };
@@ -60,12 +60,11 @@
 
   /**
    * Costo para subir 1 nivel usando SOLO oro (sin duplicados).
-   * Perfecto para dioses y titanes, cuyos duplicados son rarísimos:
-   * pagas más oro pero no dependes del azar. Un poco más caro por cada nivel.
+   * Pagas más oro pero no dependes del azar; sigue creciendo con el nivel.
    */
   function goldOnlyCost(cardId, level) {
     var st = upgradeCost(cardId, level);
-    var mult = 2.1 + Math.min(level, 24) * 0.09;
+    var mult = 2.1 + Math.min(level, 90) * 0.06;
     return Math.max(150, Math.round(st.gold * mult));
   }
 
@@ -80,11 +79,76 @@
     return Math.round(base * 0.45 * Math.pow(level, 1.05) * (0.5 + F * 0.14));
   }
 
+  /* ---------- TECNOLOGÍAS (Templo del Conocimiento) ---------- */
+
+  function techLevel(id) {
+    var st = OU.STATE && OU.STATE.state;
+    if (!st || !st.techs) return 0;
+    return st.techs[id] | 0;
+  }
+
+  /** Multiplicadores de combate por tecnología (HP/ATK/DEF). */
+  function techPower() {
+    return {
+      hp: 1 + 0.03 * techLevel('vitalidad'),
+      atk: 1 + 0.03 * techLevel('tactica'),
+      def: 1 + 0.03 * techLevel('fortaleza')
+    };
+  }
+
+  function goldMult() { return 1 + 0.04 * techLevel('alquimia'); }
+  function xpMult() { return 1 + 0.04 * techLevel('sabiduria'); }
+
+  /** Costo en oro de investigar el siguiente nivel de una tecnología. */
+  function techCost(id) {
+    var t = null, i;
+    for (i = 0; i < OU.TECHS.length; i++) if (OU.TECHS[i].id === id) { t = OU.TECHS[i]; break; }
+    if (!t) return 0;
+    var lvl = techLevel(id);
+    var st = OU.STATE && OU.STATE.state;
+    var prg = 0.9 + (st ? st.stage : 0) * 0.02;
+    return Math.round(t.base * Math.pow(1.5, lvl) * prg);
+  }
+
+  /** Inventa una tecnología: aplica recursos y devuelve true si fue posible. */
+  function researchTech(id) {
+    var st = OU.STATE.state;
+    var t = null, i;
+    for (i = 0; i < OU.TECHS.length; i++) if (OU.TECHS[i].id === id) { t = OU.TECHS[i]; break; }
+    if (!t) return false;
+    var lvl = techLevel(id);
+    if (lvl >= t.max) return false;
+    var cost = techCost(id);
+    if (st.gold < cost) return false;
+    st.gold -= cost;
+    st.techs[id] = lvl + 1;
+    OU.STATE.save();
+    return true;
+  }
+
+  /* ---------- SOBRES ---------- */
+
+  /** Ponderaciones de un sobre con el bonus de suerte del Augurio. */
+  function packWeights(p) {
+    var keys = Object.keys(p.w);
+    var luck = 0.015 * techLevel('augurio');
+    var out = {}, total = 0;
+    keys.forEach(function (k) {
+      var v = p.w[k];
+      if (k === 'normal') v = Math.max(0, v - luck);
+      else v += luck;
+      out[k] = v;
+      total += v;
+    });
+    return { w: out, total: total };
+  }
+
   function rollRarity(pack) {
-    var w = pack.w, keys = Object.keys(w);
-    var r = Math.random(), acc = 0;
+    var pw = packWeights(pack);
+    var keys = Object.keys(pack.w);
+    var r = Math.random() * pw.total, acc = 0;
     for (var i = 0; i < keys.length; i++) {
-      acc += w[keys[i]];
+      acc += pw.w[keys[i]];
       if (r <= acc) return keys[i];
     }
     return 'normal';
@@ -114,8 +178,8 @@
   function rewardOf(idx) {
     var s = idx + 1;
     return {
-      gold: Math.round(260 + s * 150 + s * s * 8),
-      xp: Math.round(60 + s * 30 + s * s * 3)
+      gold: Math.round((260 + s * 150 + s * s * 8) * goldMult()),
+      xp: Math.round((60 + s * 30 + s * s * 3) * xpMult())
     };
   }
 
@@ -150,9 +214,16 @@
     rollRarityCard: rollRarityCard,
     rollCard: rollCard,
     generatePulls: generatePulls,
+    packWeights: packWeights,
     rewardOf: rewardOf,
     rarityOrder: rarityOrder,
     xpNeed: xpNeed,
-    imgAlt: imgAlt
+    imgAlt: imgAlt,
+    techLevel: techLevel,
+    techPower: techPower,
+    goldMult: goldMult,
+    xpMult: xpMult,
+    techCost: techCost,
+    researchTech: researchTech
   };
 })();

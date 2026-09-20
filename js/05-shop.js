@@ -47,7 +47,7 @@
     var maxLvlPower = 0;
     var owned = OU.STATE.ownedList();
     owned.forEach(function (id) { maxLvlPower = Math.max(maxLvlPower, U.powerOf(id, st.cards[id].lvl)); });
-    var prg = 1 + st.stage * 0.06 + Math.min(st.lvl, 30) * 0.04;
+    var prg = 1 + st.stage * 0.06 + Math.min(st.lvl, 100) * 0.04;
     if (type === 'card') {
       var rar = pickRarity();
       var pool = OU.CARDS_BY_RAR[rar];
@@ -249,7 +249,9 @@
     var st = OU.STATE.state;
     var packs = Object.keys(OU.PACKS).map(function (k) {
       var p = OU.PACKS[k];
-      var cost = p.cost.gold ? '<span class="gold">🪙 ' + U.fmt(p.cost.gold) + '</span>' : '<span class="gem">💎 ' + U.fmt(p.cost.gems) + '</span>';
+      var costs = [];
+      if (p.cost.gold !== undefined) costs.push('<span class="gold">🪙 ' + U.fmt(p.cost.gold) + '</span>');
+      if (p.cost.gems !== undefined) costs.push('<span class="gem">💎 ' + U.fmt(p.cost.gems) + '</span>');
       var oddsRows = p.odds.map(function (o) {
         var l = o[0], v = o[1];
         var col = l === 'Primordial' ? OU.RAR.primordial.color : l === 'Titán' ? OU.RAR.titan.color : l === 'Dios' ? OU.RAR.god.color : l === 'Héroe' ? OU.RAR.hero.color : 'var(--gray)';
@@ -258,7 +260,7 @@
       return '<div class="pack-card ' + p.cls + '" data-pack="' + k + '">' +
         '<div class="pc-ic">🎁</div>' +
         '<div class="pc-name ' + p.cls + '">' + p.name + '</div>' +
-        '<div class="pc-cost">' + cost + '</div>' +
+        '<div class="pc-cost">' + costs.join(' <span class="or">ó</span> ') + '</div>' +
         '<div class="pc-desc">' + p.desc + ' · ' + p.count + ' cartas.</div>' +
         '<div class="odds">' + oddsRows + '</div>' +
         '</div>';
@@ -295,14 +297,20 @@
     if (rf) rf.addEventListener('click', refreshBazaar);
   }
 
-  function buyPack(packKey) {
+  function buyPack(packKey, currency) {
     if (openingBusy) return;
     var p = OU.PACKS[packKey];
     var st = OU.STATE.state;
-    if (p.cost.gold !== undefined) {
+
+    // Sobres con doble precio (oro → gemas): elegir moneda.
+    if (!currency && p.cost.gold !== undefined && p.cost.gems !== undefined) {
+      openPackChooser(packKey);
+      return;
+    }
+    if (p.cost.gold !== undefined && (!currency || currency === 'gold')) {
       if (st.gold < p.cost.gold) return I.toast('No tienes suficiente oro 🪙');
       st.gold -= p.cost.gold;
-    } else {
+    } else if (p.cost.gems !== undefined) {
       if (st.gems < p.cost.gems) return I.toast('No tienes suficientes gemas 💎');
       st.gems -= p.cost.gems;
     }
@@ -316,6 +324,38 @@
     });
     OU.STATE.save();
     showPackOpening(p, pulls);
+  }
+
+  /** Modal para elegir moneda al comprar un sobre premium. */
+  function openPackChooser(packKey) {
+    var st = OU.STATE.state;
+    var p = OU.PACKS[packKey];
+    var canGold = st.gold >= p.cost.gold;
+    var canGems = st.gems >= p.cost.gems;
+    I.openModal(
+      '<div class="sec-title" style="margin-top:10px">🎁 ' + p.name + '</div>' +
+      '<p style="font-size:12.5px;color:var(--dim);text-align:center;margin:4px 0 12px">¿Con qué moneda deseas pagar?</p>' +
+      '<div class="chooser-row" style="border-color:' + (canGold ? 'var(--gold2)' : 'var(--line)') + ';opacity:' + (canGold ? 1 : 0.4) + '" data-pay="gold">' +
+      '<span class="ch-ic">🪙</span>' +
+      '<span class="ch-txt">' + (canGold ? 'Pagar con oro' : 'Oro insuficiente (necesitas ' + U.fmt(p.cost.gold) + ')') + '</span>' +
+      '<span class="ch-price">' + U.fmt(p.cost.gold) + '</span>' +
+      '</div>' +
+      '<div class="chooser-row" style="border-color:' + (canGems ? 'var(--blue)' : 'var(--line)') + ';opacity:' + (canGems ? 1 : 0.4) + '" data-pay="gems">' +
+      '<span class="ch-ic">💎</span>' +
+      '<span class="ch-txt">' + (canGems ? 'Pagar con gemas' : 'Gemas insuficientes (necesitas ' + p.cost.gems + ')') + '</span>' +
+      '<span class="ch-price">' + p.cost.gems + '</span>' +
+      '</div>' +
+      '<button class="btn btn-ghost btn-block" id="chClose" style="margin-top:12px">Cancelar</button>', true);
+    U.$$('[data-pay]', U.$('#overlay')).forEach(function (row) {
+      row.addEventListener('click', function () {
+        var cur = row.dataset.pay;
+        if (cur === 'gold' && st.gold < p.cost.gold) { I.toast('No tienes suficiente oro 🪙'); return; }
+        if (cur === 'gems' && st.gems < p.cost.gems) { I.toast('No tienes suficientes gemas 💎'); return; }
+        I.closeModal();
+        buyPack(packKey, cur);
+      });
+    });
+    var cl = U.$('#chClose'); if (cl) cl.addEventListener('click', I.closeModal);
   }
 
   function isNew(id) {

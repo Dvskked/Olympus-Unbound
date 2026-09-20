@@ -96,6 +96,7 @@
       '<div class="ab-name">✨ ' + c.ab.n + '</div>' +
       '<div class="ab-desc">' + U.abDesc(c.ab, id) + '</div>' +
       '</div>' +
+      '<div class="tale-box">📜 ' + (c.d || 'Su leyenda se ha perdido en el tiempo.') + '</div>' +
       '<div class="upgrade-row">' + costHtml + '</div>', true);
 
     var up = U.$('#upBtn');

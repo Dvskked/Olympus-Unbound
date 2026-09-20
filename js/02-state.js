@@ -26,8 +26,17 @@
       shopRefresh: 0,           // timestamp de renovación de ofertas
       shopItems: [],            // ofertas actuales del Bazar
       boostUntil: 0,            // multiplicador de ingreso activo hasta aquí
-      seen: {}                  // ids descubiertos (aunque se vendan)
+      seen: {},                 // ids descubiertos (aunque se vendan)
+      techs: {}                 // niveles de tecnologías del Templo (id → nivel)
     };
+  }
+
+  /** Garantiza que todas las tecnologías existan en el estado. */
+  function initTechs() {
+    var d = state.techs = state.techs || {};
+    (OU.TECHS || []).forEach(function (t) {
+      if (typeof d[t.id] !== 'number' || d[t.id] < 0) d[t.id] = 0;
+    });
   }
 
   var state = defaultState();
@@ -45,6 +54,8 @@
       state.team = t;
     }
     if (!state.seen) state.seen = {};
+    if (!state.techs) state.techs = {};
+    initTechs();
     if (!Array.isArray(state.trainSlots)) state.trainSlots = [];
     // Migración desde el entrenamiento único de versiones anteriores.
     if (state.trainCard && state.trainCard !== null && (!state.trainSlots.length)) {
