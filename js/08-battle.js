@@ -118,21 +118,25 @@
       '</div>' +
       '<div class="arena-ctrls">' +
       '<button class="btn btn-ghost btn-sm" id="speedBtn">⏩ x1</button>' +
-      '<button class="btn btn-red btn-sm" id="quitBtn">✖ Salir</button>' +
+      '<button class="btn btn-ghost btn-sm" id="quitBtn">✖ Salir</button>' +
       '</div>' +
       '</div>' +
       '<div id="arenaWrap">' +
       '<div class="arena" id="arena">' +
-      '<div class="row enermy" id="enemyRow"></div>' +
-      '<div class="vs-line">VS</div>' +
-      '<div class="row ally" id="allyRow"></div>' +
+      '<span class="bt-label e-l">Tu equipo</span>' +
+      '<span class="bt-label en-l">Enemigos</span>' +
+      '<div class="bt-field">' +
+      '<div class="bt-side allies" id="allyCol"></div>' +
+      '<div class="bt-mid"><div class="vs-badge">VS</div></div>' +
+      '<div class="bt-side enemies" id="enemyCol"></div>' +
+      '</div>' +
       '<div class="fx-layer" id="fx"></div>' +
       '</div>' +
       '</div>' +
-      '<div class="battle-hint">Cada golpe carga la energía (barra azul). Al 100% se libera el poder especial ✨</div>' +
+      '<div class="battle-hint">Cada golpe carga la energía (barra azul). Al 100% se libera el poder especial ✨<br><b id="vsHint">ALIADOS</b> <span style="color:var(--dim)">←</span>&nbsp;·&nbsp;<span style="color:var(--dim)">→</span> <b style="color:#ff8b7d">ENEMIGOS</b></div>' +
       '</div>';
-    en.forEach(function (u) { U.$('#enemyRow').appendChild(unitEl(u)); });
-    my.forEach(function (u) { U.$('#allyRow').appendChild(unitEl(u)); });
+    en.forEach(function (u) { U.$('#enemyCol').appendChild(unitEl(u)); });
+    my.forEach(function (u) { U.$('#allyCol').appendChild(unitEl(u)); });
     U.$('#speedBtn').addEventListener('click', function () {
       battleFast = battleFast === 1 ? 2 : 1;
       U.$('#speedBtn').textContent = '⏩ x' + battleFast;
@@ -145,18 +149,21 @@
 
   function unitEl(u) {
     var div = document.createElement('div');
-    div.className = 'unit ' + (u.side === 'e' ? 'enemy' : 'ally');
+    div.className = 'btoken ' + (u.side === 'e' ? 'enemy' : 'ally');
     div.dataset.uid = u.uid;
-    div.style.setProperty('--glow', OU.RAR[u.r].glow);
+    div.style.setProperty('--c', OU.RAR[u.r].color);
     div.innerHTML =
-      '<span class="u-rarity" style="color:' + OU.RAR[u.r].color + '"></span>' +
-      '<div class="u-art">' + I.artHTML(u.cardId, 'unit-img') + '</div>' +
-      '<div class="u-name">' + u.name + '</div>' +
-      '<div class="u-lv">NV ' + u.level + ' · ' + OU.ROLES[u.role] + '</div>' +
-      '<div class="u-bar u-hpbar"><div class="u-fill" style="width:100%"></div></div>' +
-      '<div class="u-bar u-enbar"><div class="u-fill" style="width:' + u.energy + '%"></div></div>' +
-      '<div class="u-shield-dot"></div>' +
-      '<div class="u-buff-dot"></div>';
+      '<span class="bt-sd"></span>' +
+      '<span class="bt-bf"></span>' +
+      '<div class="bt-hpbar"><div class="bt-fill" style="width:100%"></div></div>' +
+      '<div class="bt-circle">' +
+      '<div class="bt-wrap">' + I.artHTML(u.cardId, 'bt-img') + '</div>' +
+      '<span class="bt-rarity" style="color:' + OU.RAR[u.r].color + '"></span>' +
+      '<span class="bt-lv">NV ' + u.level + '</span>' +
+      '</div>' +
+      '<div class="bt-name">' + u.name + '</div>' +
+      '<div class="bt-hpnum">' + U.fmt(u.hp) + ' / ' + U.fmt(u.maxHp) + '</div>' +
+      '<div class="bt-enbar"><div class="bt-fill" style="width:' + u.energy + '%"></div></div>';
     return div;
   }
 
@@ -166,16 +173,24 @@
   const setHp = (u) => {
     const el = unitElOf(u); if (!el) return;
     const pct = Math.max(0, u.hp / u.maxHp * 100);
-    $('.u-hpbar .u-fill', el).style.width = pct + '%';
-    $('.u-hpbar .u-fill', el).style.background = pct > 50 ? 'linear-gradient(90deg,var(--hp),var(--hp2))' : 'linear-gradient(90deg,#9d2020,#e33d3d)';
-    const sh = $('.u-shield-dot', el);
-    sh.textContent = u.shield > 0 ? `🛡 ${u.shield}` : '';
-    const bu = $('.u-buff-dot', el);
-    bu.textContent = u.buffAtk > 0 ? `⚡ +${Math.round(u.buffAtk)} ATK` : '';
+    const fill = $('.bt-hpbar .bt-fill', el);
+    if (fill) {
+      fill.style.width = pct + '%';
+      fill.style.background = pct > 50
+        ? 'linear-gradient(90deg,var(--hp),var(--hp2))'
+        : 'linear-gradient(90deg,#9d2020,#e33d3d)';
+    }
+    const hn = $('.bt-hpnum', el);
+    if (hn) hn.textContent = U.fmt(u.hp) + ' / ' + U.fmt(u.maxHp);
+    const sd = $('.bt-sd', el);
+    if (sd) sd.textContent = u.shield > 0 ? '🛡' : '';
+    const bf = $('.bt-bf', el);
+    if (bf) bf.textContent = u.buffAtk > 0 ? '⚡' : '';
   };
   const setEnergy = (u) => {
     const el = unitElOf(u); if (!el) return;
-    const f = $('.u-enbar .u-fill', el);
+    const f = $('.bt-enbar .bt-fill', el);
+    if (!f) return;
     f.style.width = Math.min(100, u.energy) + '%';
     f.classList.toggle('full', u.energy >= 100);
   };
@@ -186,7 +201,7 @@
     const aRect = arena.getBoundingClientRect();
     const uRect = el.getBoundingClientRect();
     const x = uRect.left - aRect.left + uRect.width / 2 + U.rnd(-12, 12);
-    const y = uRect.top - aRect.top + U.rnd(-4, 10);
+    const y = uRect.top - aRect.top + uRect.height * 0.18 + U.rnd(-4, 10);
     const n = document.createElement('div');
     n.className = 'fnum ' + cls + (crit ? ' crit' : '');
     n.textContent = msg;
@@ -202,9 +217,37 @@
     fx.appendChild(b);
     setTimeout(() => b.remove(), 1300);
   };
-  const shakeUnit = (u) => {
+  const lungeFx = (u, tgt) => {
+    const aEl = unitElOf(u), tEl = unitElOf(tgt);
+    const arena = $('#arena');
+    if (!aEl || !tEl || !arena) return;
+    const aR = aEl.getBoundingClientRect(), tR = tEl.getBoundingClientRect();
+    const dx = (tR.left + tR.width / 2) - (aR.left + aR.width / 2);
+    aEl.style.setProperty('--dx', Math.max(-160, Math.min(160, Math.round(dx * 0.4))) + 'px');
+    aEl.classList.remove('dash'); void aEl.offsetWidth; aEl.classList.add('dash');
+  };
+  const hitFx = (u) => {
     const el = unitElOf(u); if (!el) return;
     el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+    const c = $('.bt-circle', el);
+    if (c) {
+      c.classList.remove('impact'); void c.offsetWidth; c.classList.add('impact');
+      setTimeout(() => c.classList.remove('impact'), 520);
+    }
+  };
+  const castFx = (u) => {
+    const arena = $('#arena'), el = unitElOf(u);
+    if (!arena || !el) return;
+    const aR = arena.getBoundingClientRect(), uR = el.getBoundingClientRect();
+    const x = uR.left - aR.left + uR.width / 2;
+    const y = uR.top - aR.top + uR.height * 0.42;
+    const s = document.createElement('div');
+    s.className = 'shockwave';
+    s.style.left = x + 'px'; s.style.top = y + 'px';
+    arena.appendChild(s);
+    setTimeout(() => s.remove(), 660);
+    const c = $('.bt-circle', el);
+    if (c) { c.classList.add('cast'); setTimeout(() => c.classList.remove('cast'), 600); }
   };
   const killUnit = (u) => {
     u.dead = true;
@@ -224,7 +267,7 @@
   };
   async function dealDamage(att, tgt, dmg) {
     if (tgt.dead) return 0;
-    shakeUnit(tgt);
+    hitFx(tgt);
     const absorbed = Math.min(tgt.shield, dmg);
     let real = dmg - absorbed;
     tgt.shield = Math.max(0, tgt.shield - absorbed);
@@ -243,6 +286,7 @@
     const foes = u.side === 'p' ? enUnits : myUnits;
     const t = randomAlive(foes);
     if (!t) return;
+    lungeFx(u, t);
     const dmg = calcDamage(u, t, 1);
     await dealDamage(u, t, dmg);
   }
@@ -250,15 +294,16 @@
     const a = u.ab;
     banner(`${u.ic} ${a.n}!`, u.side === 'e');
     if (!u.dead) u.energy = 0;
+    castFx(u);
     const foes = u.side === 'p' ? enUnits : myUnits;
     const allies = u.side === 'p' ? myUnits : enUnits;
     await U.sleep(420 / battleFast);
     if (a.t === 'strike') {
       const t = randomAlive(foes);
-      if (t) { const dmg = calcDamage(u, t, a.s); await dealDamage(u, t, dmg); }
+      if (t) { lungeFx(u, t); const dmg = calcDamage(u, t, a.s); await dealDamage(u, t, dmg); }
     } else if (a.t === 'aoe') {
       const alive = foes.filter((f) => !f.dead);
-      for (const t of alive) { const dmg = calcDamage(u, t, a.s); await dealDamage(u, t, dmg); }
+      for (const t of alive) { lungeFx(u, t); const dmg = calcDamage(u, t, a.s); await dealDamage(u, t, dmg); }
     } else if (a.t === 'heal') {
       const candidates = allies.filter((f) => !f.dead);
       if (candidates.length) {

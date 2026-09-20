@@ -2,7 +2,7 @@
 
 **Un juego de cartas y colección de mitología griega** — jugable directamente en el navegador, sin instalación ni servidor.
 
-Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con arte local de tu carpeta `img/`, modo entrenamiento, economía pasiva y estética minimalista oscura inspirada en títulos como *Dungeon Crusher* y *AFK Arena*.
+Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con arte local de tu carpeta `img/`, modo entrenamiento, economía pasiva y una estética oscura vibrante con acentos dorados, azules y púrpuras inspirada en títulos como *Dungeon Crusher* y *AFK Arena*.
 
 > 🎮 **Juega ahora:** abre `index.html` en cualquier navegador moderno (móvil o desktop). Tu progreso se guarda automáticamente con `localStorage`.
 
@@ -19,7 +19,7 @@ Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con
 | 🏋️ **Modo Entrenamiento** | Entrena una carta en tiempo real (1, 3, 8 o 20 min) para ganar XP, oro y gemas sin gastar duplicados |
 | 📜 **Colección** | Inventario completo, contador de duplicados, subida de nivel con oro + duplicados, y subida por XP de entrenamiento |
 | 🛡️ **Mi Equipo** | 5 ranuras de batalla y poder total calculado en tiempo real |
-| ⚔️ **Modo Batalla** | Auto-battler con barras de vida/energía, poderes especiales, números voladores y 12 fases de campaña |
+| ⚔️ **Modo Batalla** | Auto-battler visual con fichas circulares, barras de vida/energía, poderes especiales, números voladores y 12 fases de campaña |
 | 📈 **Progresión más dura** | Nivel máximo 15, costos crecientes por nivel y rareza |
 | 💾 **Guardado** | Todo el progreso persistido con `localStorage` (clave `olympus_unbound_v2`) |
 | 🖥️ **Responsive** | Interfaz adaptada a móviles y desktop con barra de navegación inferior |
@@ -80,9 +80,10 @@ El progreso de entrenamiento se basa en timestamps, así que **sigue avanzando a
 
 ## ⚔️ Sistema de combate
 
-- Combate **automático por turnos** con orden de iniciativa (velocidad).
-- Barras de **energía** que se llenan con cada golpe recibido/infligido; al 100% se activa la habilidad especial.
-- **Números de daño voladores**, efectos de escudo/cura/boost, animaciones de golpe y barras animadas.
+- Combate **automático por turnos** con orden de iniciativa (velocidad) en un campo visual: tu equipo se alinea en la **izquierda** y los enemigos a la **derecha**, cada uno como una ficha circular (avatar, barra de vida y barra de energía).
+- Al atacar, la ficha **embiste** hacia su objetivo; al recibir daño se muestra un **temblor**, un anillo de impacto y **números voladores** de daño.
+- Barras de **energía** que se llenan con cada golpe recibido/infligido; al 100% la ficha **destella**, lanza una **onda expansiva** y libera su poder especial.
+- Cuando la vida de una ficha llega a 0, esta se **desvanece** del campo de batalla.
 - Botón de **velocidad ×1 / ×2**, sonido sintetizado y opción de retirarse.
 - **Recompensas** por victoria: oro, XP y posiblemente gemas. Al perder puedes **reintentar** la fase.
 - 12 fases: desde *Bandidos de la Ruta* hasta *Cronos, el Devorador*.
@@ -125,7 +126,7 @@ npx serve .
 Olympus Unbound/
 ├── index.html          # Esqueleto: carga CSS + módulos JS en orden
 ├── css/
-│   └── style.css       # Tema minimalista: una sola fuente sans, paleta oscura limpia
+│   └── style.css       # Tema oscuro vibrante: una sola fuente sans, acentos dorado/azul/púrpura
 ├── img/                # (Opcional) arte local de cartas: img/<id>.png|jpg|webp
 ├── js/                 # Módulos (namespace global window.OU)
 │   ├── 00-img.js       # Mapa de arte real por carta (OU.IMG)
