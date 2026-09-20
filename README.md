@@ -12,8 +12,8 @@ Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con
 
 | Sistema | Descripción |
 |---|---|
-| 🖼️ **31 cartas con arte local** | Ilustraciones de tu carpeta `img/` (`img/<id>.png|jpg|webp`) para cada criatura, héroe, dios y titán (con fallback a emoji) |
-| 🃏 **4 rangos de cartas** | Normales, Héroes, Dioses y Titanes con brillos y probabilidades diferenciadas |
+| 🖼️ **68 cartas con arte local** | Ilustraciones de tu carpeta `img/` (`img/<id>.png|jpg|webp`) para cada criatura, héroe, dios y titán (con fallback a emoji) |
+| 🃏 **4 rangos de cartas** | Normales, Héroes, Dioses y Titanes, cada uno con su propio **aura**: gris sencilla (Normal), azul radiante (Héroe), dorada muy visible (Dios) y rojo/negro peculiar (Titán) — además de brillos y probabilidades diferenciadas |
 | 🎁 **6 sobres** | Bronce, Plata, Oro, Épico, Olimpo y Divino con animaciones de apertura y garantías por rareza |
 | 🪙 **Economía doble + pasiva** | Oro y Gemas, más un **Ágora** que genera oro pasivo por minuto (con reloj offline) |
 | 🏋️ **Modo Entrenamiento** | Entrena una carta en tiempo real (1, 3, 8 o 20 min) para ganar XP, oro y gemas sin gastar duplicados |
@@ -69,12 +69,25 @@ El progreso de entrenamiento se basa en timestamps, así que **sigue avanzando a
 - **Mago** 🔮 — Daño masivo. Habilidad: ataca a todos los enemigos.
 - **Soporte** ✨ — Cura y potencia aliados. Habilidad: sanación o aumento de ATK.
 
-## 👑 Cartas incluidas (31)
+## ✨ Auras por rareza
 
-- **Normales:** Hoplita Espartano, Guardia Troyana, Arquero Cretense, Peltasta Tracio, Sátiro Arremetedor, Sacerdotisa de Delfos, Guardia Cretense, Fiel Mirmidón.
-- **Héroes:** Aquiles, Hércules, Perseo, Teseo, Ulises, Atalanta, Orfeo, Andrómeda, Jasón.
-- **Dioses:** Zeus, Poseidón, Hades, Atenea, Ares, Artemisa, Hefesto, Apolo.
-- **Titanes:** Cronos, Océano, Hiperión, Jápeto, Atlas, Crío.
+Cada carta emana un aura visible según su rango, tanto en la colección como en el campo de batalla:
+
+| Rango | Aura |
+|---|---|
+| **Normal** | Borde gris sutil y tenue, casi plano |
+| **Héroe** | Aura azul radiante que late con un anillo pulsante |
+| **Dios** | Aura dorada intensa, muy visible, con pulso brillante constante |
+| **Titán** | Aura rojo sangre con negro y un anillo dentado (cuadrado girado) que rota lentamente: difícil de conseguir, difícil de ignorar |
+
+## 👑 Cartas incluidas (68)
+
+> ⚡ **No todo el poder sigue la rareza**: héroes legendarios como Aquiles, Hércules, Héctor o Ayax superan en combate a dioses menores (mensajeros y auroras como Eos o Iris), tal como manda la mitología. La rareza marca el piso, pero el individuo define el techo.
+
+- **Normales (18):** Hoplita Espartano, Guardia Troyana, Arquero Cretense, Peltasta Tracio, Sátiro Arremetedor, Sacerdotisa de Delfos, Guardia Cretense, Fiel Mirmidón, Antíloco, Palamedes, Casandra, Telémaco, Laertes, Pirítoo, Podalirio, Macaón, Protesilao, Dríade del Roble.
+- **Héroes (18):** Aquiles, Hércules, Perseo, Teseo, Ulises, Atalanta, Orfeo, Andrómeda, Jasón, Héctor, Ayax el Grande, Diomedes, Menelao, Belerofonte, Eneas, Peleo, Meleagro, Antíope.
+- **Dioses (16):** Zeus, Poseidón, Hades, Atenea, Ares, Artemisa, Hefesto, Apolo, Hera, Hermes, Dioniso, Deméter, Afrodita, Éolo, Eos, Iris.
+- **Titanes (16):** Cronos, Océano, Hiperión, Jápeto, Atlas, Crío, Gea, Urano, Nix, Érebo, Tártaro, Tetis, Temis, Mnemósine, Réa, Febe.
 
 ---
 

@@ -149,7 +149,7 @@
 
   function unitEl(u) {
     var div = document.createElement('div');
-    div.className = 'btoken ' + (u.side === 'e' ? 'enemy' : 'ally');
+    div.className = 'btoken ' + (u.side === 'e' ? 'enemy' : 'ally') + ' r-' + u.r;
     div.dataset.uid = u.uid;
     div.style.setProperty('--c', OU.RAR[u.r].color);
     div.innerHTML =

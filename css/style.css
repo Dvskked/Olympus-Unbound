@@ -250,6 +250,24 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   background: radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.05), transparent 70%), #0a0c18;
   border: 1px solid var(--line-soft);
 }
+/* ----- Auras por rareza (colección) ----- */
+.ccard._rar-normal .c-icon-wrap { box-shadow: 0 0 10px rgba(174, 182, 200, 0.3); }
+.ccard._rar-hero .c-icon-wrap { box-shadow: 0 0 18px rgba(63, 182, 255, 0.5); animation: cardAuraPulse 2.4s ease-in-out infinite; }
+.ccard._rar-god .c-icon-wrap { box-shadow: 0 0 24px rgba(255, 210, 87, 0.65); animation: cardAuraPulse 1.9s ease-in-out infinite; }
+.ccard._rar-titan .c-icon-wrap {
+  box-shadow: 0 0 28px rgba(255, 48, 72, 0.55), inset 0 0 22px rgba(255, 48, 72, 0.28);
+  animation: cardAuraPulse 1.6s ease-in-out infinite;
+}
+.ccard._rar-titan .c-icon-wrap::before {
+  content: ''; position: absolute; inset: 5px; border-radius: 9px; pointer-events: none; z-index: 2;
+  border: 2px dashed rgba(255, 48, 72, 0.8); box-shadow: 0 0 14px rgba(255, 48, 72, 0.45);
+  animation: cardTitanRot 9s linear infinite;
+}
+@keyframes cardAuraPulse {
+  0%, 100% { filter: brightness(0.92); }
+  50% { filter: brightness(1.18); }
+}
+@keyframes cardTitanRot { to { transform: rotate(360deg); } }
 .c-art { width: 100%; height: 100%; object-fit: cover; }
 .ccard .c-name { font-size: 12px; font-weight: 700; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ccard .c-lv { text-align: center; font-size: 10px; color: var(--dim); margin-top: 3px; }
@@ -348,7 +366,6 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 
 .btoken .bt-circle {
   position: relative; width: 100%; aspect-ratio: 1 / 1; border-radius: 50%;
-  overflow: hidden;
   background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.08), transparent 55%), #0d1120;
   border: 2px solid var(--c, #3a4a6e);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.55), 0 0 16px var(--c);
@@ -366,6 +383,44 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .btoken .bt-name { font-size: 9px; font-weight: 700; text-align: center; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 .btoken .bt-hpnum { font-size: 8px; color: var(--dim); text-align: center; }
 .btoken.enemy .bt-name { color: #ffb4a8; }
+
+/* ----- Auras por rareza (fichas) ----- */
+.btoken .bt-circle::before {
+  content: ''; position: absolute; inset: -4px; border-radius: 50%;
+  border: 1px solid rgba(174, 182, 200, 0.3); pointer-events: none; z-index: 1;
+}
+.btoken.r-normal .bt-circle { border-color: #9aa2b5; box-shadow: 0 0 12px rgba(174, 182, 200, 0.35); }
+.btoken.r-hero .bt-circle {
+  border-color: #3fb6ff;
+  box-shadow: 0 0 18px rgba(63, 182, 255, 0.6), 0 0 36px rgba(63, 182, 255, 0.28);
+}
+.btoken.r-hero .bt-circle::before {
+  inset: -6px; border: 2px solid rgba(63, 182, 255, 0.55); box-shadow: 0 0 16px rgba(63, 182, 255, 0.55);
+  animation: btAuraPulse 2.3s ease-in-out infinite;
+}
+.btoken.r-god .bt-circle {
+  border-color: #ffd257;
+  box-shadow: 0 0 22px rgba(255, 210, 87, 0.85), 0 0 48px rgba(255, 210, 87, 0.4);
+}
+.btoken.r-god .bt-circle::before {
+  inset: -7px; border: 2px solid rgba(255, 210, 87, 0.9); box-shadow: 0 0 24px rgba(255, 210, 87, 0.8);
+  animation: btAuraPulse 1.8s ease-in-out infinite;
+}
+.btoken.r-titan .bt-circle {
+  border-color: #ff3048;
+  background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.1), transparent 55%), radial-gradient(circle, rgba(255, 48, 72, 0.4), transparent 60%), #1a070b;
+  box-shadow: 0 0 20px rgba(255, 48, 72, 0.7), inset 0 0 0 3px #000, inset 0 0 28px rgba(0, 0, 0, 0.8), inset 0 0 34px rgba(255, 48, 72, 0.4);
+}
+.btoken.r-titan .bt-circle::before {
+  inset: -10px; border-radius: 44%;
+  border: 2px dashed rgba(255, 48, 72, 0.8); box-shadow: 0 0 22px rgba(255, 48, 72, 0.5);
+  animation: btTitanRot 7s linear infinite;
+}
+@keyframes btAuraPulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.07); }
+}
+@keyframes btTitanRot { to { transform: rotate(360deg); } }
 
 .btoken .bt-sd,
 .btoken .bt-bf { position: absolute; z-index: 4; font-size: 10px; line-height: 1; pointer-events: none; }
@@ -443,9 +498,18 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .modal-close:hover { color: #fff; }
 .detail-ig { text-align: center; }
 .detail-icon {
-  width: 132px; height: 180px; display: inline-block; border-radius: 14px; overflow: hidden;
+  width: 132px; height: 180px; display: inline-block; border-radius: 14px; overflow: hidden; position: relative;
   background: radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.08), transparent 70%), #0a0c18;
   border: 2px solid var(--line); animation: floatY 3s ease-in-out infinite;
+}
+.detail-icon._rar-normal { box-shadow: 0 0 12px rgba(174, 182, 200, 0.3); }
+.detail-icon._rar-hero { box-shadow: 0 0 20px rgba(63, 182, 255, 0.5); animation: floatY 3s ease-in-out infinite, cardAuraPulse 2.4s ease-in-out infinite; }
+.detail-icon._rar-god { box-shadow: 0 0 26px rgba(255, 210, 87, 0.65); animation: floatY 3s ease-in-out infinite, cardAuraPulse 1.9s ease-in-out infinite; }
+.detail-icon._rar-titan { box-shadow: 0 0 30px rgba(255, 48, 72, 0.55), inset 0 0 24px rgba(255, 48, 72, 0.28); animation: floatY 3s ease-in-out infinite, cardAuraPulse 1.6s ease-in-out infinite; }
+.detail-icon._rar-titan::before {
+  content: ''; position: absolute; inset: 6px; border-radius: 11px; pointer-events: none; z-index: 2;
+  border: 2px dashed rgba(255, 48, 72, 0.8); box-shadow: 0 0 14px rgba(255, 48, 72, 0.45);
+  animation: cardTitanRot 9s linear infinite;
 }
 .detail-art { width: 100%; height: 100%; object-fit: cover; }
 .detail-name { font-weight: 800; font-size: 22px; margin-top: 10px; }
