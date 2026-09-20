@@ -1,0 +1,11 @@
+{
+  "name": "olympus-unbound",
+  "version": "2.0.0",
+  "description": "Juego de coleccion de cartas mitologico griego. HTML + JS modular listo para TypeScript (JSDoc).",
+  "scripts": {
+    "check": "tsc",
+    "test": "node tests/run-all.js"
+  },
+  "keywords": ["juego", "cartas", "mitologia", "griego", "tsc-check"],
+  "license": "MIT"
+}
