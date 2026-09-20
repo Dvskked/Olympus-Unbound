@@ -322,10 +322,12 @@
         '</div>' +
         (firstClear ? '<div style="text-align:center;font-size:12px;color:#7fe08a;margin-bottom:6px">¡Fase superada por primera vez!</div>' : '') +
         (idx < OU.STAGES.length - 1 ? '<button class="btn btn-gold btn-block" id="nextBtn">⚔️ Fase ' + (idx + 2) + ': ' + OU.STAGES[idx + 1].n + '</button>' : '<div class="lvup">🏆 ¡Has conquistado todas las fases de Olympus Unbound!</div>') +
-        '<button class="btn btn-ghost btn-block" style="margin-top:8px" id="againBtn">🔁 Reintentar fase</button>'
+        '<button class="btn btn-ghost btn-block" style="margin-top:8px" id="againBtn">🔁 Reintentar fase</button>' +
+        '<button class="btn btn-blue btn-block" style="margin-top:8px" id="vExitBtn">🏛️ Volver al menú</button>'
       );
       const nx = U.$('#nextBtn'); if (nx) nx.addEventListener('click', () => { I.closeModal(); startBattle(idx + 1); });
       const ag = U.$('#againBtn'); if (ag) ag.addEventListener('click', () => { I.closeModal(); startBattle(idx); });
+      const vx = U.$('#vExitBtn'); if (vx) vx.addEventListener('click', () => { I.closeModal(); OU.MAIN.setTab('home'); });
     } else {
       const rw = U.rewardOf(idx);
       I.openModal(
