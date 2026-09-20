@@ -99,7 +99,7 @@
     if (OU.SHOP.openingBusy) return;
     var stage = OU.STAGES[idx];
     myUnits = st.team.filter(Boolean).map(function (id) { return makeUnit(id, st.cards[id].lvl, 'p'); });
-    var scale = 1 + idx * 0.05;
+    var scale = 1 + idx * 0.035;
     enUnits = stage.roster.map(function (id) { return makeUnit(id, stage.level, 'e', scale); });
     battleScreen(stage, idx, myUnits, enUnits);
     runBattle(idx, myUnits, enUnits).catch(function (e) { console.error(e); I.toast('Error de combate'); });

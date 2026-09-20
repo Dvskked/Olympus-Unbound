@@ -87,20 +87,24 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 /* ---------- Navegación inferior ---------- */
 #tabs {
   position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 50;
-  width: min(620px, 100%);
+  width: min(720px, 100%);
   display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
   background: rgba(12, 15, 24, 0.97);
   border-top: 1px solid var(--line);
   padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
 }
+#tabs::-webkit-scrollbar { display: none; }
 .tab {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-  background: none; padding: 6px 2px;
-  color: var(--dim); font-size: 10px; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase;
+  flex: 1 0 auto; min-width: 74px; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: none; padding: 6px 4px;
+  color: var(--dim); font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0.5px; text-transform: uppercase;
   border-radius: 10px; transition: color 0.2s, background 0.2s;
 }
-.tab .t-ic { font-size: 19px; opacity: 0.55; filter: grayscale(0.5); transition: opacity 0.2s; }
+.tab .t-ic { font-size: 18px; opacity: 0.55; filter: grayscale(0.5); transition: opacity 0.2s; }
 .tab.active { color: var(--gold2); background: rgba(200, 162, 74, 0.1); }
 .tab.active .t-ic { opacity: 1; filter: none; }
 
@@ -240,6 +244,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .ccard._rar-hero { border-top-color: var(--blue2); }
 .ccard._rar-god { border-top-color: var(--gold); }
 .ccard._rar-titan { border-top-color: var(--purple); }
+.ccard._rar-primordial { border-top-color: #f2f7ff; }
 .ccard:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4); }
 @keyframes popIn { from { transform: scale(0.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .ccard .c-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -262,6 +267,19 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   content: ''; position: absolute; inset: 5px; border-radius: 9px; pointer-events: none; z-index: 2;
   border: 2px dashed rgba(255, 48, 72, 0.8); box-shadow: 0 0 14px rgba(255, 48, 72, 0.45);
   animation: cardTitanRot 9s linear infinite;
+}
+.ccard._rar-primordial .c-icon-wrap {
+  box-shadow: 0 0 30px rgba(242, 247, 255, 0.75), inset 0 0 24px rgba(242, 247, 255, 0.35);
+  animation: cardAuraPulse 1.5s ease-in-out infinite;
+}
+.ccard._rar-primordial .c-icon-wrap::before {
+  content: ''; position: absolute; inset: -3px; border-radius: 12px; pointer-events: none; z-index: 2;
+  border: 2px solid rgba(242, 247, 255, 0.85); background: radial-gradient(rgba(242,247,255,0.14), transparent 70%);
+  animation: cardPrimordialGlow 2.2s ease-in-out infinite;
+}
+@keyframes cardPrimordialGlow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
 }
 @keyframes cardAuraPulse {
   0%, 100% { filter: brightness(0.92); }
@@ -291,6 +309,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .pack-card.epic { border-top-color: #e85bff; }
 .pack-card.olympus { border-top-color: var(--blue); }
 .pack-card.divine { border-top-color: var(--purple); }
+.pack-card.cosmic { border-top-color: #7de8ff; }
 .pack-card .pc-ic { font-size: 46px; margin: 6px 0; animation: floatY 3s ease-in-out infinite; }
 .pack-card .pc-name { font-weight: 800; font-size: 15px; letter-spacing: 0.3px; }
 .pack-card .pc-name.bronze { color: var(--gray); }
@@ -299,6 +318,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .pack-card .pc-name.epic { color: #e85bff; }
 .pack-card .pc-name.olympus { color: var(--blue); }
 .pack-card .pc-name.divine { color: var(--purple); }
+.pack-card .pc-name.cosmic { color: #7de8ff; }
 .pack-card .pc-cost { margin: 10px 0 8px; font-size: 14px; font-weight: 700; }
 .pack-card .pc-cost .gold { color: var(--gold2); } .pack-card .pc-cost .gem { color: var(--blue); }
 .pack-card .pc-desc { font-size: 11px; color: var(--dim); margin-bottom: 10px; line-height: 1.5; }
@@ -416,6 +436,20 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   border: 2px dashed rgba(255, 48, 72, 0.8); box-shadow: 0 0 22px rgba(255, 48, 72, 0.5);
   animation: btTitanRot 7s linear infinite;
 }
+.btoken.r-primordial .bt-circle {
+  border-color: #f2f7ff;
+  background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.16), transparent 55%), radial-gradient(circle, rgba(125, 232, 255, 0.45), transparent 62%), #08101a;
+  box-shadow: 0 0 26px rgba(242, 247, 255, 0.9), inset 0 0 0 3px #000, inset 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 36px rgba(125, 232, 255, 0.5);
+}
+.btoken.r-primordial .bt-circle::before {
+  inset: -10px;
+  border: 2px solid rgba(242, 247, 255, 0.95); box-shadow: 0 0 26px rgba(242, 247, 255, 0.7);
+  animation: btPrimordialPulse 1.4s ease-in-out infinite;
+}
+@keyframes btPrimordialPulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.12); filter: brightness(1.5); }
+}
 @keyframes btAuraPulse {
   0%, 100% { opacity: 0.35; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.07); }
@@ -511,6 +545,12 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   border: 2px dashed rgba(255, 48, 72, 0.8); box-shadow: 0 0 14px rgba(255, 48, 72, 0.45);
   animation: cardTitanRot 9s linear infinite;
 }
+.detail-icon._rar-primordial { box-shadow: 0 0 34px rgba(242, 247, 255, 0.8), inset 0 0 26px rgba(242, 247, 255, 0.35); animation: floatY 3s ease-in-out infinite, cardPrimordialGlow 1.6s ease-in-out infinite; }
+.detail-icon._rar-primordial::before {
+  content: ''; position: absolute; inset: 6px; border-radius: 11px; pointer-events: none; z-index: 2;
+  border: 2px solid rgba(242, 247, 255, 0.9); box-shadow: 0 0 16px rgba(242, 247, 255, 0.75);
+  animation: cardPrimordialGlow 1.8s ease-in-out infinite;
+}
 .detail-art { width: 100%; height: 100%; object-fit: cover; }
 .detail-name { font-weight: 800; font-size: 22px; margin-top: 10px; }
 .badge { display: inline-block; padding: 3px 10px; border-radius: 7px; font-size: 10px; font-weight: 700; letter-spacing: 1px; margin: 6px 3px 0; }
@@ -566,6 +606,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .epic { --pc1: #56204d; --pc2: #e85bff; --pcg: rgba(232, 91, 255, 0.4); }
 .olympus { --pc1: #10365e; --pc2: #47a3eb; --pcg: rgba(71, 163, 235, 0.4); }
 .divine { --pc1: #34134a; --pc2: #b14dff; --pcg: rgba(163, 124, 242, 0.45); }
+.cosmic { --pc1: #08101a; --pc2: #7de8ff; --pcg: rgba(125, 232, 255, 0.5); }
 .pack-box .pb-inner { position: absolute; inset: 8px; border: 1px dashed rgba(255, 255, 255, 0.35); border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
 .pack-box .pb-glyph { font-weight: 800; font-size: 36px; letter-spacing: 2px; color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6); }
 .pack-box .pb-ray { position: absolute; inset: 0; background: conic-gradient(from 0deg, transparent 0 12deg, rgba(255, 255, 255, 0.14) 18deg 30deg, transparent 36deg 120deg, rgba(255, 255, 255, 0.1) 126deg 138deg, transparent 144deg 240deg, rgba(255, 255, 255, 0.12) 246deg 258deg, transparent 264deg 360deg); animation: rot 6s linear infinite; }
@@ -626,6 +667,73 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .t-timer { font-size: 20px; font-weight: 800; color: var(--gold2); margin-top: 8px; }
 .t-rewards { display: flex; gap: 8px; justify-content: center; margin: 12px 0 4px; flex-wrap: wrap; }
 .train-opt { text-align: left; }
+
+/* ---------- Índice de Leyendas ---------- */
+.idx-progress {
+  background: linear-gradient(160deg, #1c2134, #131829);
+  border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; margin-bottom: 12px;
+}
+.idx-prog-val { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.idx-prog-val b { color: var(--gold2); }
+.idx-rar-pill {
+  display: inline-block; margin: 8px 8px 0 0; padding: 3px 10px; border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35); border: 1px solid var(--line-soft); font-size: 10.5px; font-weight: 700;
+}
+.index-card.locked { pointer-events: none; filter: grayscale(0.75) brightness(0.6); }
+.idx-lock-wrap { display: flex; align-items: center; justify-content: center; }
+.idx-lock { font-size: 30px; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #5a6280; }
+.idx-lock small { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ---------- Minijuegos ---------- */
+.games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.game-card {
+  position: relative; border-radius: 16px; padding: 20px 18px; text-align: center; cursor: pointer; overflow: hidden;
+  background: linear-gradient(170deg, var(--panel), var(--panel2)); border: 1px solid var(--line);
+  border-top-width: 3px; border-top-color: var(--blue);
+  transition: transform 0.15s, border-color 0.2s; animation: popIn 0.3s ease;
+}
+.game-card:hover { transform: translateY(-3px); border-color: var(--blue); }
+.game-card .gc-ic { font-size: 40px; margin: 4px 0 8px; animation: floatY 3s ease-in-out infinite; }
+.game-card .gc-name { font-weight: 800; font-size: 15px; color: var(--gold2); }
+.game-card .gc-desc { font-size: 11.5px; color: var(--dim); margin: 8px 0; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.game-card .gc-cta { font-weight: 800; font-size: 12px; color: var(--blue); }
+.game-card .gc-wins { font-size: 10.5px; color: var(--dim); margin-top: 6px; }
+.mg-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+.mg-stats span { background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; font-size: 11px; color: var(--dim); }
+.mg-stats b { color: var(--gold2); }
+.oracle-bet { text-align: center; margin: 14px 0 6px; font-size: 12.5px; color: var(--dim); }
+.oracle-bet b { color: var(--gold2); }
+.oracle-cta { display: flex; gap: 10px; justify-content: center; margin: 10px 0; }
+.ppt-bets { display: flex; gap: 8px; justify-content: center; margin: 12px 0; flex-wrap: wrap; }
+.ppt-hands { display: flex; gap: 10px; justify-content: center; margin: 10px 0; flex-wrap: wrap; }
+.ppt-hand {
+  padding: 14px 16px; border-radius: 12px; font-weight: 800; font-size: 13px;
+  background: var(--panel); border: 1px solid var(--line); cursor: pointer; transition: transform 0.12s, border-color 0.2s;
+}
+.ppt-hand:hover { transform: translateY(-2px); border-color: var(--gold2); }
+.wheel-zone { margin: 14px 0; text-align: center; }
+.wheel-dial {
+  width: 120px; height: 120px; margin: 0 auto 14px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.16), transparent 55%), conic-gradient(#3a4a6e, #57b3f0, #e6cc7d, #b14dff, #ff6b6b, #3a4a6e);
+  border: 4px solid var(--gold); box-shadow: 0 0 30px rgba(200, 162, 74, 0.4);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  animation: wheelFloat 2.4s ease-in-out infinite;
+}
+.wheel-dial .wd-glyph { font-size: 30px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
+.wheel-dial .wd-seg { font-size: 12px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); background: rgba(0,0,0,0.45); padding: 1px 8px; border-radius: 99px; }
+.wheel-dial.spin { animation: wheelSpin 0.62s ease forwards; }
+@keyframes wheelFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes wheelSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  45% { transform: rotate(300deg) scale(1.08); }
+  70% { transform: rotate(480deg) scale(1.02); }
+  100% { transform: rotate(560deg) scale(1); }
+}
+.mg-result { text-align: center; margin-top: 12px; padding: 11px; border-radius: 11px; font-weight: 800; animation: popIn 0.3s ease; }
+.mg-result.win { background: rgba(103, 232, 143, 0.12); border: 1px solid rgba(103, 232, 143, 0.5); color: #67e88f; }
+.mg-result.lose { background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.45); color: #ff8b8b; }
+.mg-result.tie { background: rgba(135, 144, 168, 0.12); border: 1px solid var(--line); color: var(--dim); }
+.mg-coins { text-align: center; font-size: 12px; color: var(--dim); margin-top: 8px; }
 
 /* ---------- Toast ---------- */
 #toast {

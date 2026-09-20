@@ -16,7 +16,7 @@
     if (!cards.length) {
       return '<div class="empty-msg">📜 Tu colección está vacía.<br><br><button class="btn btn-gold" onclick="OU.MAIN.setTab(\'shop\')">Abrir tu primer sobre</button></div>';
     }
-    var filters = [['all', 'Todas'], ['normal', 'Normales'], ['hero', 'Héroes'], ['god', 'Dioses'], ['titan', 'Titanes']];
+    var filters = [['all', 'Todas'], ['normal', 'Normales'], ['hero', 'Héroes'], ['god', 'Dioses'], ['titan', 'Titanes'], ['primordial', 'Primordiales']];
     var fbar = '<div class="filter-bar">' + filters.map(function (f) {
       return '<button class="fbtn ' + (collFilter === f[0] ? 'active' : '') + '" data-f="' + f[0] + '">' + f[1] + '</button>';
     }).join('') + '</div>';
@@ -56,8 +56,10 @@
     var c = OU.CARD_BY_ID[id], rc = st.cards[id], r = OU.RAR[c.r], v = U.valuesAt(id, rc.lvl);
     var maxed = rc.lvl >= OU.CONST.MAX_LEVEL;
     var cost = U.upgradeCost(id, rc.lvl);
+    var goldCost = U.goldOnlyCost(id, rc.lvl);
     var tcost = U.trainCost(id, rc.lvl);
     var canUp = !maxed && rc.dup >= cost.dupes && st.gold >= cost.gold;
+    var canGold = !maxed && st.gold >= goldCost;
     var next = maxed ? null : U.valuesAt(id, rc.lvl + 1);
     var costHtml;
     if (maxed) {
@@ -67,10 +69,14 @@
         '<div>' +
         '<div class="up-cost">Requiere <span class="' + (rc.dup >= cost.dupes ? 'ok' : 'bad') + '">' + cost.dupes + ' duplicado(s)</span> · Tienes <span class="' + (rc.dup >= cost.dupes ? 'ok' : 'bad') + '">' + rc.dup + '</span></div>' +
         '<div class="up-cost">Costo en oro: <span class="' + (st.gold >= cost.gold ? 'ok' : 'bad') + '">🪙 ' + U.fmt(cost.gold) + '</span> · Tienes 🪙 ' + U.fmt(st.gold) + '</div>' +
+        '<div class="up-cost">Solo con oro: <span class="' + (st.gold >= goldCost ? 'ok' : 'bad') + '">🪙 ' + U.fmt(goldCost) + '</span> (sin duplicados)</div>' +
         (next ? '<div class="up-preview">HP ' + U.fmt(v.hp) + '→' + U.fmt(next.hp) + ' · ATK ' + U.fmt(v.atk) + '→' + U.fmt(next.atk) + ' · DEF ' + U.fmt(v.def) + '→' + U.fmt(next.def) + '</div>' : '') +
         (rc.xp ? '<div class="train-xp">🏋️ XP de entrenamiento: ' + rc.xp + ' / ' + tcost + '</div>' : '') +
         '</div>' +
-        '<button class="btn btn-gold btn-sm" ' + (canUp ? '' : 'disabled') + ' id="upBtn">⬆ Subir a NV ' + (rc.lvl + 1) + '</button>';
+        '<div style="display:flex;flex-direction:column;gap:6px;align-items:stretch">' +
+        '<button class="btn btn-gold btn-sm" ' + (canUp ? '' : 'disabled') + ' id="upBtn">⬆ Subir a NV ' + (rc.lvl + 1) + '</button>' +
+        '<button class="btn btn-blue btn-sm" ' + (canGold ? '' : 'disabled') + ' id="goldBtn">💰 Mejorar solo con oro</button>' +
+        '</div>';
     }
     I.openModal(
       '<div class="detail-ig">' +
@@ -98,6 +104,16 @@
       st.gold -= cost.gold; rc.dup -= cost.dupes; rc.lvl++;
       OU.STATE.save();
       I.toast('⬆ ' + c.n + ' subió a nivel ' + rc.lvl);
+      openCardDetail(id);
+      OU.MAIN.render();
+    });
+
+    var goldBtn = U.$('#goldBtn');
+    if (goldBtn) goldBtn.addEventListener('click', function () {
+      if (st.gold < goldCost) return I.toast('No tienes suficiente oro 🪙');
+      st.gold -= goldCost; rc.lvl++;
+      OU.STATE.save();
+      I.toast('💰 ' + c.n + ' subió a nivel ' + rc.lvl + ' sin duplicados');
       openCardDetail(id);
       OU.MAIN.render();
     });

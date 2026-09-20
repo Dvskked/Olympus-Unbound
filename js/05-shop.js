@@ -17,7 +17,7 @@
       var cost = p.cost.gold ? '<span class="gold">🪙 ' + U.fmt(p.cost.gold) + '</span>' : '<span class="gem">💎 ' + U.fmt(p.cost.gems) + '</span>';
       var oddsRows = p.odds.map(function (o) {
         var l = o[0], v = o[1];
-        var col = l === 'Titán' ? OU.RAR.titan.color : l === 'Dios' ? OU.RAR.god.color : l === 'Héroe' ? OU.RAR.hero.color : 'var(--gray)';
+        var col = l === 'Primordial' ? OU.RAR.primordial.color : l === 'Titán' ? OU.RAR.titan.color : l === 'Dios' ? OU.RAR.god.color : l === 'Héroe' ? OU.RAR.hero.color : 'var(--gray)';
         return '<div class="o-row"><span class="o-l">' + l + '</span><span class="o-v" style="color:' + col + '">' + v + '</span></div>';
       }).join('');
       return '<div class="pack-card ' + p.cls + '" data-pack="' + k + '">' +

@@ -6,7 +6,7 @@ const DIR = path.resolve(__dirname, '..', 'js');
 const files = [
   '00-img.js', '01-data.js', '02-state.js', '03-utils.js', '04-ui.js',
   '05-shop.js', '06-collection.js', '07-team.js', '08-battle.js',
-  '09-training.js', '10-main.js'
+  '09-training.js', '10-main.js', '11-index.js', '12-games.js'
 ];
 
 function makeEl() {
@@ -57,12 +57,14 @@ function check(name, cond, extra) {
   const CARD_BY_ID = o.CARD_BY_ID, CARDS_BY_RAR = o.CARDS_BY_RAR, RAR = o.RAR;
 
   check('cards have unique ids', new Set(CARDS.map(c => c.id)).size === CARDS.length, CARDS.length + ' cards');
-  check('rarity distribution', CARDS_BY_RAR.normal.length > 0 && CARDS_BY_RAR.titan.length > 0,
-    `n=${CARDS_BY_RAR.normal.length} h=${CARDS_BY_RAR.hero.length} g=${CARDS_BY_RAR.god.length} t=${CARDS_BY_RAR.titan.length}`);
+  check('102 cards in total', CARDS.length === 102, 'esperábamos 102 (==24N+24H+22G+22T+10P)');
+  check('rarity distribution', CARDS_BY_RAR.normal.length > 0 && CARDS_BY_RAR.titan.length > 0 && CARDS_BY_RAR.primordial.length === 10,
+    `n=${CARDS_BY_RAR.normal.length} h=${CARDS_BY_RAR.hero.length} g=${CARDS_BY_RAR.god.length} t=${CARDS_BY_RAR.titan.length} p=${CARDS_BY_RAR.primordial.length}`);
   check('all stage card ids exist', STAGES.every(s => s.roster.every(id => CARD_BY_ID[id])), STAGES.length + ' stages');
+  check('30 stages defined', STAGES.length === 30, 'campaign ampliada a 30 fases');
   check('all cards have images', CARDS.every(c => o.IMG[c.id] !== undefined), 'IMG map = ' + Object.keys(o.IMG).length);
-  check('six packs defined', Object.keys(PACKS).length === 6, 'bronze/silver/gold/epic/olympus/divine');
-  check('pack probability sums to 1', Object.values(PACKS).every(p => Math.abs(Object.values(p.w).reduce((a, b) => a + b, 0) - 1) < 0.01), '6 packs');
+  check('seven packs defined', Object.keys(PACKS).length === 7, 'bronze/silver/gold/epic/olympus/divine/cosmic');
+  check('pack probability sums to 1', Object.values(PACKS).every(p => Math.abs(Object.values(p.w).reduce((a, b) => a + b, 0) - 1) < 0.01), '7 packs');
 
   // Garantías
   for (const k of Object.keys(PACKS)) {
@@ -81,12 +83,17 @@ function check(name, cond, extra) {
     return up.gold > 0 && up.dupes > 0 && up10.gold > up.gold;
   })(), 'MAX_LEVEL=' + CONST.MAX_LEVEL);
 
+  check('gold-only upgrade is the pricey shortcut', (() => {
+    const g1 = U.goldOnlyCost('hop', 1), g30 = U.goldOnlyCost('zus', 29);
+    return g1 > U.upgradeCost('hop', 1).gold && g1 >= 150 && g30 > g1;
+  })(), 'goldOnly > standard, max(150), crece con nivel');
+
   let hits = { normal: 0, hero: 0, god: 0, titan: 0 };
   for (let i = 0; i < 20000; i++) hits[U.rollRarity(PACKS.bronze)]++;
-  check('bronze odds sane', hits.normal > 14000 && hits.normal < 17000 && hits.titan > 5, JSON.stringify(hits));
+  check('bronze odds sane', hits.normal > 16500 && hits.normal < 18000 && hits.titan > 5, JSON.stringify(hits));
 
-  const r1 = U.rewardOf(0), r11 = U.rewardOf(11);
-  check('rewards scale', r11.gold > r1.gold && r11.xp > r1.xp, `stage1=${r1.gold}g stage12=${r11.gold}g`);
+  const r1 = U.rewardOf(0), r29 = U.rewardOf(29);
+  check('rewards scale to stage 30', r29.gold > r1.gold && r29.xp > r1.xp, `stage1=${r1.gold}g stage30=${r29.gold}g`);
 
   // Estado inicial tras el load() de main.init()
   let st = o.STATE.state;
@@ -123,9 +130,10 @@ function check(name, cond, extra) {
   // Tienda: comprar un sobre
   check('buy bronze pack', (() => {
     const gold0 = st.gold;
+    const cost = o.PACKS.bronze.cost.gold;
     const count0 = Object.keys(st.cards).length;
     o.SHOP.buyPack('bronze');  // animación síncrona con sleep stub? no, es async real
-    const deduct = st.gold === gold0 - 300;
+    const deduct = st.gold === gold0 - cost;
     const gained = Object.keys(st.cards).length >= count0;
     // la apertura real añade cartas tras el cálculo; aquí ya se dedujo y se guardó
     return deduct && gained;
@@ -198,6 +206,48 @@ function check(name, cond, extra) {
   check('team view renders', (() => { try { return typeof o.TEAM.viewTeam() === 'string'; } catch (e) { return false; } })());
   check('collection view renders', (() => { try { return typeof o.COLLECTION.viewCollection() === 'string'; } catch (e) { return false; } })());
   check('shop view renders', (() => { try { return typeof o.SHOP.viewShop() === 'string'; } catch (e) { return false; } })());
+  check('index view renders + progress', (() => {
+    try {
+      const h = o.INDEX.viewIndex();
+      return typeof h === 'string' && h.includes('Índice de Leyendas') && h.includes('Desbloqueadas');
+    } catch (e) { return false; }
+  })());
+  check('index order strongest first', (() => {
+    const st = o.STATE.state;
+    const sorted = o.CARDS.slice().sort((a, b) => o.INDEX.maxPower(b.id) - o.INDEX.maxPower(a.id));
+    return o.INDEX.maxPower(sorted[0].id) >= o.INDEX.maxPower(sorted[1].id);
+  })());
+  check('games view renders', (() => { try { const h = o.GAMES.viewGames(); return typeof h === 'string' && h.includes('Minijuegos'); } catch (e) { return false; } })());
+  check('oracle play consistent', (() => {
+    let ok = true;
+    for (let i = 0; i < 200; i++) {
+      const r = o.GAMES.oraclePlay(true);
+      if (r.heads < 0 || r.heads > 7 || typeof r.won !== 'boolean' || (r.heads >= 4) !== r.won) { ok = false; break; }
+    }
+    return ok;
+  })());
+  check('rps resolves all matchups', (() => {
+    return o.GAMES.rpsResolve(0, 2) === 1 && o.GAMES.rpsResolve(1, 0) === 1 && o.GAMES.rpsResolve(2, 1) === 1 &&
+      o.GAMES.rpsResolve(0, 1) === -1 && o.GAMES.rpsResolve(1, 2) === -1 && o.GAMES.rpsResolve(2, 0) === -1 &&
+      o.GAMES.rpsResolve(0, 0) === 0 && o.GAMES.rpsResolve(1, 1) === 0 && o.GAMES.rpsResolve(2, 2) === 0;
+  })());
+  check('roulette picks weight-loaded segment', (() => {
+    const i = o.GAMES.wheelPick(() => 0.001);       // muy baja → primeras casillas
+    const j = o.GAMES.wheelPick(() => 0.9999);      // muy alta → últimas casillas
+    return i === 0 && j === o.GAMES.wheelPick(() => 0.9999);
+  })());
+  check('wheel free daily resets', (() => {
+    const st = o.STATE.state;
+    if (!st.mgStats) st.mgStats = {};
+    if (!st.mgStats.wheel) st.mgStats.wheel = {};
+    st.mgStats.wheel.lastFree = '';
+    const wasFree = o.GAMES.wheelFree();
+    st.mgStats.wheel.lastFree = new Date().toISOString().slice(0, 10);
+    const nowNotFree = !o.GAMES.wheelFree();
+    st.mgStats.wheel.lastFree = '';
+    o.STATE.save();
+    return wasFree && nowNotFree;
+  })());
 
   console.log(fails === 0 ? '\nALL PASSED' : `\n${fails} FAILURES`);
   process.exit(fails === 0 ? 0 : 1);

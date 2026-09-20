@@ -44,16 +44,28 @@
   }
 
   /**
-   * Costo para subir de nivel: cada vez más caro en duplicados y oro.
-   * Nivel 15 es el tope máximo.
+   * Costo para subir de nivel con duplicados + oro.
+   * Ahora es MÁS BARATO que antes (sobre todo en rarezas altas): subir a
+   * dioses y titanes ya no cuesta una fortuna. Nivel 30 es el tope máximo.
    */
   function upgradeCost(cardId, level) {
     var c = OU.CARD_BY_ID[cardId];
     var F = OU.RARITY_FACTOR[c.r];
     var base = (c.hp * 0.2 + c.atk + c.def * 1.2);
-    var gold = Math.max(50, Math.round(base * 1.45 * Math.pow(level, 1.25) * (F * 0.9)));
-    var dupes = Math.max(1, Math.round(level * (0.5 + F * 0.4)));
+    var gold = Math.max(40, Math.round(base * (1.6 + level * 0.5) * (0.5 + F * 0.2)));
+    var dupes = Math.max(1, Math.round(level * (0.2 + F * 0.16)));
     return { dupes: dupes, gold: gold };
+  }
+
+  /**
+   * Costo para subir 1 nivel usando SOLO oro (sin duplicados).
+   * Perfecto para dioses y titanes, cuyos duplicados son rarísimos:
+   * pagas más oro pero no dependes del azar. Un poco más caro por cada nivel.
+   */
+  function goldOnlyCost(cardId, level) {
+    var st = upgradeCost(cardId, level);
+    var mult = 2.2 + Math.min(level, 20) * 0.06;
+    return Math.max(150, Math.round(st.gold * mult));
   }
 
   /**
@@ -64,7 +76,7 @@
     var c = OU.CARD_BY_ID[cardId];
     var F = OU.RARITY_FACTOR[c.r];
     var base = (c.hp * 0.2 + c.atk + c.def * 1.2);
-    return Math.round(base * 0.5 * Math.pow(level, 1.15) * (F * 0.75));
+    return Math.round(base * 0.45 * Math.pow(level, 1.05) * (0.5 + F * 0.14));
   }
 
   function rollRarity(pack) {
@@ -100,7 +112,10 @@
 
   function rewardOf(idx) {
     var s = idx + 1;
-    return { gold: 220 + s * 120, xp: 45 + s * 22 };
+    return {
+      gold: Math.round(180 + s * 90 + s * s * 5),
+      xp: Math.round(40 + s * 20 + s * s * 2)
+    };
   }
 
   function rarityOrder(a, b) {
@@ -128,6 +143,7 @@
     powerOf: powerOf,
     abDesc: abDesc,
     upgradeCost: upgradeCost,
+    goldOnlyCost: goldOnlyCost,
     trainCost: trainCost,
     rollRarity: rollRarity,
     rollRarityCard: rollRarityCard,

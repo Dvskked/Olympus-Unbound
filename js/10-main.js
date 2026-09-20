@@ -8,7 +8,7 @@
   var OU = window.OU = window.OU || {};
   var U = OU.UTIL, I = OU.UI;
 
-  var TABS = ['home', 'training', 'team', 'collection', 'shop'];
+  var TABS = ['home', 'training', 'games', 'team', 'collection', 'index', 'shop'];
   var currentTab = 'home';
 
   function setTab(name) {
@@ -34,12 +34,18 @@
     } else if (currentTab === 'training') {
       v.innerHTML = OU.TRAIN.viewTraining();
       OU.TRAIN.bindTraining(v);
+    } else if (currentTab === 'games') {
+      v.innerHTML = OU.GAMES.viewGames();
+      OU.GAMES.bindGames(v);
     } else if (currentTab === 'team') {
       v.innerHTML = OU.TEAM.viewTeam();
       OU.TEAM.bindTeam(v);
     } else if (currentTab === 'collection') {
       v.innerHTML = OU.COLLECTION.viewCollection();
       OU.COLLECTION.bindCollection(v);
+    } else if (currentTab === 'index') {
+      v.innerHTML = OU.INDEX.viewIndex();
+      OU.INDEX.bindIndex(v);
     } else if (currentTab === 'shop') {
       v.innerHTML = OU.SHOP.viewShop();
       OU.SHOP.bindShop(v);
