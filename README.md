@@ -12,7 +12,7 @@ Forja tu legado entre mortales, héroes, dioses y titanes en un auto-battler con
 
 | Sistema | Descripción |
 |---|---|
-| 🖼️ **31 cartas con arte real** | Ilustraciones de Wikipedia para cada criatura, héroe, dios y titán (con fallback a emoji) |
+| 🖼️ **31 cartas con arte real** | Ilustraciones locales (carpeta `img/`) o de Wikipedia para cada criatura, héroe, dios y titán (con fallback a emoji) |
 | 🃏 **4 rangos de cartas** | Normales, Héroes, Dioses y Titanes con brillos y probabilidades diferenciadas |
 | 🎁 **6 sobres** | Bronce, Plata, Oro, Épico, Olimpo y Divino con animaciones de apertura y garantías por rareza |
 | 🪙 **Economía doble + pasiva** | Oro y Gemas, más un **Ágora** que genera oro pasivo por minuto (con reloj offline) |
@@ -96,7 +96,7 @@ El progreso de entrenamiento se basa en timestamps, así que **sigue avanzando a
 - **Listo para TypeScript**: configuración `tsconfig.json` + JSDoc en cada módulo. Ejecuta `npx tsc` (o `npm run check`) para validar tipos.
 - Pack de test `node tests/run-all.js` (`npm test`) valida datos, probabilidades, mecánicas y el motor de combate con DOM simulado.
 - Tipografía *Cinzel* (Google Fonts) con fallback a serif si no hay conexión.
-- Arte de las cartas desde Wikimedia/Wikipedia (se carga online; sin conexión se muestran emojis).
+- Arte de las cartas en cadena de fallbacks: primero la carpeta local `img/` (crea `img/<id>.png`, `.jpg` o `.webp`), luego Wikimedia/Wikipedia, y por último emojis.
 - Persistencia mediante `localStorage` (clave `olympus_unbound_v2`).
 
 ---
@@ -115,7 +115,7 @@ npx serve .
 # y visita http://localhost:3000
 ```
 
-> **Nota:** el arte de las cartas se obtiene de Wikipedia y la fuente *Cinzel* de Google Fonts — ambos requieren conexión a internet la primera vez. Sin conexión, el juego usa emojis y fuente serif; todo lo demás funciona 100% offline.
+> **Nota:** el arte de las cartas se busca primero en la carpeta `img/` (offline); si no existe la imagen local, se descarga de Wikipedia y la fuente *Cinzel* proviene de Google Fonts — ambos requieren conexión a internet la primera vez. Sin conexión, el juego usa emojis y fuente serif; todo lo demás funciona 100% offline.
 
 ---
 
@@ -125,7 +125,8 @@ npx serve .
 Olympus Unbound/
 ├── index.html          # Esqueleto: carga CSS + módulos JS en orden
 ├── css/
-│   └── style.css       # Tema oscuro: mármol, oro y azul olímpico
+│   └── style.css       # Tema oscuro: mármol, oro y azul olímpico (una sola fuente: Cinzel)
+├── img/                # (Opcional) arte local de cartas: img/<id>.png|jpg|webp
 ├── js/                 # Módulos (namespace global window.OU)
 │   ├── 00-img.js       # Mapa de arte real por carta (OU.IMG)
 │   ├── 01-data.js      # Constantes, cartas, sobres, fases, entrenamiento (OU.CONST/RAR/PACKS/CARDS/STAGES/TRAIN)
