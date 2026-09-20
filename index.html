@@ -773,6 +773,7 @@ function teamSlotHTML(id, i){
 function openTeamPicker(slotIdx){
   const owned = ownedList();
   const inTeam = new Set(state.team.filter(Boolean));
+  if(state.team[slotIdx]) inTeam.delete(state.team[slotIdx]);
   const rows = owned.sort((a,b)=> rarityOrder(a,b)).map(id=>{
     const c = CARD_BY_ID[id], lvl = state.cards[id].lvl, r = RAR[c.r];
     const on = inTeam.has(id);
