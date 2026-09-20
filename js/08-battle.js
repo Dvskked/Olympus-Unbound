@@ -26,7 +26,7 @@
     var cur = OU.STAGES[Math.min(stag, last)];
     var progressPct = Math.min(100, Math.round(U.xpNeed(st.lvl) === 0 ? 0 : st.xp / U.xpNeed(st.lvl) * 100));
     return '<div class="hero">' +
-      '<div class="glyph">🏛️</div>' +
+      '<img class="logo-img" src="img/logo-olympus.png" alt="Olympus Unbound" onerror="this.style.display=\'none\'">' +
       '<h1>OLYMPUS UNBOUND</h1>' +
       '<div class="tagline">Forja tu legado entre dioses y titanes</div>' +
       '<div class="hero-stats">' +

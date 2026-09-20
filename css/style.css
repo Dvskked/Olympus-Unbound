@@ -146,6 +146,12 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   text-align: center;
 }
 .hero .glyph { font-size: 44px; animation: floatY 3.4s ease-in-out infinite; filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.4)); }
+.hero .logo-img {
+  width: min(180px, 48vw); height: auto; margin: 0 auto 16px; display: block;
+  animation: floatY 3.4s ease-in-out infinite;
+  filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 26px rgba(230, 204, 125, 0.18));
+  border-radius: 14px;
+}
 @keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 .hero h1 { font-size: clamp(26px, 7vw, 36px); font-weight: 800; letter-spacing: 4px; color: var(--gold2); text-shadow: 0 0 30px rgba(230, 204, 125, 0.35); }
 .hero .tagline { color: var(--dim); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; margin-top: 6px; }
