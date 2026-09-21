@@ -37,11 +37,13 @@
   };
   var GAME_EMOJI = { oracle: '🔮', ppt: '🪨📄✂️', wheel: '🎡', dice: '🎲', mem: '🧠' };
 
-  /** Logo grande para la tarjeta del minijuego. */
+  /** Logo grande para la tarjeta del minijuego: medallón circular recortado y ampliado. */
   function gameLogo(id, name) {
-    return '<img class="gc-img" src="' + GAME_IMG[id] + '" alt="' + name + '" loading="lazy"' +
+    return '<div class="gc-thumb th-' + id + '"><div class="gc-thumb-in">' +
+      '<img class="gc-img" src="' + GAME_IMG[id] + '" alt="' + name + '" loading="lazy"' +
       ' onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">' +
-      '<span class="gc-emo" style="display:none">' + GAME_EMOJI[id] + '</span>';
+      '<span class="gc-emo" style="display:none">' + GAME_EMOJI[id] + '</span>' +
+      '</div></div>';
   }
 
   /** Logo pequeño para títulos e historial. */

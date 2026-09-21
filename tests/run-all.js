@@ -57,9 +57,9 @@ function check(name, cond, extra) {
   const CARD_BY_ID = o.CARD_BY_ID, CARDS_BY_RAR = o.CARDS_BY_RAR, RAR = o.RAR;
 
   check('cards have unique ids', new Set(CARDS.map(c => c.id)).size === CARDS.length, CARDS.length + ' cards');
-  check('102 cards in total', CARDS.length === 102, 'esperábamos 102 (==24N+24H+22G+22T+10P)');
-  check('rarity distribution', CARDS_BY_RAR.normal.length > 0 && CARDS_BY_RAR.titan.length > 0 && CARDS_BY_RAR.primordial.length === 10,
-    `n=${CARDS_BY_RAR.normal.length} h=${CARDS_BY_RAR.hero.length} g=${CARDS_BY_RAR.god.length} t=${CARDS_BY_RAR.titan.length} p=${CARDS_BY_RAR.primordial.length}`);
+  check('103 cards in total', CARDS.length === 103, 'esperábamos 103 (==24N+24H+22G+20T+12P+1C)');
+  check('rarity distribution', CARDS_BY_RAR.normal.length > 0 && CARDS_BY_RAR.titan.length > 0 && CARDS_BY_RAR.primordial.length === 12 && CARDS_BY_RAR.creator.length === 1,
+    `n=${CARDS_BY_RAR.normal.length} h=${CARDS_BY_RAR.hero.length} g=${CARDS_BY_RAR.god.length} t=${CARDS_BY_RAR.titan.length} p=${CARDS_BY_RAR.primordial.length} c=${(CARDS_BY_RAR.creator || []).length}`);
   check('all stage card ids exist', STAGES.every(s => s.roster.every(id => CARD_BY_ID[id])), STAGES.length + ' stages');
   check('30 stages defined', STAGES.length === 30, 'campaign ampliada a 30 fases');
   check('all cards have images', CARDS.every(c => o.IMG[c.id] !== undefined), 'IMG map = ' + Object.keys(o.IMG).length);

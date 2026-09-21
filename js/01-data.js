@@ -33,13 +33,15 @@
     hero:       { name: 'Héroe',      color: '#3fb6ff', glow: 'rgba(63,182,255,0.6)',       order: 1 },
     god:        { name: 'Dios',       color: '#ffd257', glow: 'rgba(255,210,87,0.6)',       order: 2 },
     titan:      { name: 'Titán',      color: '#b14dff', glow: 'rgba(177,77,255,0.7)',       order: 3 },
-    primordial: { name: 'Primordial', color: '#f2f7ff', glow: 'rgba(240,247,255,0.9)',      order: 4 }
+    primordial: { name: 'Primordial', color: '#f2f7ff', glow: 'rgba(240,247,255,0.9)',      order: 4 },
+    creator:    { name: 'Creator',    color: '#ff1a1a', glow: 'rgba(255,15,15,0.95)',       order: 5 }
   };
 
   OU.ROLES = { tanque: 'Tanque', guerrero: 'Guerrero', mago: 'Mago', soporte: 'Soporte' };
 
   // Jerarquía mitológica: cada rareza está SIEMPRE por encima de la anterior.
-  OU.RARITY_FACTOR = { normal: 1, hero: 1.5, god: 2.0, titan: 2.6, primordial: 3.2 };
+  // El Creador (creator) es exclusivo e inalcanzable: nunca aparece en sobres ni en el Bazar.
+  OU.RARITY_FACTOR = { normal: 1, hero: 1.5, god: 2.0, titan: 2.6, primordial: 3.2, creator: 4.2 };
 
   /**
    * Tecnologías del Templo del Conocimiento: mejoras globales permanentes.
@@ -197,18 +199,18 @@
     { id: 'hebe',  n: 'Hebe',        r: 'god', role: 'soporte',   ic: '🥂', hp: 580, atk: 110, def: 28, spd: 68, d: 'Diosa de la juventud, escanciadora del néctar del Olimpo.', ab: { n: 'Néctar de Juventud', t: 'heal', s: 1.8 } },
     { id: 'hipno', n: 'Hipnos',      r: 'god', role: 'mago',      ic: '🌙', hp: 520, atk: 180, def: 22, spd: 80, d: 'Dios del sueño, hermano de la muerte y aliento quieto de la noche.', ab: { n: 'Sueño Eterno', t: 'aoe', s: 0.9 } },
 
-    // ------------------------------------------------------- TITANES (22)
+    // ------------------------------------------------------- TITANES (20)
     { id: 'cro',   n: 'Cronos',      r: 'titan', role: 'mago',    ic: '⏳', hp: 760, atk: 260, def: 34, spd: 72, d: 'Rey de los titanes, hijo del cielo que devoró a sus hijos para conservar el trono.', ab: { n: 'Devorador del Tiempo', t: 'aoe', s: 1.3 } },
     { id: 'oce',   n: 'Océano',      r: 'titan', role: 'tanque',  ic: '🌊', hp: 1150, atk: 150, def: 72, spd: 44, d: 'El océano primordial que rodea el mundo, titán de las aguas infinitas.', ab: { n: 'Abismo de las Aguas', t: 'shield', s: 1 } },
     { id: 'hip',   n: 'Hiperión',    r: 'titan', role: 'guerrero', ic: '🌅', hp: 820, atk: 250, def: 44, spd: 80, d: 'Titán de la luz, padre del Sol, de la Luna y de la Aurora.', ab: { n: 'Fuego del Sol', t: 'strike', s: 3.0 } },
     { id: 'jap',   n: 'Jápeto',      r: 'titan', role: 'tanque',  ic: '⛓️', hp: 1080, atk: 140, def: 70, spd: 46, d: 'Titán de las cadenas, padre de Prometeo y de Atlas.', ab: { n: 'Cadenas Primordiales', t: 'shield', s: 1 } },
     { id: 'atl',   n: 'Atlas',       r: 'titan', role: 'tanque',  ic: '🌍', hp: 1250, atk: 170, def: 80, spd: 40, d: 'Condenado a sostener el cielo sobre sus hombros por toda la eternidad.', ab: { n: 'Sostén del Cielo', t: 'shield', s: 1 } },
     { id: 'cri',   n: 'Crío',        r: 'titan', role: 'guerrero', ic: '🦾', hp: 790, atk: 240, def: 40, spd: 84, d: 'Titán del tormentoso norte, abuelo de los vientos de la travesía.', ab: { n: 'Tormenta del Norte', t: 'aoe', s: 1.0 } },
-    { id: 'gaya',  n: 'Gea',         r: 'titan', role: 'tanque',  ic: '🌍', hp: 1400, atk: 190, def: 90, spd: 36, d: 'La Tierra madre, primera fuerza de la creación y abuela de todos los dioses.', ab: { n: 'Alma de la Tierra', t: 'shield', s: 1 } },
-    { id: 'our',   n: 'Urano',       r: 'titan', role: 'mago',    ic: '🌌', hp: 1100, atk: 270, def: 48, spd: 64, d: 'El cielo estrellado, primer soberano del universo antes de Cronos.', ab: { n: 'Bóveda Celestial', t: 'aoe', s: 1.2 } },
-    { id: 'nix',   n: 'Nix',         r: 'titan', role: 'mago',    ic: '🌑', hp: 980, atk: 280, def: 44, spd: 70, d: 'La Noche primordial, madre del sueño, de la muerte y del destino.', ab: { n: 'Noche Eterna', t: 'aoe', s: 1.35 } },
-    { id: 'ereb',  n: 'Érebo',       r: 'titan', role: 'mago',    ic: '🌒', hp: 900, atk: 240, def: 40, spd: 66, d: 'La Oscuridad primordial, del seno de la sombra surgió toda luz.', ab: { n: 'Oscuridad Primordial', t: 'aoe', s: 1.1 } },
-    { id: 'tar',   n: 'Tártaro',     r: 'titan', role: 'mago',    ic: '🕳️', hp: 1040, atk: 260, def: 46, spd: 60, d: 'El abismo sin fondo, prisión eterna de titanes y monstruos.', ab: { n: 'Abismo sin Fondo', t: 'aoe', s: 1.25 } },
+    { id: 'gaya',  n: 'Gea',         r: 'primordial', role: 'tanque',  ic: '🌍', hp: 1400, atk: 190, def: 90, spd: 36, d: 'La Tierra madre, primera fuerza de la creación y abuela de todos los dioses.', ab: { n: 'Alma de la Tierra', t: 'shield', s: 1 } },
+    { id: 'our',   n: 'Urano',       r: 'primordial', role: 'mago',    ic: '🌌', hp: 1100, atk: 270, def: 48, spd: 64, d: 'El cielo estrellado, primer soberano del universo antes de Cronos.', ab: { n: 'Bóveda Celestial', t: 'aoe', s: 1.2 } },
+    { id: 'nix',   n: 'Nix',         r: 'primordial', role: 'mago',    ic: '🌑', hp: 980, atk: 280, def: 44, spd: 70, d: 'La Noche primordial, madre del sueño, de la muerte y del destino.', ab: { n: 'Noche Eterna', t: 'aoe', s: 1.35 } },
+    { id: 'ereb',  n: 'Érebo',       r: 'primordial', role: 'mago',    ic: '🌒', hp: 900, atk: 240, def: 40, spd: 66, d: 'La Oscuridad primordial, del seno de la sombra surgió toda luz.', ab: { n: 'Oscuridad Primordial', t: 'aoe', s: 1.1 } },
+    { id: 'tar',   n: 'Tártaro',     r: 'primordial', role: 'mago',    ic: '🕳️', hp: 1040, atk: 260, def: 46, spd: 60, d: 'El abismo sin fondo, prisión eterna de titanes y monstruos.', ab: { n: 'Abismo sin Fondo', t: 'aoe', s: 1.25 } },
     { id: 'teth',  n: 'Tetis',       r: 'titan', role: 'soporte', ic: '🌊', hp: 880, atk: 170, def: 38, spd: 58, d: 'Titánide de las corrientes, nodriza de las aguas del mundo.', ab: { n: 'Corrientes del Mar', t: 'heal', s: 2.0 } },
     { id: 'thes',  n: 'Temis',       r: 'titan', role: 'soporte', ic: '⚖️', hp: 840, atk: 160, def: 36, spd: 54, d: 'Titánide de la justicia y el orden divino, balanza del destino.', ab: { n: 'Balanza del Destino', t: 'buff', s: 1.2 } },
     { id: 'mnem',  n: 'Mnemósine',   r: 'titan', role: 'soporte', ic: '📜', hp: 820, atk: 150, def: 34, spd: 52, d: 'Titánide de la memoria, madre de las nueve musas.', ab: { n: 'Memoria Ancestral', t: 'heal', s: 1.8 } },
@@ -219,19 +221,25 @@
     { id: 'astra', n: 'Astreo',      r: 'titan', role: 'guerrero', ic: '🌟', hp: 900, atk: 275, def: 46, spd: 86, d: 'Titán de los astros y las constelaciones, padre de los vientos.', ab: { n: 'Estrella del Alba', t: 'strike', s: 3.1 } },
     { id: 'pers',  n: 'Perses',      r: 'titan', role: 'guerrero', ic: '💫', hp: 850, atk: 265, def: 44, spd: 82, d: 'Titán de la destrucción y la violencia estelar.', ab: { n: 'Violencia Estelar', t: 'strike', s: 3.0 } },
     { id: 'dion2', n: 'Dione',       r: 'titan', role: 'soporte', ic: '🌺', hp: 1000, atk: 170, def: 40, spd: 50, d: 'Titánide del oráculo de Dodona, mar divina y madre de Afrodita.', ab: { n: 'Oráculo de Dodona', t: 'heal', s: 2.1 } },
-    { id: 'ponto', n: 'Ponto',       r: 'titan', role: 'tanque',  ic: '🌊', hp: 1300, atk: 160, def: 78, spd: 42, d: 'El mar primordial, padre de todas las profundidades marinas.', ab: { n: 'Profundidades Marinas', t: 'shield', s: 1 } },
+    { id: 'ponto', n: 'Ponto',       r: 'primordial', role: 'tanque',  ic: '🌊', hp: 1300, atk: 160, def: 78, spd: 42, d: 'El mar primordial, padre de todas las profundidades marinas.', ab: { n: 'Profundidades Marinas', t: 'shield', s: 1 } },
 
-    // ------------------------------------------------------- PRIMORDIALES (10)
+    // ------------------------------------------------------- PRIMORDIALES (12)
     { id: 'chaos', n: 'Caos',        r: 'primordial', role: 'mago',     ic: '🌌', hp: 1750, atk: 330, def: 58, spd: 70, d: 'El vacío primigenio, principio de todo lo que existe y existirá.', ab: { n: 'Vacío Absoluto', t: 'aoe', s: 1.5 } },
     { id: 'eter',  n: 'Éter',        r: 'primordial', role: 'mago',     ic: '✨', hp: 1600, atk: 320, def: 56, spd: 84, d: 'La luz de arriba, el cielo superior donde respiran los inmortales.', ab: { n: 'Luz Primordial', t: 'aoe', s: 1.4 } },
     { id: 'hemer', n: 'Hemera',      r: 'primordial', role: 'soporte',  ic: '🌅', hp: 1400, atk: 200, def: 48, spd: 78, d: 'El Día encarnado, hija de la Noche y de la Oscuridad, luz que todo lo ve.', ab: { n: 'Alba Eterna', t: 'heal', s: 2.3 } },
     { id: 'eros',  n: 'Eros',        r: 'primordial', role: 'guerrero', ic: '❤️', hp: 1500, atk: 305, def: 50, spd: 92, d: 'El Amor primordial, fuerza creadora que unió a la primera pareja.', ab: { n: 'Flecha Cósmica', t: 'strike', s: 3.4 } },
     { id: 'anank', n: 'Ananké',      r: 'primordial', role: 'mago',     ic: '⛓️', hp: 1700, atk: 295, def: 54, spd: 62, d: 'La Necesidad inevitable, ciclo eterno al que hasta los dioses obedecen.', ab: { n: 'Inevitable Necesidad', t: 'aoe', s: 1.35 } },
-    { id: 'tifon', n: 'Tifón',       r: 'primordial', role: 'guerrero', ic: '🌪️', hp: 1900, atk: 325, def: 70, spd: 74, d: 'El monstruo de las tormentas, hijo de Gea y Tártaro, terror de los dioses.', ab: { n: 'Tormenta del Juicio', t: 'aoe', s: 1.3 } },
-    { id: 'ofion', n: 'Ofión',       r: 'primordial', role: 'tanque',   ic: '🐍', hp: 2050, atk: 240, def: 84, spd: 48, d: 'La serpiente primordial que gobernó el Olimpo antes que los titanes.', ab: { n: 'Anillos del Olimpo', t: 'shield', s: 1 } },
-    { id: 'eurin', n: 'Eurínome',    r: 'primordial', role: 'soporte',  ic: '🎭', hp: 1550, atk: 210, def: 50, spd: 72, d: 'La creadora del cosmos danzante, madre del viento del norte.', ab: { n: 'Danza del Destino', t: 'buff', s: 1.3 } },
+    { id: 'tifon', n: 'Tifón',       r: 'titan', role: 'guerrero', ic: '🌪️', hp: 1900, atk: 325, def: 70, spd: 74, d: 'El monstruo de las tormentas, hijo de Gea y Tártaro, terror de los dioses.', ab: { n: 'Tormenta del Juicio', t: 'aoe', s: 1.3 } },
+    { id: 'ofion', n: 'Ofión',       r: 'titan', role: 'tanque',   ic: '🐍', hp: 2050, atk: 240, def: 84, spd: 48, d: 'La serpiente primordial que gobernó el Olimpo antes que los titanes.', ab: { n: 'Anillos del Olimpo', t: 'shield', s: 1 } },
+    { id: 'eurin', n: 'Eurínome',    r: 'titan', role: 'soporte',  ic: '🎭', hp: 1550, atk: 210, def: 50, spd: 72, d: 'La creadora del cosmos danzante, madre del viento del norte.', ab: { n: 'Danza del Destino', t: 'buff', s: 1.3 } },
     { id: 'fanes', n: 'Fanes',       r: 'primordial', role: 'mago',     ic: '🥚', hp: 1580, atk: 340, def: 52, spd: 88, d: 'El primero en emerger del huevo cósmico, dios de la luz naciente.', ab: { n: 'Huevo Cósmico', t: 'aoe', s: 1.45 } },
-    { id: 'ekidna',n: 'Équidna',     r: 'primordial', role: 'guerrero', ic: '🐲', hp: 1800, atk: 300, def: 62, spd: 76, d: 'Madre de todos los monstruos, medio mujer y serpiente.', ab: { n: 'Madre de Monstruos', t: 'aoe', s: 1.2 } }
+    { id: 'ekidna',n: 'Équidna',     r: 'titan', role: 'guerrero', ic: '🐲', hp: 1800, atk: 300, def: 62, spd: 76, d: 'Madre de todos los monstruos, medio mujer y serpiente.', ab: { n: 'Madre de Monstruos', t: 'aoe', s: 1.2 } },
+
+    /* ---- CREADOR (1) · EXCLUSIVO. Andrés, el desarrollador supremo. ---- */
+    // `locked: true` · imposible de soltar por sobres o Bazar: ninguna
+    // mecánica normal llega a la rareza `creator` (los sobres solo usan
+    // probabilidades para normal/hero/god/titan/primordial).
+    { id: 'andre', n: 'Andrés',     r: 'creator', role: 'mago',     ic: '⚡', hp: 2600, atk: 520, def: 130, spd: 120, locked: true, d: 'El Arquitecto que escribió el código del Olimpo. Vive por encima de toda probabilidad: ningún sobre, Bazar ni ritual puede contener su esencia.', ab: { n: 'Diseño Absoluto', t: 'aoe', s: 2.6 } }
   ];
 
   /* ----------------------------------------------------------------------
@@ -247,7 +255,8 @@
     hero:       { lo: 330, hi: 435 },
     god:        { lo: 490, hi: 625 },
     titan:      { lo: 690, hi: 850 },
-    primordial: { lo: 940, hi: 1120 }
+    primordial: { lo: 940, hi: 1120 },
+    creator:    { lo: 1500, hi: 1900 }
   };
 
   (function normalizeStats() {

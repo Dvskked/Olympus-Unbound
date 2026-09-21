@@ -9,6 +9,29 @@
   var U = OU.UTIL, I = OU.UI;
 
   var collFilter = 'all';
+  var collRole = 'all';
+  var collSort = 'rare';
+
+  var COLL_RAR_OPTS = [
+    ['all', 'Todas'],
+    ['normal', 'Normales'],
+    ['hero', 'Héroes'],
+    ['god', 'Dioses'],
+    ['titan', 'Titanes'],
+    ['primordial', 'Primordiales'],
+    ['creator', 'Creadores']
+  ];
+  var COLL_ROLE_OPTS = [
+    ['all', '🌌 Todo'],
+    ['tanque', '🛡️ Tanques'],
+    ['guerrero', '⚔️ Guerreros'],
+    ['mago', '🔮 Magos'],
+    ['soporte', '✨ Soportes']
+  ];
+  var COLL_SORT_OPTS = [
+    ['rare', '🎴 Por rareza'],
+    ['power', '⚡ Mejores']
+  ];
 
   function viewCollection() {
     var st = OU.STATE.state;
@@ -16,16 +39,37 @@
     if (!cards.length) {
       return '<div class="empty-msg">📜 Tu colección está vacía.<br><br><button class="btn btn-gold" onclick="OU.MAIN.setTab(\'shop\')">Abrir tu primer sobre</button></div>';
     }
-    var filters = [['all', 'Todas'], ['normal', 'Normales'], ['hero', 'Héroes'], ['god', 'Dioses'], ['titan', 'Titanes'], ['primordial', 'Primordiales']];
-    var fbar = '<div class="filter-bar">' + filters.map(function (f) {
-      return '<button class="fbtn ' + (collFilter === f[0] ? 'active' : '') + '" data-f="' + f[0] + '">' + f[1] + '</button>';
-    }).join('') + '</div>';
-    var grid = cards
+    var fbar =
+      '<div class="coll-toolbar">' +
+      '<div class="fb-label">Rareza</div>' +
+      '<div class="filter-bar">' + COLL_RAR_OPTS.map(function (f) {
+        return '<button class="fbtn ' + (collFilter === f[0] ? 'active' : '') + '" data-f="' + f[0] + '">' + f[1] + '</button>';
+      }).join('') + '</div>' +
+      '<div class="fb-label">Rol</div>' +
+      '<div class="filter-bar">' + COLL_ROLE_OPTS.map(function (f) {
+        return '<button class="fbtn ' + (collRole === f[0] ? 'active' : '') + '" data-r="' + f[0] + '">' + f[1] + '</button>';
+      }).join('') + '</div>' +
+      '<div class="fb-label">Orden</div>' +
+      '<div class="filter-bar sort-bar">' + COLL_SORT_OPTS.map(function (f) {
+        return '<button class="fbtn ' + (collSort === f[0] ? 'active' : '') + '" data-s="' + f[0] + '">' + f[1] + '</button>';
+      }).join('') + '</div>' +
+      '</div>';
+    var list = cards
       .map(function (id) { return [id, OU.CARD_BY_ID[id]]; })
-      .sort(function (a, b) { return U.rarityOrder(a[0], b[0]); })
-      .filter(function (ab) { return collFilter === 'all' || ab[1].r === collFilter; })
-      .map(function (ab) { return collectionCardHTML(ab[0], ab[1]); })
-      .join('');
+      .filter(function (ab) {
+        if (collFilter !== 'all' && ab[1].r !== collFilter) return false;
+        if (collRole !== 'all' && ab[1].role !== collRole) return false;
+        return true;
+      })
+      .sort(function (a, b) {
+        if (collSort === 'power') {
+          var pa = U.powerOf(a[0], st.cards[a[0]].lvl);
+          var pb = U.powerOf(b[0], st.cards[b[0]].lvl);
+          return (pb - pa) || U.rarityOrder(a[0], b[0]);
+        }
+        return U.rarityOrder(a[0], b[0]);
+      });
+    var grid = list.map(function (ab) { return collectionCardHTML(ab[0], ab[1]); }).join('');
     return fbar + (grid ? '<div class="ccard-grid">' + grid + '</div>' : '<div class="empty-msg">Sin cartas en esta categoría.</div>');
   }
 
@@ -141,6 +185,22 @@ I.openModal(
         U.$$('[data-f]', root).forEach(function (x) { x.classList.remove('active'); });
         b.classList.add('active');
         collFilter = b.dataset.f;
+        OU.MAIN.render();
+      });
+    });
+    U.$$('[data-r]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        U.$$('[data-r]', root).forEach(function (x) { x.classList.remove('active'); });
+        b.classList.add('active');
+        collRole = b.dataset.r;
+        OU.MAIN.render();
+      });
+    });
+    U.$$('[data-s]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        U.$$('[data-s]', root).forEach(function (x) { x.classList.remove('active'); });
+        b.classList.add('active');
+        collSort = b.dataset.s;
         OU.MAIN.render();
       });
     });

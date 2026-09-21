@@ -190,10 +190,12 @@
       Object.keys(p.cap).forEach(function (r) { counts[r] = 0; });
       for (var j = 0; j < arr.length; j++) {
         var r = OU.CARD_BY_ID[arr[j]].r;
-        if (p.cap[r] !== undefined) {
-          if (counts[r] >= p.cap[r]) arr[j] = cappedReplacement(p, r, counts);
-          else counts[r]++;
+        var guard = 0;
+        while (p.cap[r] !== undefined && counts[r] >= p.cap[r] && guard++ < 8) {
+          arr[j] = cappedReplacement(p, r, counts);
+          r = OU.CARD_BY_ID[arr[j]].r;
         }
+        if (p.cap[r] !== undefined) counts[r]++;
       }
     }
     if (p.guarantee > 0 && !arr.some(function (id) {

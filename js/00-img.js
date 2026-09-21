@@ -1,6 +1,7 @@
 // Arte de las cartas: se usan SOLO las imagenes locales de la carpeta /img
 // (creadas a mano), sin referencias externas. Si no hay imagen, se muestra emoji.
-// Nombres de archivo locales: img/<id>.png (tambien acepta .jpg o .webp).
+// Organización de carpetas: img/personajes/<rareza>/<id>.png, img/minijuegos/,
+// img/sobres/, img/extras/.
 (function () {
   "use strict";
   var OU = window.OU = window.OU || {};
@@ -97,15 +98,16 @@
     "eris": ["img/eris.png", "img/eris.jpg", "img/eris.webp"],
     "hebe": ["img/hebe.png", "img/hebe.jpg", "img/hebe.webp"],
     "hipno": ["img/hipno.png", "img/hipno.jpg", "img/hipno.webp"],
-    "chaos": ["img/primordiales/caos.png", "img/chaos.png", "img/chaos.jpg", "img/chaos.webp"],
-    "eter": ["img/primordiales/eter.png", "img/eter.png", "img/eter.jpg", "img/eter.webp"],
-    "hemer": ["img/primordiales/hemera.png", "img/hemer.png", "img/hemer.jpg", "img/hemer.webp"],
-    "eros": ["img/primordiales/eros.png", "img/eros.png", "img/eros.jpg", "img/eros.webp"],
-    "anank": ["img/primordiales/ananke.png", "img/anank.png", "img/anank.jpg", "img/anank.webp"],
-    "tifon": ["img/primordiales/tifon.png", "img/tifon.png", "img/tifon.jpg", "img/tifon.webp"],
-    "ofion": ["img/primordiales/ofion.png", "img/ofion.png", "img/ofion.jpg", "img/ofion.webp"],
-    "eurin": ["img/primordiales/eurinome.png", "img/eurin.png", "img/eurin.jpg", "img/eurin.webp"],
-    "fanes": ["img/primordiales/fanes.png", "img/fanes.png", "img/fanes.jpg", "img/fanes.webp"],
-    "ekidna": ["img/primordiales/equidna.png", "img/ekidna.png", "img/ekidna.jpg", "img/ekidna.webp"]
+    "chaos": ["img/personajes/primordiales/caos.png", "img/chaos.png", "img/chaos.jpg", "img/chaos.webp"],
+    "eter": ["img/personajes/primordiales/eter.png", "img/eter.png", "img/eter.jpg", "img/eter.webp"],
+    "hemer": ["img/personajes/primordiales/hemera.png", "img/hemer.png", "img/hemer.jpg", "img/hemer.webp"],
+    "eros": ["img/personajes/primordiales/eros.png", "img/eros.png", "img/eros.jpg", "img/eros.webp"],
+    "anank": ["img/personajes/primordiales/ananke.png", "img/anank.png", "img/anank.jpg", "img/anank.webp"],
+    "tifon": ["img/personajes/primordiales/tifon.png", "img/tifon.png", "img/tifon.jpg", "img/tifon.webp"],
+    "ofion": ["img/personajes/primordiales/ofion.png", "img/ofion.png", "img/ofion.jpg", "img/ofion.webp"],
+    "eurin": ["img/personajes/primordiales/eurinome.png", "img/eurin.png", "img/eurin.jpg", "img/eurin.webp"],
+    "fanes": ["img/personajes/primordiales/fanes.png", "img/fanes.png", "img/fanes.jpg", "img/fanes.webp"],
+    "ekidna": ["img/personajes/primordiales/equidna.png", "img/ekidna.png", "img/ekidna.jpg", "img/ekidna.webp"],
+    "andre": ["img/personajes/creador/creador.png", "img/andre.png", "img/creator.png", "img/andres.png"]
   };
 })();

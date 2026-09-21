@@ -26,7 +26,9 @@
     var cur = OU.STAGES[Math.min(stag, last)];
     var progressPct = Math.min(100, Math.round(U.xpNeed(st.lvl) === 0 ? 0 : st.xp / U.xpNeed(st.lvl) * 100));
     return '<div class="hero">' +
-      '<img class="logo-img" src="img/logo-olympus.png" alt="Olympus Unbound" onerror="this.style.display=\'none\'">' +
+      '<div class="logo-wrap">' +
+      '<img class="logo-img" src="img/extras/logo/logo-olympus.png" alt="Olympus Unbound" onerror="this.style.display=\'none\'">' +
+      '</div>' +
       '<h1>OLYMPUS UNBOUND</h1>' +
       '<div class="tagline">Forja tu legado entre dioses y titanes</div>' +
       '<div class="hero-stats">' +
@@ -37,6 +39,7 @@
       '<div class="hstat"><div class="v">' + (done ? OU.STAGES.length : stag + 1) + '<span style="font-size:11px;color:var(--dim)">/' + OU.STAGES.length + '</span></div><div class="l">Campaña</div></div>' +
       '</div>' +
       '<button class="btn btn-gold big-cta" data-play="' + Math.min(stag, last) + '">' + (done ? '⚔️ Volver a desafiar jefes' : '⚔️ Continuar campaña') + '</button>' +
+      '<button class="btn-dev btn-block" data-unlock-creator>👑 Desbloquear Creador</button>' +
       '</div>' +
       OU.TRAIN.incomeBannerHTML() +
       '<div class="sec-title">' + (done ? 'Todas las fases completadas' : 'Próxima batalla') + '</div>' +
@@ -419,6 +422,19 @@
     viewHome: viewHome,
     bindHome: function (root) {
       U.$$('[data-play]', root).forEach((e) => e.addEventListener('click', () => startBattle(parseInt(e.dataset.play, 10))));
+      // TEMPORAL: botón de desarrollo para desbloquear al Creador (Andrés).
+      U.$$('[data-unlock-creator]', root).forEach(function (b) {
+        b.addEventListener('click', function () {
+          var st = OU.STATE.state;
+          if (!st.cards.andre) st.cards.andre = { lvl: 1, dup: 0, xp: 0 };
+          else st.cards.andre.dup++;
+          st.seen.andre = true;
+          OU.STATE.save();
+          I.updateTopRes();
+          OU.MAIN.render();
+          I.toast('👑 Andrés, el Creador, ha sido desbloqueado ⚡');
+        });
+      });
     },
     startBattle: startBattle,
     get running() { return battleRunning; },

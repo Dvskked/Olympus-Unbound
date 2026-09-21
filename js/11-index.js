@@ -42,7 +42,7 @@
       if (c) countByRar[c.r] = (countByRar[c.r] || 0) + 1;
     });
 
-    var rarFilters = [['all', 'Todas'], ['normal', 'Normales'], ['hero', 'Héroes'], ['god', 'Dioses'], ['titan', 'Titanes'], ['primordial', 'Primordiales']];
+    var rarFilters = [['all', 'Todas'], ['normal', 'Normales'], ['hero', 'Héroes'], ['god', 'Dioses'], ['titan', 'Titanes'], ['primordial', 'Primordiales'], ['creator', 'Creadores']];
     var stateFilters = [['all', 'Todas'], ['unlocked', 'Desbloqueadas'], ['locked', 'No desbloqueadas']];
 
     var fbar = '<div class="filter-bar">' + rarFilters.map(function (f) {
