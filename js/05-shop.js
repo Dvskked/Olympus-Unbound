@@ -269,7 +269,7 @@
         return '<div class="o-row"><span class="o-l">' + l + '</span><span class="o-v" style="color:' + col + '">' + v + '</span></div>';
       }).join('');
       return '<div class="pack-card ' + p.cls + '" data-pack="' + k + '">' +
-        '<img class="pc-img" src="' + PACK_IMG[k] + '" alt="' + p.name + '" loading="lazy">' +
+        '<img class="pc-img" src="' + PACK_IMG[p.cls] + '" alt="' + p.name + '" loading="lazy">' +
         '<div class="pc-name ' + p.cls + '">' + p.name + '</div>' +
         '<div class="pc-cost">' + costs.join(' <span class="or">ó</span> ') + '</div>' +
         '<div class="pc-desc">' + p.desc + ' · ' + p.count + ' cartas.</div>' +
@@ -342,7 +342,7 @@
     }).join('');
     I.openModal(
       '<div class="pack-buy">' +
-      '<img class="pack-buy-img" src="' + PACK_IMG[packKey] + '" alt="' + p.name + '" loading="lazy">' +
+      '<img class="pack-buy-img" src="' + PACK_IMG[p.cls] + '" alt="' + p.name + '" loading="lazy">' +
       '<div class="pack-buy-name ' + p.cls + '">' + p.name + '</div>' +
       '<div class="pack-buy-desc">' + p.desc + '</div>' +
       '<div class="pack-buy-cost">' + costs.join(' <span class="or">ó</span> ') + ' por sobre</div>' +
@@ -439,6 +439,13 @@
     return OU.STATE.state.cards[id] && OU.STATE.state.cards[id].dup === 0;
   }
 
+  /* Efectos especiales de revelado según la rareza de la carta. */
+  var RAR_FX = {
+    god: { cls: 'fx-god', badge: 'b-god', label: '¡UN DIOS HA LLEGADO!' },
+    titan: { cls: 'fx-titan', badge: 'b-titan', label: '¡TITÁN DESATADO!' },
+    primordial: { cls: 'fx-primordial', badge: 'b-primordial', label: '¡PRIMORDIAL CÓSMICO!' }
+  };
+
   function bigCardHTML(pid) {
     var c = OU.CARD_BY_ID[pid], r = OU.RAR[c.r];
     return '<div class="rv-big" style="--glow:' + r.glow + ';border-color:' + r.color + '">' +
@@ -469,6 +476,7 @@
       '<img class="pb-img" src="' + PACK_IMG[cls] + '" alt="' + p.name + '">' +
       '</div>' +
       '<div class="pack-msg" id="packMsg">Toca el sobre para abrirlo</div>' +
+      '<div class="rarity-banner" id="rarBanner"></div>' +
       '<div class="reveal-big" id="revealBig"></div>' +
       '<div class="reveal-count" id="revealCount"></div>' +
       '<div class="reveal-grid" id="revealGrid"></div>' +
@@ -476,7 +484,7 @@
       '</div>', false);
 
     var box = U.$('#packBox'), msg = U.$('#packMsg'), big = U.$('#revealBig');
-    var grid = U.$('#revealGrid'), count = U.$('#revealCount');
+    var grid = U.$('#revealGrid'), count = U.$('#revealCount'), banner = U.$('#rarBanner');
 
     for (var n = 0; n < opens.length; n++) {
       var pulls = opens[n];
@@ -501,14 +509,23 @@
 
       for (var i = 0; i < pulls.length; i++) {
         var pid = pulls[i];
+        var fx = RAR_FX[OU.CARD_BY_ID[pid].r];
+        big.className = 'reveal-big' + (fx ? ' ' + fx.cls : '');
         big.innerHTML = bigCardHTML(pid);
+        if (fx) {
+          banner.textContent = fx.label;
+          banner.className = 'rarity-banner show ' + fx.badge;
+        } else {
+          banner.className = 'rarity-banner';
+        }
         big.classList.remove('show'); void big.offsetWidth; big.classList.add('show');
         count.textContent = 'Carta ' + (i + 1) + ' de ' + pulls.length;
         playPop();
-        await U.sleep(950);
+        await U.sleep(1150);
         grid.insertAdjacentHTML('beforeend', rvMiniHTML(pid));
         playPop();
         big.classList.remove('show');
+        banner.className = 'rarity-banner';
         await U.sleep(250);
       }
       big.innerHTML = '';
