@@ -40,6 +40,27 @@
       '</div>';
   }
 
+  /** Renderiza el "Mi Equipo" del centro de la ciudad: hasta 5 cartas con su aura. */
+  function teamHubHTML() {
+    var st = OU.STATE.state;
+    var out = [];
+    for (var i = 0; i < OU.CONST.MAX_TEAM; i++) {
+      var id = st.team[i];
+      if (!id || !st.cards[id]) {
+        out.push('<button class="hub-hero empty" data-gotab="team">' +
+          '<span class="hu-ring"></span><span class="hu-plus">+</span>' +
+          '<span class="hu-name">Ranura ' + (i + 1) + '</span></button>');
+        continue;
+      }
+      var c = OU.CARD_BY_ID[id], lvl = st.cards[id].lvl, r = OU.RAR[c.r];
+      out.push('<button class="hub-hero _rar-' + c.r + '" data-hero="' + id + '" title="' + c.n + ' · ' + r.name + '">' +
+        '<span class="hu-lvl">NV ' + lvl + '</span>' +
+        '<span class="hu-disc">' + I.artHTML(id, 'hub-art') + '</span>' +
+        '<span class="hu-name" style="color:' + r.color + '">' + c.n + '</span></button>');
+    }
+    return out.join('');
+  }
+
   function openTeamPicker(slotIdx) {
     var st = OU.STATE.state;
     var owned = OU.STATE.ownedList();
@@ -111,6 +132,7 @@
   OU.TEAM = {
     viewTeam: viewTeam,
     bindTeam: bindTeam,
+    teamHubHTML: teamHubHTML,
     openTeamPicker: openTeamPicker,
     equipBest: equipBest
   };

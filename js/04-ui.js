@@ -47,11 +47,28 @@
     return '<span class="rar-badge" style="color:' + r.color + ';border-color:' + r.color + '">' + r.name.toUpperCase() + '</span>';
   }
 
+  /** Estado de la racha diaria para el HUD: cuántas gemas están por reclamar hoy. */
+  function dailyInfo() {
+    var st = OU.STATE.state;
+    var d = st.daily = st.daily || { last: '', streak: 0 };
+    var today = OU.STATE.todayStr(0), yesterday = OU.STATE.todayStr(1);
+    var claimed = d.last === today;
+    var streak = claimed ? d.streak : (d.last === yesterday ? d.streak + 1 : 1);
+    var reward = Math.min(OU.CONST.DAILY_GEMS_BASE + streak, OU.CONST.DAILY_GEMS_CAP);
+    var nextReward = Math.min(OU.CONST.DAILY_GEMS_BASE + (claimed ? d.streak + 1 : streak + 1), OU.CONST.DAILY_GEMS_CAP);
+    return { claimed: claimed, streak: streak, reward: reward, nextReward: nextReward };
+  }
+
   function updateTopRes() {
     var st = OU.STATE.state;
     var g = U.$('#goldTxt'), gm = U.$('#gemsTxt');
+    var di = dailyInfo();
     if (g) g.textContent = U.fmt(st.gold);
     if (gm) gm.textContent = U.fmt(st.gems);
+    var stTxt = U.$('#streakTxt'), stIc = U.$('#streakIc'), chip = U.$('.streak-chip');
+    if (stIc) stIc.textContent = di.claimed ? '🔥' : '🎁';
+    if (stTxt) stTxt.textContent = di.claimed ? di.streak : di.reward;
+    if (chip) chip.classList.toggle('claimed', di.claimed);
   }
 
   var toastTimer = null;
@@ -89,6 +106,7 @@
   OU.UI = {
     artHTML: artHTML,
     rarityHTML: rarityHTML,
+    dailyInfo: dailyInfo,
     updateTopRes: updateTopRes,
     toast: toast,
     openModal: openModal,
