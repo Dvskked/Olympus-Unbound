@@ -2021,3 +2021,60 @@ body {
   #tabs .tab .t-ic { font-size: 17px; }
   .home-foot { width: calc(100% - 16px); }
 }
+
+/* ==========================================================================
+   ICONOS REDONDOS (campaña · mercadeo · índice) + legibilidad de acentos
+   sobre superficies claras.
+   ========================================================================== */
+
+/* Iconos de las tarjetas del inicio: círculo, sin borde, flote suave */
+.hc-ic { animation: none; filter: none; display: inline-flex; align-items: center; justify-content: center; }
+.hc-img {
+  width: clamp(56px, 7vw, 64px); height: clamp(56px, 7vw, 64px);
+  border-radius: 50%; object-fit: cover; display: block; border: none;
+  box-shadow: 0 10px 22px rgba(60, 72, 100, 0.3), 0 0 16px rgba(90, 105, 140, 0.16);
+  animation: iconFloat 3.6s ease-in-out infinite;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.home-camp .hc-img { animation-delay: 0.4s; }
+.home-card:hover .hc-img { transform: translateY(-4px) scale(1.04); box-shadow: 0 16px 30px rgba(60, 72, 100, 0.38), 0 0 24px rgba(217, 154, 43, 0.4); }
+@keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* Libro del índice: círculo limpio y flotación sutil */
+.idx-book {
+  width: clamp(54px, 9vw, 66px); aspect-ratio: 1;
+  border-radius: 50%; background: none; border: none; box-shadow: none; padding: 0;
+}
+.idx-img {
+  width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: none;
+  box-shadow: 0 10px 22px rgba(60, 72, 100, 0.3), 0 0 18px rgba(143, 79, 196, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.home-idx:hover .idx-img { transform: translateY(-4px) rotate(-2deg); box-shadow: 0 16px 30px rgba(60, 72, 100, 0.38), 0 0 26px rgba(143, 79, 196, 0.5); }
+@keyframes bookFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+/* Logo del juego: oro salvaje sobre topbar clara */
+.logo {
+  background: linear-gradient(120deg, #8a6110, #c8891a 45%, #b64e14 72%, #2b6fb3 135%);
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.9));
+}
+.logo:hover { filter: drop-shadow(0 0 18px rgba(200, 137, 26, 0.45)); }
+
+/* Acentos claros que eran ilegibles sobre paneles claros */
+.diff-0 { color: #2e8a3e; } .diff-1 { color: #a06d00; } .diff-2 { color: #b64e14; }
+.diff-3 { color: #cf2f2f; } .diff-4 { color: #b12bd6; }
+.ccard .c-hp { color: #d84b3b; } .ccard .c-atk { color: #c8891a; } .ccard .c-def { color: #2b83c9; }
+.stat-box.hp .va { color: #d84b3b; } .stat-box.atk .va { color: #c8891a; }
+.stat-box.def .va { color: #2b83c9; } .stat-box.spd .va { color: #2e8a3e; }
+.abil-box .ab-desc { color: #40506b; }
+.pack-msg { color: #4a5568; }
+.pc-name.silver { color: #6a7588; }
+.pack-buy-name.silver { color: #6a7588; }
+.btoken.enemy .bt-name { color: #c8452f; }
+.bt-label.en-l { color: #d84b3b; }
+.fnum.heal { color: #2e9e4b; } .fnum.shield { color: #2b83c9; } .fnum.buff { color: #b07813; }
+.fnum.crit { color: #a06d00; }
+.fnum.player-dmg { color: #cf4a3a; } .fnum.enemy-dmg { color: #c25a2a; }
+.result-title.lose { color: #cf2f2f; }
+.tale-box { color: #40506b; }
+.ub-cost .chip.bad { color: #c92f22; }
