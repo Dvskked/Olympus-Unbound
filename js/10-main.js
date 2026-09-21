@@ -236,17 +236,17 @@
       '<div class="hub-squad">' + OU.TEAM.teamHubHTML() + '</div>' +
       '</section>' +
       '<button class="home-cell home-card home-merk" data-go="shop" title="Abrir el Mercadeo">' +
-      '<span class="hc-ic">🛍️</span>' +
+      '<span class="hc-ic"><img class="hc-img" src="img/extras/icons/mercadeo.png" alt="Mercadeo"></span>' +
       '<span class="hc-t">Mercadeo</span>' +
       '<span class="hc-d">Sobres · ofertas · El Creador</span>' +
       '</button>' +
       '<button class="home-cell home-card home-camp" data-go="campaign" title="Ir a la Campaña">' +
-      '<span class="hc-ic">⚔️</span>' +
+      '<span class="hc-ic"><img class="hc-img" src="img/extras/icons/campaña.png" alt="Campaña"></span>' +
       '<span class="hc-t">Campaña</span>' +
       '<span class="hc-d">Fase ' + (stag + 1) + ' · ' + OU.STAGES[stag].n + '</span>' +
       '</button>' +
       '<button class="home-cell home-idx" data-go="index" title="Índice de Leyendas">' +
-      '<span class="idx-book">📖</span>' +
+      '<span class="idx-book"><img class="idx-img" src="img/extras/icons/indnice.png" alt="Índice"></span>' +
       '<span class="idx-lb">Índice</span>' +
       '</button>' +
       '</div>' +
