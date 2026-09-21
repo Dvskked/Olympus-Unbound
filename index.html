@@ -21,26 +21,23 @@
 </div>
 <div id="app">
   <header id="topbar">
-    <div class="logo-block">
-      <div class="logo">OLYMPUS UNBOUND</div>
-      <div class="logo-sub">M i t o l o g í a · G r i e g a</div>
-    </div>
+    <button class="user-hud" id="userHud" title="Tu perfil · tocar para editar">
+      <span class="uh-avatar" id="uhAvatar">👤</span>
+      <span class="uh-name" id="uhName">Héroe</span>
+    </button>
     <div id="resRow">
-      <div class="chip gold-chip" title="Tocar para abrir tienda"><span class="ic">🪙</span><span id="goldTxt">0</span></div>
-      <div class="chip gem-chip" title="Tocar para abrir tienda"><span class="ic">💎</span><span id="gemsTxt">0</span></div>
+      <div class="chip gold-chip" data-goto="shop" title="🪙 Oro · tocar para abrir el Mercadeo"><span class="ic">🪙</span><span id="goldTxt">0</span></div>
+      <div class="chip gem-chip" data-goto="shop" title="💎 Gemas · tocar para abrir el Mercadeo"><span class="ic">💎</span><span id="gemsTxt">0</span></div>
     </div>
   </header>
   <main id="view"></main>
 </div>
 
-<nav id="tabs">
-  <button class="tab active" data-tab="home"><span class="t-ic">⚔️</span>Batalla</button>
-  <button class="tab" data-tab="training"><span class="t-ic">🏋️</span>Entrenar</button>
-  <button class="tab" data-tab="games"><span class="t-ic">🎮</span>Minijuegos</button>
-  <button class="tab" data-tab="team"><span class="t-ic">🛡️</span>Equipo</button>
-  <button class="tab" data-tab="collection"><span class="t-ic">📜</span>Colección</button>
-  <button class="tab" data-tab="index"><span class="t-ic">📖</span>Índice</button>
-  <button class="tab" data-tab="shop"><span class="t-ic">🏛️</span>Tienda</button>
+<nav id="tabs" aria-label="Menú principal">
+  <button class="tab" data-tab="story"><span class="t-ic">🏺</span>Historia</button>
+  <button class="tab" data-tab="collection"><span class="t-ic">🃏</span>Personajes</button>
+  <button class="tab" data-tab="news"><span class="t-ic">📰</span>Noticias</button>
+  <button class="tab" data-tab="daily"><span class="t-ic">🎁</span>Recompensas</button>
 </nav>
 
 <div id="overlay"></div>
