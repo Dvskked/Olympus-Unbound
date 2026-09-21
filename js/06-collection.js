@@ -105,22 +105,45 @@
     var canUp = !maxed && rc.dup >= cost.dupes && st.gold >= cost.gold;
     var canGold = !maxed && st.gold >= goldCost;
     var next = maxed ? null : U.valuesAt(id, rc.lvl + 1);
+    function chip(cond, txt) {
+      return '<span class="chip ' + (cond ? 'ok' : 'bad') + '">' + txt + '</span>';
+    }
     var costHtml;
     if (maxed) {
-      costHtml = '<div class="up-cost" style="color:var(--gold2)">NIVEL MÁXIMO ALCANZADO</div>';
-    } else {
       costHtml =
-        '<div>' +
-        '<div class="up-cost">Requiere <span class="' + (rc.dup >= cost.dupes ? 'ok' : 'bad') + '">' + cost.dupes + ' duplicado(s)</span> · Tienes <span class="' + (rc.dup >= cost.dupes ? 'ok' : 'bad') + '">' + rc.dup + '</span></div>' +
-        '<div class="up-cost">Costo en oro: <span class="' + (st.gold >= cost.gold ? 'ok' : 'bad') + '">🪙 ' + U.fmt(cost.gold) + '</span> · Tienes 🪙 ' + U.fmt(st.gold) + '</div>' +
-        '<div class="up-cost">Solo con oro: <span class="' + (st.gold >= goldCost ? 'ok' : 'bad') + '">🪙 ' + U.fmt(goldCost) + '</span> (sin duplicados)</div>' +
-        (next ? '<div class="up-preview">HP ' + U.fmt(v.hp) + '→' + U.fmt(next.hp) + ' · ATK ' + U.fmt(v.atk) + '→' + U.fmt(next.atk) + ' · DEF ' + U.fmt(v.def) + '→' + U.fmt(next.def) + '</div>' : '') +
-        (rc.xp ? '<div class="train-xp">🏋️ XP de entrenamiento: ' + rc.xp + ' / ' + tcost + '</div>' : '') +
+        '<div class="up-maxed">🏆 NIVEL MÁXIMO ALCANZADO</div>' +
+        '<div class="up-preview">Poder final: <b>' + U.fmt(U.powerOf(id, rc.lvl)) + '</b> ⚡</div>';
+    } else {
+      var pct = Math.round(rc.lvl / OU.CONST.MAX_LEVEL * 100);
+      var powNow = U.powerOf(id, rc.lvl), powNext = U.powerOf(id, rc.lvl + 1);
+      costHtml =
+        '<div class="up-head">' +
+        '<span class="up-lvl">NV ' + rc.lvl + '</span>' +
+        '<div class="up-bar"><div class="up-bar-fill" style="width:' + pct + '%"></div></div>' +
+        '<span class="up-lvl">NV ' + OU.CONST.MAX_LEVEL + '</span>' +
         '</div>' +
-        '<div style="display:flex;flex-direction:column;gap:6px;align-items:stretch">' +
-        '<button class="btn btn-gold btn-sm" ' + (canUp ? '' : 'disabled') + ' id="upBtn">⬆ Subir a NV ' + (rc.lvl + 1) + '</button>' +
-        '<button class="btn btn-blue btn-sm" ' + (canGold ? '' : 'disabled') + ' id="goldBtn">💰 Mejorar solo con oro</button>' +
-        '</div>';
+        '<div class="upgrade-btns">' +
+        '<button class="upbtn upbtn-dups" ' + (canUp ? '' : 'disabled') + ' id="upBtn">' +
+        '<span class="ub-ic">⬆</span>' +
+        '<span class="ub-main">' +
+        '<span class="ub-title">Duplicados + oro</span>' +
+        '<span class="ub-desc">Subir a NV ' + (rc.lvl + 1) + ' · tienes ×' + rc.dup + ' dups</span>' +
+        '</span>' +
+        '<span class="ub-cost">' + chip(rc.dup >= cost.dupes, '×' + cost.dupes + ' dups') + chip(st.gold >= cost.gold, '🪙 ' + U.fmt(cost.gold)) + '</span>' +
+        '<span class="ub-arrow">▶</span>' +
+        '</button>' +
+        '<button class="upbtn upbtn-gold" ' + (canGold ? '' : 'disabled') + ' id="goldBtn">' +
+        '<span class="ub-ic">💰</span>' +
+        '<span class="ub-main">' +
+        '<span class="ub-title">Solo con oro</span>' +
+        '<span class="ub-desc">Sin duplicados · subir a NV ' + (rc.lvl + 1) + '</span>' +
+        '</span>' +
+        '<span class="ub-cost">' + chip(st.gold >= goldCost, '🪙 ' + U.fmt(goldCost)) + '</span>' +
+        '<span class="ub-arrow">▶</span>' +
+        '</button>' +
+        (rc.xp ? '<div class="up-xp">🏋️ XP de entrenamiento: ' + rc.xp + ' / ' + tcost + '</div>' : '') +
+        '</div>' +
+        '<div class="up-preview">Poder <b>' + U.fmt(powNow) + '→' + U.fmt(powNext) + '</b> · HP <b>' + U.fmt(v.hp) + '→' + U.fmt(next.hp) + '</b> · ATK <b>' + U.fmt(v.atk) + '→' + U.fmt(next.atk) + '</b> · DEF <b>' + U.fmt(v.def) + '→' + U.fmt(next.def) + '</b></div>';
     }
 I.openModal(
       '<div class="detail-ig">' +

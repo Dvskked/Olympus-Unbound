@@ -26,7 +26,7 @@ Forja tu legado entre mortales, héroes, dioses, titanes, primordiales y hasta e
 | 🏆 **Colección estilo arena** | 3 barras de filtros: **Rareza**, **Rol** (🏰 Tanques · ⚔️ Guerreros · 🔮 Magos · ✨ Soportes) y **Orden** (por rareza o ⚡ los mejores por poder) |
 | 🖥️ **UI renovada** | Paleta viva rediseñada, logo de Olympus con **hover que crece y brilla**, sobres/minijuegos con imágenes propias y botón de desarrollo **"Desbloquear Creador"** en el inicio |
 | ⚔️ **Modo Batalla** | Auto-battler visual con fichas circulares, barras de vida/energía, poderes especiales, números voladores y **30 fases** de campaña |
-| 📈 **Progresión más dura** | Nivel máximo 30, costos crecientes por nivel y rareza |
+| 📈 **Progresión** | Hasta 100 niveles por carta con curva de costes suave y duplicados limitados: subir de nivel siempre es alcanzable con el oro de batallas y del Ágora |
 | 💾 **Guardado** | Todo el progreso persistido con `localStorage` (clave `olympus_unbound_v2`) |
 | 🖥️ **Responsive** | Interfaz adaptada a móviles y desktop con barra de navegación inferior |
 
@@ -233,7 +233,7 @@ npm run check     # npx tsc — valida tipos sobre los módulos JS
 
 ## 🎨 Arte
 
-- **Cartas:** se cargan desde `img/personajes/<rareza>/<id>.png` (una subcarpeta por rango: `normal`, `heroe`, `dios`, `titan`, `primordial`, `creador`). Sin imagen, se usa el emoji de la carta.
+- **Cartas:** se cargan desde `img/personajes/<rareza>/<id>.png` (una subcarpeta por rango: `normal`, `heroe`, `dios`, `titan`, `primordial`, `creador`). Los **Primordiales**, **Titanes** y el **Creador** ya tienen arte; el resto usa el emoji de la carta.
 - **Sobres:** `img/sobres/` — un arte por tipo de sobre.
 - **Minijuegos:** `img/minijuegos/` — logo de cada minijuego.
 - **Logo:** `img/extras/logo/logo-olympus.png` — inicio y favicon con hover brillante.
