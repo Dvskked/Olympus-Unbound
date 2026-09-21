@@ -17,14 +17,14 @@ Forja tu legado entre mortales, héroes, dioses, titanes, primordiales y hasta e
 | 🎁 **7 sobres** | Bronce, Plata, Oro, Épico, Olimpo, Divino y Cósmico con animación de apertura **carta por carta** y garantías por rareza. Los **Primordiales** solo salen en el Cósmico (tope de 1 Titán + 1 Primordial por sobre); el **Creador** nunca entra en ningún sobre |
 | 📖 **Índice de Leyendas** | Muestra TODAS las cartas del juego (desbloqueadas y por desbloquear) ordenadas de la más poderosa a la más débil, con filtros por rareza y estado |
 | 🎮 **5 minijuegos** | El Oráculo, el Desafío del Dios, la Ruleta del Destino (¡giro gratis diario!), el Dado de Zeus y la Memoria de Orfeo — cada uno con su propio **logo** en `img/minijuegos/` |
-| 🏪 **Bazar con ofertas rotativas** | 4 ofertas que se renuevan cada **12 horas** (cartas, oro, gemas, XP, refinamiento de Hefesto y potenciadores de Ágora) comprables con oro o gemas |
+| 🏪 **Bazar con ofertas rotativas** | **5 ofertas** que se renuevan cada **12 horas** (cartas, oro, gemas, XP, refinamiento de Hefesto y potenciadores de Ágora) comprables con oro o gemas; entre ellas **siempre hay 1 dios gratuito** 🆓 |
 | 🪙 **Economía dorada** | Ágora que genera mucho más oro pasivo por minuto (con reloj offline), recompensas de batalla crecientes y mejora cada vez más cara según progresas |
-| 🏋️ **Modo Entrenamiento** | Entrena **hasta 3 cartas a la vez** (1, 3, 8, 20 o 60 min) para ganar XP, oro y gemas sin gastar duplicados; acelera al instante gastando gemas |
+| 🏋️ **Modo Entrenamiento** | Entrena **hasta 3 cartas a la vez** (1, 3, 8, 20 o 60 min) para ganar XP, oro y gemas sin gastar duplicados. Con **límites anti-farm**: 5 stocks de mejora por carta, máx. 3 sesiones de la misma carta y máx. 10 niveles por cada 12 h ("acelerar" gasta más gemas de las que da la sesión) |
 | 💎 **Gemas con utilidad** | Acelerar entrenamientos, refrescar el Bazar al instante, canjear por oro, sobras premium y recompensas de la Memoria de Orfeo |
 | 📜 **Colección** | Inventario completo, contador de duplicados, subida de nivel con oro + duplicados, subida solo con oro (sin duplicados) y subida por XP de entrenamiento |
 | 🛡️ **Mi Equipo** | 5 ranuras de batalla y poder total calculado en tiempo real, con el botón **"Equipar los mejores"** para auto-rellenar el equipo más fuerte |
 | 🏆 **Colección estilo arena** | 3 barras de filtros: **Rareza**, **Rol** (🏰 Tanques · ⚔️ Guerreros · 🔮 Magos · ✨ Soportes) y **Orden** (por rareza o ⚡ los mejores por poder) |
-| 🖥️ **UI renovada** | Paleta viva rediseñada, logo de Olympus con **hover que crece y brilla**, sobres/minijuegos con imágenes propias y botón de desarrollo **"Desbloquear Creador"** en el inicio |
+| 🖥️ **UI renovada** | Paleta viva rediseñada, logo de Olympus con **hover que crece y brilla**, sobres/minijuegos con imágenes propias, **pantalla de carga con logo animado y botón Jugar** y **guía de bienvenida** para nuevos jugadores |
 | ⚔️ **Modo Batalla** | Auto-battler visual con fichas circulares, barras de vida/energía, poderes especiales, números voladores y **30 fases** de campaña |
 | 📈 **Progresión** | Hasta 100 niveles por carta con curva de costes suave y duplicados limitados: subir de nivel siempre es alcanzable con el oro de batallas y del Ágora |
 | 💾 **Guardado** | Todo el progreso persistido con `localStorage` (clave `olympus_unbound_v2`) |
@@ -40,8 +40,8 @@ Forja tu legado entre mortales, héroes, dioses, titanes, primordiales y hasta e
 4. **Entrena** 🏋️ hasta 3 cartas a la vez antes de una batalla difícil: vuelve cuando el reloj acabe y recoge XP, 🪙 y a veces 💎 (o acelera al instante gastando gemas).
 5. **Recoge el Ágora** 💰 cada vez que estés fuera: el oro pasivo se acumula hasta un tope.
 6. **Mejora tus cartas** 📜 consumiendo duplicados + oro, o con XP de entrenamiento (¡no gasta duplicados!), o pagando solo oro como acceso directo.
-7. **Visita el Bazar** 🏪 cada pocas horas: 4 ofertas que se renuevan cada 12 h, comprables con oro o gemas (refresco manual: 💎 8).
-8. **Gana oro rápido** 🎮 en los Minijuegos: el Oráculo, el Desafío del Dios, la Ruleta con su giro gratis diario, el Dado de Zeus y la Memoria de Orfeo.
+7. **Visita el Bazar** 🏪 cada pocas horas: 5 ofertas que se renuevan cada 12 h (la 5.ª es un **dios gratis**), comprables con oro o gemas (refresco manual: 💎 8).
+8. **Reclama tu recompensa diaria** 🎁 cada día que entres (💎 2 + racha) y gana oro rápido 🎮 en los Minijuegos: el Oráculo, el Desafío del Dios, la Ruleta con su giro gratis diario, el Dado de Zeus y la Memoria de Orfeo.
 9. **Completa tu Índice** 📖 consultando qué cartas te faltan, de la más fuerte a la más débil.
 10. **Cada carta** tiene un rol (Tanque, Guerrero, Mago o Soporte) y una habilidad especial que se activa al llenar la barra de energía 💫.
 
@@ -57,7 +57,7 @@ Forja tu legado entre mortales, héroes, dioses, titanes, primordiales y hasta e
 | **Divino** | 💎 90 | 6 | 12% | 53.4% | 32.2% | 2.4% | — | ≥1 Dios |
 | **Cósmico** | 💎 160 | 6 | 10% | 42% | 34% | 10% | 4% | ≥1 Dios |
 
-Las gemas también pueden canjearse por oro: 💎 10 → 🪙 1.500 · 💎 25 → 🪙 3.900 · 💎 50 → 🪙 8.000, usarse para refrescar el Bazar (💎 8) o para terminar al instante un entrenamiento.
+Las gemas también pueden canjearse por oro: 💎 10 → 🪙 2.000 · 💎 25 → 🪙 5.500 · 💎 50 → 🪙 12.000, usarse para refrescar el Bazar (💎 8) o para terminar al instante un entrenamiento. Además, **al entrar al juego cada día** ganas una **recompensa diaria** de 💎 (2 + racha, hasta 10).
 
 > El **Sobre Cósmico** respeta un tope de **1 Titán y 1 Primordial** por apertura (si se repiten, se reemplazan por una rareza menor). **Ningún sobre ni el Bazar puede entregar al Creador**: esa carta es exclusiva del propio Andrés 👑, el autor del Olimpo.
 
@@ -71,16 +71,21 @@ Las gemas también pueden canjearse por oro: 💎 10 → 🪙 1.500 · 💎 25 �
 | Legendario | 20 min | 1.350 | 2.400 | 5 |
 | Primordial | 60 min | 4.800 | 8.000 | 12 |
 
-El progreso de entrenamiento se basa en timestamps, así que **sigue avanzando aunque cierres el juego** (igual que el Ágora). Puedes entrenar **hasta 3 cartas a la vez**.
+El progreso de entrenamiento se basa en timestamps, así que **sigue avanzando aunque cierres el juego** (igual que el Ágora). Puedes entrenar **hasta 3 cartas a la vez**, con estos **límites por cada 12 h**:
+- **5 stocks de mejora** por carta (cada sesión completada consume 1 stock).
+- Máximo **3 sesiones simultáneas de la misma carta**.
+- Máximo **10 niveles** ganados por entrenamiento (y hasta **3 niveles por recogida**).
+- *Completar ahora* cuesta gemas y **nunca es rentable**: el coste supera las gemas que daría la sesión (sin bucles infinitos).
 
 
 
 ### 🏪 Bazar (ofertas de 12 h)
 
-Cada 12 horas se generan 4 ofertas nuevas con un coste mixto (🪙 oro o 💎 gemas):
+Cada 12 horas se generan 5 ofertas nuevas — **la 5.ª siempre es un dios totalmente gratis** 🆓 (una por renovación) — con un coste mixto (🪙 oro o 💎 gemas):
 
 | Oferta | Efecto |
 |---|---|
+| 🆓 **Dios gratis** | 1 dios aleatorio de regalo por cada renovación (12 h) |
 | 🎴 Carta rara | Consigue una carta de una rareza sorteada (más barata que un sobre) |
 | 🪙 Lote de oro | Intercambio directo de gemas por oro (o viceversa según precio) |
 | 💎 Lote de gemas | Oro convertido en gemas |
@@ -110,7 +115,7 @@ Cada carta emana un aura visible según su rango, tanto en la colección y el í
 | **Dios** | **Rayos dorados girando** alrededor de la carta |
 | **Titán** | Aura **púrpura** con bordes de roca irregulares que **tiemblan** como un terremoto |
 | **Primordial** | Aura blanca cegadora que late como un sol interno, con brillo expandiéndose y contrayéndose |
-| **Creador** | **Rojo furioso + negro profundo** con rayos giratorios rápidos y doble anillo: supera visualmente a todas las demás. **Exclusivo e inalcanzable** (ni sobres ni Bazar) — solo se desbloquea con el botón de desarrollo del inicio |
+| **Creador** | **Rojo furioso + negro profundo** con rayos giratorios rápidos y doble anillo: supera visualmente a todas las demás. **Exclusivo e inalcanzable** (ni sobres ni Bazar) — solo se desbloquea siguiendo al creador en GitHub e Instagram |
 
 ## 👑 Cartas incluidas (103)
 
@@ -124,7 +129,7 @@ Cada carta emana un aura visible según su rango, tanto en la colección y el í
 
 > 📌 Las entidades **primordiales mal ubicadas** se reubicaron a su rango real: Gea, Urano, Nix, Érebo, Tártaro y Ponto **ascienden a Primordial** (esencia del origen), mientras que los monstruos y descendientes Tifón, Équidna, Ofión y Eurínome **pasan a Titán**.
 
-- **Creador (1):** Andrés 👑 — el Arquitecto del Olimpo. Carta exclusiva marcada como `locked`: ningún sobre ni el Bazar pueden entregarla, solo existe el botón de desarrollo **"Desbloquear Creador"** del inicio. Su aura rojo + negro con rayos giratorios supera a todas las demás.
+- **Creador (1):** Andrés 👑 — el Arquitecto del Olimpo. Carta exclusiva marcada como `locked`: ningún sobre ni el Bazar pueden entregarla. Para desbloquearla, en la Tienda → *El Creador* debes **seguir a Andrés en GitHub ([@Dvskked](https://github.com/Dvskked)) e Instagram ([@_andres.nox](https://www.instagram.com/_andres.nox/))**, confirmarlo y reclamar tu **única carta**. Existe 1 solo stock: no se duplica. Se mejora **solo con oro** (no acepta duplicados ni entrenamiento). Su aura rojo + negro con rayos giratorios supera a todas las demás.
 
 ---
 
@@ -218,7 +223,10 @@ npm run check     # npx tsc — valida tipos sobre los módulos JS
 - [x] **Minijuegos** para ganar oro y gemas al instante (Oráculo, RPS, Ruleta, Dado, Memoria).
 - [x] **Bazar** con ofertas rotativas cada 12 horas y compras con oro/gemas.
 - [x] **Entrenamiento** de hasta 3 cartas a la vez y gemas con más utilidad.
-- [x] **Rango Creador** con carta exclusiva e inalcanzable (Andrés 👑).
+- [x] **Rango Creador** con carta exclusiva e inalcanzable (Andrés 👑) — desbloqueo real siguiendo su GitHub e Instagram.
+- [x] **Recompensas diarias** de gemas al entrar al juego y **dios gratis** cada 12 h en el Bazar.
+- [x] **Límites anti-farm** de entrenamiento (stock, misma carta y tope de 10 niveles / 12 h).
+- [x] **Pantalla de carga** con logo y botón Jugar, y **guía de bienvenida** en 7 pasos.
 - [x] **Reorganización mitológica**: los seis primordiales desubicados vuelven a Primordial y los monstruos pasan a Titán.
 - [x] **Imágenes por carpetas** (`img/personajes/<rareza>/`, `img/sobres/`, `img/minijuegos/`, `img/extras/logo/`).
 - [x] **Colección con filtros** por rareza, rol y orden (estilo Clash Royale).

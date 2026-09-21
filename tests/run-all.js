@@ -143,8 +143,8 @@ function check(name, cond, extra) {
     const gold0 = st.gold;
     st.gems = Math.max(st.gems, 10);
     o.SHOP.doExchange(10);
-    return o.STATE.state.gold === gold0 + 1200 && o.STATE.state.gems === Math.max(st.gems, 10) - 10 || o.STATE.state.gold > gold0;
-  })());
+    return o.STATE.state.gold === gold0 + 2000 && o.STATE.state.gems === Math.max(st.gems, 10) - 10;
+  })(), '💎 10 → 🪙 2000');
 
   // Entrenamiento: iniciar y recolectar (con nivel de carta)
   check('training flow (multi-slot)', (() => {

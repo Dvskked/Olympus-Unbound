@@ -25,12 +25,19 @@
     var done = stag >= last;
     var cur = OU.STAGES[Math.min(stag, last)];
     var progressPct = Math.min(100, Math.round(U.xpNeed(st.lvl) === 0 ? 0 : st.xp / U.xpNeed(st.lvl) * 100));
+    var dl = st.daily || { last: '', streak: 0 };
+    var today = OU.STATE.todayStr(0);
+    var nextReward = Math.min(OU.CONST.DAILY_GEMS_BASE + dl.streak + 1, OU.CONST.DAILY_GEMS_CAP);
+    var dailyTxt = dl.last === today
+      ? '🎁 Racha diaria (día <b>' + dl.streak + '</b>): vuelve mañana por <b>+' + nextReward + ' 💎</b>'
+      : '🎁 Racha diaria: <b>+2 💎</b> al entrar hoy';
     return '<div class="hero">' +
       '<div class="logo-wrap">' +
       '<img class="logo-img" src="img/extras/logo/logo-olympus.png" alt="Olympus Unbound" onerror="this.style.display=\'none\'">' +
       '</div>' +
       '<h1>OLYMPUS UNBOUND</h1>' +
       '<div class="tagline">Forja tu legado entre dioses y titanes</div>' +
+      '<div class="daily-chip">' + dailyTxt + '</div>' +
       '<div class="hero-stats">' +
       '<div class="hstat"><div class="v">' + st.lvl + '</div><div class="l">Nivel</div>' +
       '<div class="xp-bar"><div class="xp-fill" style="width:' + progressPct + '%"></div></div></div>' +
@@ -39,7 +46,7 @@
       '<div class="hstat"><div class="v">' + (done ? OU.STAGES.length : stag + 1) + '<span style="font-size:11px;color:var(--dim)">/' + OU.STAGES.length + '</span></div><div class="l">Campaña</div></div>' +
       '</div>' +
       '<button class="btn btn-gold big-cta" data-play="' + Math.min(stag, last) + '">' + (done ? '⚔️ Volver a desafiar jefes' : '⚔️ Continuar campaña') + '</button>' +
-      '<button class="btn-dev btn-block" data-unlock-creator>👑 Desbloquear Creador</button>' +
+      '<button class="btn btn-ghost btn-sm home-creator" id="goCreator">👑 El Creador</button>' +
       '</div>' +
       OU.TRAIN.incomeBannerHTML() +
       '<div class="sec-title">' + (done ? 'Todas las fases completadas' : 'Próxima batalla') + '</div>' +
@@ -422,19 +429,8 @@
     viewHome: viewHome,
     bindHome: function (root) {
       U.$$('[data-play]', root).forEach((e) => e.addEventListener('click', () => startBattle(parseInt(e.dataset.play, 10))));
-      // TEMPORAL: botón de desarrollo para desbloquear al Creador (Andrés).
-      U.$$('[data-unlock-creator]', root).forEach(function (b) {
-        b.addEventListener('click', function () {
-          var st = OU.STATE.state;
-          if (!st.cards.andre) st.cards.andre = { lvl: 1, dup: 0, xp: 0 };
-          else st.cards.andre.dup++;
-          st.seen.andre = true;
-          OU.STATE.save();
-          I.updateTopRes();
-          OU.MAIN.render();
-          I.toast('👑 Andrés, el Creador, ha sido desbloqueado ⚡');
-        });
-      });
+      var gC = U.$('#goCreator', root);
+      if (gC) gC.addEventListener('click', () => OU.MAIN.setTab('shop'));
     },
     startBattle: startBattle,
     get running() { return battleRunning; },

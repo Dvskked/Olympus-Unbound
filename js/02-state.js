@@ -27,7 +27,10 @@
       shopItems: [],            // ofertas actuales del Bazar
       boostUntil: 0,            // multiplicador de ingreso activo hasta aquí
       seen: {},                 // ids descubiertos (aunque se vendan)
-      techs: {}                 // niveles de tecnologías del Templo (id → nivel)
+      techs: {},                // niveles de tecnologías del Templo (id → nivel)
+      daily: { last: '', streak: 0 },       // recompensa diaria por entrar al juego
+      creatorFollows: { github: false, instagram: false }, // confirmaciones "sigo al creador"
+      _tutorial: false          // guía de bienvenida mostrada (o no)
     };
   }
 
@@ -69,6 +72,9 @@
     state.trainUntil = 0;
     state.trainType = null;
     if (!Array.isArray(state.shopItems)) state.shopItems = [];
+    if (!state.daily) state.daily = { last: '', streak: 0 };
+    if (!state.creatorFollows || typeof state.creatorFollows !== 'object') state.creatorFollows = { github: false, instagram: false };
+    if (typeof state._tutorial !== 'boolean') state._tutorial = false;
   }
 
   function load() {
@@ -139,6 +145,23 @@
     return Object.keys(state.cards);
   }
 
+  function todayStr(offsetDays) {
+    return new Date(Date.now() - (offsetDays || 0) * 86400000).toISOString().slice(0, 10);
+  }
+
+  /** Recompensa diaria: 2 + racha (hasta DAILY_GEMS_CAP) gemas una vez por día. */
+  function checkDaily() {
+    var d = state.daily = state.daily || { last: '', streak: 0 };
+    var today = todayStr(0);
+    if (d.last === today) return { reward: 0, streak: d.streak };
+    if (d.last === todayStr(1)) d.streak++; else d.streak = 1;
+    d.last = today;
+    var reward = Math.min(OU.CONST.DAILY_GEMS_BASE + d.streak, OU.CONST.DAILY_GEMS_CAP);
+    state.gems += reward;
+    save();
+    return { reward: reward, streak: d.streak };
+  }
+
   function reset() {
     try { localStorage.removeItem(OU.CONST.SAVE_KEY); } catch (e) {}
     state = defaultState();
@@ -157,6 +180,8 @@
     tickIncome: tickIncome,
     claimIncome: claimIncome,
     ownedList: ownedList,
+    checkDaily: checkDaily,
+    todayStr: todayStr,
     reset: reset
   };
 })();

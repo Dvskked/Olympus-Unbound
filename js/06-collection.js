@@ -102,12 +102,24 @@
     var cost = U.upgradeCost(id, rc.lvl);
     var goldCost = U.goldOnlyCost(id, rc.lvl);
     var tcost = U.trainCost(id, rc.lvl);
-    var canUp = !maxed && rc.dup >= cost.dupes && st.gold >= cost.gold;
+    var creatorOnly = c.r === 'creator';
+    var canUp = !maxed && !creatorOnly && rc.dup >= cost.dupes && st.gold >= cost.gold;
     var canGold = !maxed && st.gold >= goldCost;
     var next = maxed ? null : U.valuesAt(id, rc.lvl + 1);
     function chip(cond, txt) {
       return '<span class="chip ' + (cond ? 'ok' : 'bad') + '">' + txt + '</span>';
     }
+    var dupBtn = creatorOnly
+      ? '<div class="up-xp">👑 El Creador es una carta única: no acepta duplicados. Se mejora <b>solo con oro</b> (y no se entrena).</div>'
+      : '<button class="upbtn upbtn-dups" ' + (canUp ? '' : 'disabled') + ' id="upBtn">' +
+        '<span class="ub-ic">⬆</span>' +
+        '<span class="ub-main">' +
+        '<span class="ub-title">Duplicados + oro</span>' +
+        '<span class="ub-desc">Subir a NV ' + (rc.lvl + 1) + ' · tienes ×' + rc.dup + ' dups</span>' +
+        '</span>' +
+        '<span class="ub-cost">' + chip(rc.dup >= cost.dupes, '×' + cost.dupes + ' dups') + chip(st.gold >= cost.gold, '🪙 ' + U.fmt(cost.gold)) + '</span>' +
+        '<span class="ub-arrow">▶</span>' +
+        '</button>';
     var costHtml;
     if (maxed) {
       costHtml =
@@ -123,15 +135,7 @@
         '<span class="up-lvl">NV ' + OU.CONST.MAX_LEVEL + '</span>' +
         '</div>' +
         '<div class="upgrade-btns">' +
-        '<button class="upbtn upbtn-dups" ' + (canUp ? '' : 'disabled') + ' id="upBtn">' +
-        '<span class="ub-ic">⬆</span>' +
-        '<span class="ub-main">' +
-        '<span class="ub-title">Duplicados + oro</span>' +
-        '<span class="ub-desc">Subir a NV ' + (rc.lvl + 1) + ' · tienes ×' + rc.dup + ' dups</span>' +
-        '</span>' +
-        '<span class="ub-cost">' + chip(rc.dup >= cost.dupes, '×' + cost.dupes + ' dups') + chip(st.gold >= cost.gold, '🪙 ' + U.fmt(cost.gold)) + '</span>' +
-        '<span class="ub-arrow">▶</span>' +
-        '</button>' +
+        dupBtn +
         '<button class="upbtn upbtn-gold" ' + (canGold ? '' : 'disabled') + ' id="goldBtn">' +
         '<span class="ub-ic">💰</span>' +
         '<span class="ub-main">' +
@@ -141,7 +145,7 @@
         '<span class="ub-cost">' + chip(st.gold >= goldCost, '🪙 ' + U.fmt(goldCost)) + '</span>' +
         '<span class="ub-arrow">▶</span>' +
         '</button>' +
-        (rc.xp ? '<div class="up-xp">🏋️ XP de entrenamiento: ' + rc.xp + ' / ' + tcost + '</div>' : '') +
+        (rc.xp && !creatorOnly ? '<div class="up-xp">🏋️ XP de entrenamiento: ' + rc.xp + ' / ' + tcost + '</div>' : '') +
         '</div>' +
         '<div class="up-preview">Poder <b>' + U.fmt(powNow) + '→' + U.fmt(powNext) + '</b> · HP <b>' + U.fmt(v.hp) + '→' + U.fmt(next.hp) + '</b> · ATK <b>' + U.fmt(v.atk) + '→' + U.fmt(next.atk) + '</b> · DEF <b>' + U.fmt(v.def) + '→' + U.fmt(next.def) + '</b></div>';
     }

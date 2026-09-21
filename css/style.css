@@ -181,17 +181,6 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .xp-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #b08a2f, var(--gold2)); transition: width 0.4s; }
 .big-cta { margin-top: 20px; width: 100%; padding: 14px; font-size: 14px; }
 
-/* TEMPORAL: botón de desarrollo para desbloquear al Creador (Andrés). */
-.btn-dev {
-  display: block; width: 100%; margin-top: 10px; padding: 11px;
-  background: linear-gradient(180deg, #ff5a3c, #8f0000);
-  color: #fff; border: 1px solid #ff2a2a; border-radius: var(--r);
-  font-weight: 800; letter-spacing: 1px; font-size: 13px;
-  box-shadow: 0 0 18px rgba(255, 20, 20, 0.35);
-  cursor: pointer; transition: filter 0.2s, box-shadow 0.2s, transform 0.2s;
-}
-.btn-dev:hover { filter: brightness(1.15); box-shadow: 0 0 26px rgba(255, 20, 20, 0.55); transform: translateY(-1px); }
-
 /* ---------- Ágora (ingreso pasivo) ---------- */
 .income-banner {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -1243,3 +1232,88 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   .reveal-grid { gap: 5px; }
   .income-banner { flex-direction: column; align-items: stretch; text-align: center; }
 }
+/* ---------- Pantalla de carga ---------- */
+#loader {
+  position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(700px 420px at 50% -10%, rgba(92, 194, 255, 0.12), transparent 60%),
+    radial-gradient(600px 380px at 50% 115%, rgba(227, 176, 79, 0.10), transparent 55%),
+    linear-gradient(168deg, var(--bg1), var(--bg0) 55%, var(--bg2));
+  transition: opacity 0.45s ease;
+}
+#loader.hide { opacity: 0; pointer-events: none; }
+.ld-wrap { text-align: center; padding: 24px; max-width: 420px; width: 100%; }
+.ld-logo-wrap { animation: floatY 3.2s ease-in-out infinite; margin-bottom: 18px; }
+.ld-logo {
+  width: min(190px, 52vw);
+  border-radius: 18px;
+  filter: drop-shadow(0 8px 30px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 34px rgba(230, 204, 125, 0.28));
+}
+.ld-title { font-size: clamp(26px, 7vw, 34px); font-weight: 800; letter-spacing: 5px; color: var(--gold2); text-shadow: 0 0 30px rgba(230, 204, 125, 0.4); }
+.ld-sub { color: var(--dim); font-size: 12.5px; letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; min-height: 18px; }
+.ld-track { height: 10px; border-radius: 99px; background: #0a0c18; border: 1px solid var(--line); overflow: hidden; margin: 22px 8px 8px; }
+.ld-fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, #b08a2f, var(--gold2)); box-shadow: 0 0 16px rgba(245, 217, 126, 0.6); transition: width 0.15s linear; }
+.ld-pct { font-size: 12px; color: var(--dim); letter-spacing: 2px; }
+.ld-play { margin-top: 22px; width: min(240px, 80%); padding: 14px; font-size: 15px; opacity: 0.5; transition: opacity 0.3s, transform 0.2s, box-shadow 0.2s; }
+.ld-play:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 0 28px rgba(245, 217, 126, 0.45); }
+
+/* ---------- Racha diaria (home) ---------- */
+.daily-chip {
+  display: inline-block; margin-top: 12px; padding: 6px 14px; font-size: 12px; font-weight: 700;
+  color: var(--gold2); background: rgba(200, 162, 74, 0.12); border: 1px solid rgba(200, 162, 74, 0.45);
+  border-radius: 99px;
+}
+.home-creator { margin-top: 10px; }
+
+/* ---------- Gu�a de bienvenida ---------- */
+.tut { text-align: center; padding: 10px 6px 4px; }
+.tut-ic { font-size: 52px; line-height: 1; animation: floatY 2.6s ease-in-out infinite; margin-bottom: 12px; }
+.tut-t { font-size: 20px; font-weight: 800; letter-spacing: 1px; color: var(--gold2); }
+.tut-d { font-size: 13px; color: var(--dim); line-height: 1.6; margin: 10px auto 14px; max-width: 320px; }
+.tut-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 14px; }
+.tut-dots .dot { width: 7px; height: 7px; border-radius: 99px; background: var(--line); transition: background 0.2s, transform 0.2s; }
+.tut-dots .dot.on { background: var(--gold2); transform: scale(1.35); box-shadow: 0 0 8px rgba(245, 217, 126, 0.7); }
+.tut-btns { display: flex; gap: 10px; justify-content: center; }
+
+/* ---------- Stock de entrenamiento ---------- */
+.train-row .tr-stock { font-size: 10px; color: var(--teal); margin-top: 3px; }
+.train-row .tr-stock.bad { color: var(--hp); font-weight: 700; }
+.train-row.blocked { opacity: 0.6; }
+.train-row.blocked .tr-cta { color: var(--dim); }
+
+/* ---------- Oferta gratis (dios cada 12 h) ---------- */
+.offer-card.o-free { border-top-color: var(--gold2); border-color: rgba(245, 217, 126, 0.7); box-shadow: 0 0 22px rgba(230, 204, 125, 0.25); animation: pulseFree 2.4s ease-in-out infinite; }
+@keyframes pulseFree { 0%, 100% { box-shadow: 0 0 12px rgba(230, 204, 125, 0.18); } 50% { box-shadow: 0 0 26px rgba(230, 204, 125, 0.42); } }
+.offer-card .oc-cost.free { color: var(--teal); }
+.offer-card.o-free .oc-badge { background: rgba(230, 204, 125, 0.12); }
+
+/* ---------- El Creador ---------- */
+.creator-panel {
+  display: flex; gap: 14px; align-items: stretch; margin-top: 16px; flex-wrap: wrap;
+  background: linear-gradient(160deg, rgba(172, 123, 247, 0.12), rgba(200, 162, 74, 0.06)), var(--panel);
+  border: 1px solid var(--line); border-radius: var(--r); padding: 16px;
+}
+.creator-panel.ok { border-color: rgba(65, 224, 196, 0.5); }
+.creator-panel .cp-art {
+  width: 96px; height: 136px; flex: 0 0 96px; border-radius: 10px; overflow: hidden;
+  background: #0a0c18; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 22px rgba(172, 123, 247, 0.35);
+}
+.creator-panel .cp-body { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 9px; }
+.creator-panel .cp-t { font-weight: 800; color: var(--gold2); font-size: 13.5px; }
+.creator-panel .cp-d { font-size: 11.5px; color: var(--dim); line-height: 1.55; }
+.creator-panel .cp-claim { font-size: 13px; }
+.follow-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: rgba(10, 12, 19, 0.55); border: 1px solid var(--line-soft); border-radius: var(--r-sm); padding: 9px 12px;
+}
+.follow-row .fr-link { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-size: 12.5px; }
+.follow-row .fr-link .fr-emoji { font-size: 20px; }
+.follow-row .fr-link .fr-handle { font-size: 11px; color: var(--dim); }
+.follow-row .fr-check {
+  padding: 6px 12px; border-radius: 99px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.5px;
+  background: rgba(92, 194, 255, 0.12); color: var(--blue); border: 1px solid rgba(92, 194, 255, 0.4);
+  transition: background 0.2s, color 0.2s, transform 0.15s; white-space: nowrap;
+}
+.follow-row .fr-check.on { background: rgba(65, 224, 196, 0.16); color: var(--teal); border-color: rgba(65, 224, 196, 0.55); }
+.follow-row .fr-check:hover { transform: translateY(-1px); }

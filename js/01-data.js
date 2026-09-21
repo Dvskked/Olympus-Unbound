@@ -19,13 +19,25 @@
     INITIAL_GEMS: 50,
     START_CARDS: ['hop', 'pela', 'delf'],
     TRAIN_XP_NEED: 160,
-    INCOME_BASE: 70,
-    INCOME_PER_STAGE: 30,
+    INCOME_BASE: 60,
+    INCOME_PER_STAGE: 25,
     INCOME_CAP: 500000,
     SHOP_REFRESH_MS: 12 * 60 * 60 * 1000,
     SHOP_REFRESH_GEMS: 8,
     BOOST_MULT: 1.5,
-    BOOST_MS: 12 * 60 * 60 * 1000
+    BOOST_MS: 12 * 60 * 60 * 1000,
+    // Entrenamiento: ciclo de 12 h con stock y tope de mejoras por carta.
+    TRAIN_CYCLE_MS: 12 * 60 * 60 * 1000,
+    TRAIN_STOCK: 5,           // sesiones de entrenamiento por carta y ciclo
+    TRAIN_MAX_SAME: 3,        // veces que puedes entrenar la misma carta a la vez
+    TRAIN_MAX_UPS: 10,        // niveles máx. ganados por entrenamiento en 12 h
+    TRAIN_UPS_CONSEC: 3,      // niveles máx. que saltan de una sola recogida
+    // Recompensa diaria: gemas al entrar al juego (2 + racha, hasta 10).
+    DAILY_GEMS_BASE: 2,
+    DAILY_GEMS_CAP: 10,
+    // Creador exclusivo: solo se desbloquea siguiendo estos perfiles.
+    CREATOR_GITHUB: 'https://github.com/Dvskked',
+    CREATOR_INSTAGRAM: 'https://www.instagram.com/_andres.nox/'
   };
 
   OU.RAR = {

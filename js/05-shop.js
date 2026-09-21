@@ -69,7 +69,7 @@
     }
     if (type === 'gold') {
       var gAmt = Math.round((1800 + st.lvl * 90 + st.stage * 120) * prg / 2);
-      return { t: 'gold', g: U.clamp(gAmt, 1500, 60000), cost: { gems: Math.max(6, Math.round(gAmt / 380)) } };
+      return { t: 'gold', g: U.clamp(gAmt, 1500, 60000), cost: { gems: Math.max(6, Math.round(gAmt / 320)) } };
     }
     if (type === 'gems') {
       var gm = Math.max(6, Math.round((8 + st.lvl * 0.6 + st.stage * 0.8) * prg / 2));
@@ -82,6 +82,11 @@
     if (type === 'upgrade') {
       return { t: 'upgrade', cost: { gold: Math.round(2000 * prg) }, cid: null };
     }
+    if (type === 'freeGod') {
+      // Regalo gratuito: 1 dios aleatorio por cada renovación del Bazar (12 h).
+      var god = U.pick(OU.CARDS_BY_RAR.god);
+      return { t: 'freeGod', id: god.id, cost: { gold: 0 }, tag: 'god' };
+    }
     // boost
     return { t: 'boost', cost: { gold: Math.round(2600 * prg) } };
   }
@@ -92,6 +97,8 @@
     if (st.shopItems.length && st.shopRefresh > Date.now()) return;
     var items = [];
     for (var i = 0; i < 4; i++) items.push(makeOffer(weightedType()));
+    // La 5.ª oferta SIEMPRE es un dios gratis (una por renovación de 12 h).
+    items.push(makeOffer('freeGod'));
     st.shopItems = items;
     st.shopRefresh = Date.now() + OU.CONST.SHOP_REFRESH_MS;
     OU.STATE.save();
@@ -117,6 +124,16 @@
         '<div class="oc-name" style="color:' + r.color + '">' + c.n + '</div>' +
         '<div class="oc-cost gold">🪙 ' + U.fmt(o.cost.gold) + '</div>' +
         '<div class="oc-cta">Comprar ➜</div>' +
+        '</div>';
+    }
+    if (o.t === 'freeGod') {
+      var fc = OU.CARD_BY_ID[o.id], fr = OU.RAR[fc.r];
+      return '<div class="offer-card o-card o-free" data-offer="' + i + '">' +
+        '<div class="oc-badge" style="color:' + fr.color + ';border-color:' + fr.color + '">DON GRATIS DE LOS DIOSES</div>' +
+        '<div class="oc-art" style="border-color:' + fr.color + '">' + I.artHTML(o.id, 'pick-art') + '</div>' +
+        '<div class="oc-name" style="color:' + fr.color + '">' + fc.n + '</div>' +
+        '<div class="oc-cost free">🆓 GRATIS · 1 por renovación</div>' +
+        '<div class="oc-cta">Reclamar ➜</div>' +
         '</div>';
     }
     if (o.t === 'gold') {
@@ -188,6 +205,11 @@
     } else if (o.t === 'gold') {
       st.gold += o.g;
       I.toast('🪙 +' + U.fmt(o.g) + ' oro');
+    } else if (o.t === 'freeGod') {
+      if (!st.cards[o.id]) st.cards[o.id] = { lvl: 1, dup: 0, xp: 0 };
+      else st.cards[o.id].dup++;
+      st.seen[o.id] = true;
+      I.toast('🆓 Los dioses te obsequian ' + OU.CARD_BY_ID[o.id].n);
     } else if (o.t === 'gems') {
       st.gems += o.g;
       I.toast('💎 +' + o.g + ' gemas');
@@ -287,10 +309,12 @@
       '<div class="shop-grid">' + packs + '</div>' +
       '<div class="sec-title">Canje de gemas</div>' +
       '<div class="exchange-card">' +
-      '<div class="ex-item" data-ex="10"><div class="ei-ic">💎→🪙</div><div class="ei-body">10 gemas = <span class="g">' + U.fmt(1500) + ' oro</span></div></div>' +
-      '<div class="ex-item" data-ex="25"><div class="ei-ic">💎→🪙</div><div class="ei-body">25 gemas = <span class="g">' + U.fmt(3900) + ' oro</span></div></div>' +
-      '<div class="ex-item" data-ex="50"><div class="ei-ic">💎→🪙</div><div class="ei-body">50 gemas = <span class="g">' + U.fmt(8000) + ' oro</span></div></div>' +
+      '<div class="ex-item" data-ex="10"><div class="ei-ic">💎→🪙</div><div class="ei-body">10 gemas = <span class="g">' + U.fmt(2000) + ' oro</span></div></div>' +
+      '<div class="ex-item" data-ex="25"><div class="ei-ic">💎→🪙</div><div class="ei-body">25 gemas = <span class="g">' + U.fmt(5500) + ' oro</span></div></div>' +
+      '<div class="ex-item" data-ex="50"><div class="ei-ic">💎→🪙</div><div class="ei-body">50 gemas = <span class="g">' + U.fmt(12000) + ' oro</span></div></div>' +
       '</div>' +
+      '<div class="sec-title">👑 El Creador</div>' +
+      creatorPanelHTML() +
       '<p class="battle-hint">💎 Las gemas también sirven para refrescar el Bazar y para completar entrenamientos al instante.</p>';
   }
 
@@ -304,6 +328,7 @@
     U.$$('[data-offer]', root).forEach(function (e) {
       e.addEventListener('click', function () { buyOffer(parseInt(e.dataset.offer, 10)); });
     });
+    bindCreator(root);
     var rf = U.$('#refreshShopBtn');
     if (rf) rf.addEventListener('click', refreshBazaar);
   }
@@ -551,12 +576,77 @@
 
   function doExchange(gems) {
     var st = OU.STATE.state;
-    var gold = { 10: 1500, 25: 3900, 50: 8000 }[gems] || 0;
+    var gold = { 10: 2000, 25: 5500, 50: 12000 }[gems] || 0;
     if (st.gems < gems) return I.toast('No tienes suficientes gemas 💎');
     st.gems -= gems; st.gold += gold;
     OU.STATE.save(); I.updateTopRes();
     I.toast('Canjeaste ' + gems + '💎 por ' + U.fmt(gold) + '🪙');
     OU.MAIN.render();
+  }
+
+  /* ---------- EL CREADOR (exclusivo · 1 carta) ---------- */
+
+  /** Panel de desbloqueo del Creador: requiere seguir a Andrés en GitHub e Instagram. */
+  function creatorPanelHTML() {
+    var st = OU.STATE.state;
+    if (!st.cards.andre) {
+      st.creatorFollows = st.creatorFollows || {};
+    }
+    var f = st.creatorFollows || {};
+    var ready = !!f.github && !!f.instagram;
+    function row(key, emoji, name, handle, url, val) {
+      return '<div class="follow-row">' +
+        '<a class="fr-link" href="' + url + '" target="_blank" rel="noopener">' +
+        '<span class="fr-emoji">' + emoji + '</span>' +
+        '<span class="fr-txt"><b>' + name + '</b><br><span class="fr-handle">' + handle + '</span></span>' +
+        '</a>' +
+        '<button class="fr-check' + (val ? ' on' : '') + '" data-foll="' + key + '">' + (val ? '✓ ¡Hecho!' : 'Seguido ✓') + '</button>' +
+        '</div>';
+    }
+    if (st.cards.andre) {
+      return '<div class="creator-panel ok">' +
+        '<div class="cp-art">' + I.artHTML('andre', 'pick-art') + '</div>' +
+        '<div class="cp-body">' +
+        '<div class="cp-t">👑 ¡Andrés, el Creador, ya está en tu colección!</div>' +
+        '<div class="cp-d">Carta única: solo existe esta copia. Para mejorarla usa <b>solo oro</b> (su coste de oro es elevado y no acepta duplicados).</div>' +
+        '</div>' +
+        '</div>';
+    }
+    return '<div class="creator-panel">' +
+      '<div class="cp-art">' + I.artHTML('andre', 'pick-art') + '</div>' +
+      '<div class="cp-body">' +
+      '<div class="cp-t">🧑‍💻 Desbloquea al Creador (stock: 1)</div>' +
+      '<div class="cp-d">La única carta del juego que no saldrá jamás por sobres. Sigue a Andrés en <b>GitHub</b> e <b>Instagram</b>, vuelve aquí, confirma y recíbelo.</div>' +
+      row('github', '🐙', 'GitHub', 'github.com/Dvskked', OU.CONST.CREATOR_GITHUB, f.github) +
+      row('instagram', '📸', 'Instagram', '@_andres.nox', OU.CONST.CREATOR_INSTAGRAM, f.instagram) +
+      '<button class="btn btn-gold btn-block' + (ready ? '' : ' disabled') + '" id="creatorClaim"' + (ready ? '' : ' disabled') + '><div class="cp-claim">👑 Reclamar 1 carta (stock único)</div></button>' +
+      '</div>' +
+      '</div>';
+  }
+
+  function bindCreator(root) {
+    U.$$('[data-foll]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var st = OU.STATE.state;
+        st.creatorFollows = st.creatorFollows || {};
+        st.creatorFollows[b.dataset.foll] = true;
+        OU.STATE.save();
+        I.toast(b.dataset.foll === 'github' ? '✓ Confirmaste que sigues a Andrés en GitHub 🐙' : '✓ Confirmaste que sigues a Andrés en Instagram 📸');
+        OU.MAIN.render();
+      });
+    });
+    var cc = U.$('#creatorClaim', root);
+    if (cc) cc.addEventListener('click', function () {
+      var st = OU.STATE.state;
+      var f = st.creatorFollows || {};
+      if (!f.github || !f.instagram) { I.toast('Primero sigue al Creador en GitHub e Instagram 💌'); return; }
+      if (st.cards.andre) { I.toast('Ya posees al Creador'); return; }
+      st.cards.andre = { lvl: 1, dup: 0, xp: 0 };
+      st.seen.andre = true;
+      OU.STATE.save(); I.updateTopRes();
+      OU.MAIN.render();
+      I.toast('👑 Andrés, el Creador, se une a tu altar ⚡');
+    });
   }
 
   /* Reloj del Bazar: actualiza la cuenta atrás mientras la tienda está abierta. */
