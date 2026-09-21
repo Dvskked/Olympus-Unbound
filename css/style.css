@@ -4,29 +4,32 @@
    (oro, azul, verde, rojo, pÃºrpura) para una experiencia alegre y dinÃ¡mica.
    ========================================================================== */
 :root {
-  --gold: #e3b04f;
-  --gold2: #f5d97e;
-  --blue: #5cc2ff;
-  --blue2: #3ba0ee;
-  --purple: #ac7bf7;
-  --teal: #41e0c4;
-  --gray: #a9b1c9;
+  /* Paleta Â«Costa del EgeoÂ»: armoniza con el fondo ilustrado
+     (cielo azul claro + blanco cÃ¡lido, mar cobalto, piedra beige/arena,
+     colinas azul-pÃºrpura y verde oliva). */
+  --gold: #d99a2b;      /* ocre cÃ¡lido */
+  --gold2: #a86c0f;     /* miel oscura (legible sobre claro) */
+  --blue: #2b6fb3;      /* cobalto mar */
+  --blue2: #4496d8;     /* celeste */
+  --purple: #8f4fc4;    /* azul-pÃºrpura (colinas) */
+  --teal: #3aa98f;
+  --gray: #8b97ac;      /* gris piedra */
 
-  --bg0: #090c16;
-  --bg1: #0f1322;
-  --bg2: #131828;
-  --panel: #1a1f35;
-  --panel2: #0d1020;
-  --line: #2f3b63;
-  --line-soft: #1e2746;
+  --bg0: #eef6f9;       /* cielo muy claro */
+  --bg1: #e2f0f5;       /* celeste suave */
+  --bg2: #efe6d5;       /* arena */
+  --panel: #fdf9f0;     /* baldosa: blanco cÃ¡lido / beige */
+  --panel2: #f1e8d8;    /* arena mÃ¡s oscura */
+  --line: #cfc3a4;      /* junta de piedra */
+  --line-soft: #e3d9c4;
 
-  --text: #f0f3fc;
-  --dim: #8a93ad;
+  --text: #24304a;      /* tinta azul marino */
+  --dim: #6f7c92;       /* pizarra */
 
-  --hp: #f0564a;
-  --hp2: #ff9085;
-  --en: #4fb0f2;
-  --en2: #9bdcff;
+  --hp: #e0453a;
+  --hp2: #ff7a6b;
+  --en: #2b6fb3;
+  --en2: #7cc0ff;
 
   --r: 12px;
   --r-sm: 9px;
@@ -1319,7 +1322,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .follow-row .fr-check:hover { transform: translateY(-1px); }
 
 /* ==========================================================================
-   CIUDAD (hub 2.5D · estilo Hero Wars)
+   CIUDAD (hub 2.5D ï¿½ estilo Hero Wars)
    ========================================================================== */
 button.logo-block { background: none; border: none; padding: 0; text-align: left; }
 .chip.streak-chip { color: var(--blue); }
@@ -1349,8 +1352,8 @@ button.logo-block { background: none; border: none; padding: 0; text-align: left
   background: linear-gradient(180deg, rgba(9, 12, 22, 0.22) 0%, rgba(9, 12, 22, 0.04) 34%, rgba(9, 12, 22, 0.55) 74%, rgba(9, 12, 22, 0.86) 100%);
 }
 
-/* Zonas interactivas de la ciudad (ajusta --px / --py según dónde quede cada
-   edificio en la ilustración fondo.jpg) */
+/* Zonas interactivas de la ciudad (ajusta --px / --py segï¿½n dï¿½nde quede cada
+   edificio en la ilustraciï¿½n fondo.jpg) */
 .hub-points { position: absolute; inset: 0; z-index: 3; }
 .hub-point {
   position: absolute; left: var(--px); top: var(--py);
@@ -1423,7 +1426,7 @@ button.logo-block { background: none; border: none; padding: 0; text-align: left
 .hub-hero.empty { animation: none; opacity: 0.85; }
 .hub-hero.empty .hu-plus { position: absolute; top: 4px; font-size: 26px; font-weight: 300; color: #5a6280; }
 
-/* Aura de héroe (anillo radiante detrás del disco) */
+/* Aura de hï¿½roe (anillo radiante detrï¿½s del disco) */
 .hub-hero::before {
   content: ''; position: absolute; top: -6px; left: -6px; width: 78px; height: 78px;
   border-radius: 50%; z-index: 0; pointer-events: none;
@@ -1485,7 +1488,7 @@ button.logo-block { background: none; border: none; padding: 0; text-align: left
 @keyframes heroAuraPulse { 0%, 100% { filter: brightness(0.95); } 50% { filter: brightness(1.2); } }
 @keyframes heroRingPulse { 0%, 100% { opacity: 0.4; transform: scale(0.92); } 50% { opacity: 1; transform: scale(1.06); } }
 
-/* Atajos + pie (Ágora) */
+/* Atajos + pie (ï¿½gora) */
 .hub-quick {
   position: absolute; left: 0; right: 0; bottom: 118px; z-index: 5;
   display: flex; justify-content: center; gap: 8px;
@@ -1561,7 +1564,7 @@ button.logo-block { background: none; border: none; padding: 0; text-align: left
 .m-st.lock { color: var(--dim); }
 
 /* ==========================================================================
-   HISTORIA (mitología)
+   HISTORIA (mitologï¿½a)
    ========================================================================== */
 .story-today {
   text-align: center; padding: 22px 16px;
@@ -1603,8 +1606,8 @@ button.logo-block { background: none; border: none; padding: 0; text-align: left
 }
 
 /* ==========================================================================
-   REDISEÑO PRINCIPAL (estilo boceto)
-   Perfil · recursos · Mi Equipo · Mercadeo · Campaña · Índice · menú 4 botones
+   REDISEï¿½O PRINCIPAL (estilo boceto)
+   Perfil ï¿½ recursos ï¿½ Mi Equipo ï¿½ Mercadeo ï¿½ Campaï¿½a ï¿½ ï¿½ndice ï¿½ menï¿½ 4 botones
    ========================================================================== */
 
 /* ---------- HUD de usuario (esquina superior izquierda) ---------- */
@@ -1630,7 +1633,7 @@ button.logo-block { background: none; border: none; padding: 0; text-align: left
   max-width: 24ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* Menú inferior: 4 botones */
+/* Menï¿½ inferior: 4 botones */
 #tabs .tab { min-width: 96px; }
 
 /* ---------- Pantalla principal (grid sobre el fondo ilustrado) ---------- */
@@ -1677,7 +1680,7 @@ button.logo-block { background: none; border: none; padding: 0; text-align: left
 .hc-t { font-size: clamp(15px, 2.4vw, 20px); font-weight: 800; color: var(--gold2); letter-spacing: 1px; text-transform: uppercase; }
 .hc-d { font-size: 10px; color: var(--dim); line-height: 1.35; }
 
-/* Libro flotante del Índice (abajo-izquierda) */
+/* Libro flotante del ï¿½ndice (abajo-izquierda) */
 .home-idx {
   grid-column: 1; grid-row: 3; align-self: end; justify-self: center;
   position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px;
@@ -1752,7 +1755,7 @@ button.logo-block { background: none; border: none; padding: 0; text-align: left
   border: 1px solid rgba(92, 194, 255, 0.35); border-radius: 99px; padding: 2px 9px;
 }
 
-/* Accesos rápidos dentro de Recompensas */
+/* Accesos rï¿½pidos dentro de Recompensas */
 .quick-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .quick-row .qbtn { flex: 1; justify-content: center; white-space: nowrap; }
 

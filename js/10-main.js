@@ -37,6 +37,14 @@
   screen('story', '🏺 Historia', viewStory, null);
   screen('news', '📰 Noticias', viewNews, null);
 
+  // El menú inferior (tabs) solo existe en la pantalla de inicio;
+  // al entrar a cualquier sección se oculta y en su lugar queda «Volver al Inicio».
+  function syncMenu() {
+    var tabs = U.$('#tabs');
+    if (!tabs) return;
+    tabs.classList.toggle('menu-hidden', currentTab !== 'home');
+  }
+
   function setTab(name) {
     if (OU.BATTLE.running) OU.BATTLE.running = false;
     currentTab = name;
@@ -47,6 +55,7 @@
   }
 
   function render() {
+    syncMenu();
     OU.STATE.tickIncome();
     I.updateTopRes();
     updateUserHUD();
@@ -596,7 +605,7 @@
     render: render,
     init: init,
     get currentTab() { return currentTab; },
-    set currentTab(v) { currentTab = v; }
+    set currentTab(v) { currentTab = v; syncMenu(); }
   };
 
   function boot() {
