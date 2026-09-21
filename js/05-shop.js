@@ -11,6 +11,17 @@
 
   var openingBusy = false;
 
+  /* Arte de los sobres: imágenes locales por tipo de sobre. */
+  var PACK_IMG = {
+    bronze: 'img/sobres/sobre_bronce.jpg',
+    silver: 'img/sobres/sobre_plata.jpg',
+    goldc: 'img/sobres/sobre_oro.jpg',
+    epic: 'img/sobres/sobre_epico.jpg',
+    olympus: 'img/sobres/sobre_olimpo.png',
+    divine: 'img/sobres/sobre_divino.png',
+    cosmic: 'img/sobres/sobre_cosmico.png'
+  };
+
   /* ---------- BAZAR (ofertas de 12 h) ---------- */
 
   var OFFER_WEIGHTS = [
@@ -258,7 +269,7 @@
         return '<div class="o-row"><span class="o-l">' + l + '</span><span class="o-v" style="color:' + col + '">' + v + '</span></div>';
       }).join('');
       return '<div class="pack-card ' + p.cls + '" data-pack="' + k + '">' +
-        '<div class="pc-ic">🎁</div>' +
+        '<img class="pc-img" src="' + PACK_IMG[k] + '" alt="' + p.name + '" loading="lazy">' +
         '<div class="pc-name ' + p.cls + '">' + p.name + '</div>' +
         '<div class="pc-cost">' + costs.join(' <span class="or">ó</span> ') + '</div>' +
         '<div class="pc-desc">' + p.desc + ' · ' + p.count + ' cartas.</div>' +
@@ -285,7 +296,7 @@
 
   function bindShop(root) {
     U.$$('[data-pack]', root).forEach(function (e) {
-      e.addEventListener('click', function () { buyPack(e.dataset.pack); });
+      e.addEventListener('click', function () { openPackBuyModal(e.dataset.pack); });
     });
     U.$$('[data-ex]', root).forEach(function (e) {
       e.addEventListener('click', function () { doExchange(parseInt(e.dataset.ex, 10)); });
@@ -297,62 +308,128 @@
     if (rf) rf.addEventListener('click', refreshBazaar);
   }
 
-  function buyPack(packKey, currency) {
+  /** ¿Se puede pagar qty sobres con al menos una de las monedas (oro o gemas)? */
+  function canPayQty(p, st, qty) {
+    return (p.cost.gold !== undefined && st.gold >= (p.cost.gold || 0) * qty) ||
+      (p.cost.gems !== undefined && st.gems >= (p.cost.gems || 0) * qty);
+  }
+
+  function qtyPriceLabel(p, n) {
+    var parts = [];
+    if (p.cost.gold !== undefined) parts.push('🪙 ' + U.fmt(p.cost.gold * n));
+    if (p.cost.gems !== undefined) parts.push('💎 ' + U.fmt(p.cost.gems * n));
+    return parts.join(' · ');
+  }
+
+  /** Modal de compra: permite abrir x1, x2 o x5 sobres, conservando los porcentajes. */
+  function openPackBuyModal(packKey) {
+    var p = OU.PACKS[packKey];
+    var st = OU.STATE.state;
+    var costs = [];
+    if (p.cost.gold !== undefined) costs.push('<span class="gold">🪙 ' + U.fmt(p.cost.gold) + '</span>');
+    if (p.cost.gems !== undefined) costs.push('<span class="gem">💎 ' + U.fmt(p.cost.gems) + '</span>');
+    var oddsRows = p.odds.map(function (o) {
+      var l = o[0];
+      var col = l === 'Primordial' ? OU.RAR.primordial.color : l === 'Titán' ? OU.RAR.titan.color : l === 'Dios' ? OU.RAR.god.color : l === 'Héroe' ? OU.RAR.hero.color : 'var(--gray)';
+      return '<div class="o-row"><span class="o-l">' + l + '</span><span class="o-v" style="color:' + col + '">' + o[1] + '</span></div>';
+    }).join('');
+    var qtyBtns = [1, 2, 5].map(function (n) {
+      var affordable = canPayQty(p, st, n);
+      return '<button class="pack-qty' + (affordable ? '' : ' locked') + '" data-qty="' + n + '"' + (affordable ? '' : ' disabled') + '>' +
+        '<span class="pq-x">×' + n + '</span>' +
+        '<span class="pq-l">' + qtyPriceLabel(p, n) + '</span>' +
+        '</button>';
+    }).join('');
+    I.openModal(
+      '<div class="pack-buy">' +
+      '<img class="pack-buy-img" src="' + PACK_IMG[packKey] + '" alt="' + p.name + '" loading="lazy">' +
+      '<div class="pack-buy-name ' + p.cls + '">' + p.name + '</div>' +
+      '<div class="pack-buy-desc">' + p.desc + '</div>' +
+      '<div class="pack-buy-cost">' + costs.join(' <span class="or">ó</span> ') + ' por sobre</div>' +
+      '<div class="odds">' + oddsRows + '</div>' +
+      '<div class="pq-title">¿Cuántos sobres quieres abrir?</div>' +
+      '<div class="pack-qty-row">' + qtyBtns + '</div>' +
+      '<button class="btn btn-ghost btn-block" id="pbClose">Cerrar</button>' +
+      '</div>', true);
+    U.$$('[data-qty]', U.$('#overlay')).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var qty = parseInt(b.dataset.qty, 10);
+        if (!canPayQty(p, st, qty)) return I.toast('No tienes suficientes recursos para ' + qty + ' sobres');
+        I.closeModal();
+        if (p.cost.gold !== undefined && p.cost.gems !== undefined) {
+          openPackChooser(packKey, qty);
+        } else {
+          buyPack(packKey, p.cost.gold !== undefined ? 'gold' : 'gems', qty);
+        }
+      });
+    });
+    var cl = U.$('#pbClose'); if (cl) cl.addEventListener('click', I.closeModal);
+  }
+
+  function buyPack(packKey, currency, qty) {
     if (openingBusy) return;
+    qty = qty || 1;
     var p = OU.PACKS[packKey];
     var st = OU.STATE.state;
 
     // Sobres con doble precio (oro → gemas): elegir moneda.
     if (!currency && p.cost.gold !== undefined && p.cost.gems !== undefined) {
-      openPackChooser(packKey);
+      openPackChooser(packKey, qty);
       return;
     }
-    if (p.cost.gold !== undefined && (!currency || currency === 'gold')) {
-      if (st.gold < p.cost.gold) return I.toast('No tienes suficiente oro 🪙');
-      st.gold -= p.cost.gold;
-    } else if (p.cost.gems !== undefined) {
-      if (st.gems < p.cost.gems) return I.toast('No tienes suficientes gemas 💎');
-      st.gems -= p.cost.gems;
+    var costGold = (p.cost.gold || 0) * qty;
+    var costGems = (p.cost.gems || 0) * qty;
+    if (costGold > 0 && (!currency || currency === 'gold')) {
+      if (st.gold < costGold) return I.toast('No tienes suficiente oro 🪙');
+      st.gold -= costGold;
+    } else if (costGems > 0) {
+      if (st.gems < costGems) return I.toast('No tienes suficientes gemas 💎');
+      st.gems -= costGems;
     }
     OU.STATE.save();
     I.updateTopRes();
-    var pulls = U.generatePulls(p);
-    pulls.forEach(function (pid) {
-      if (!st.cards[pid]) st.cards[pid] = { lvl: 1, dup: 0, xp: 0 };
-      else st.cards[pid].dup++;
-      st.seen[pid] = true;
-    });
+    var opens = [];
+    for (var i = 0; i < qty; i++) {
+      var pulls = U.generatePulls(p);
+      opens.push(pulls);
+      pulls.forEach(function (pid) {
+        if (!st.cards[pid]) st.cards[pid] = { lvl: 1, dup: 0, xp: 0 };
+        else st.cards[pid].dup++;
+        st.seen[pid] = true;
+      });
+    }
     OU.STATE.save();
-    showPackOpening(p, pulls);
+    showPackOpenings(p, opens);
   }
 
   /** Modal para elegir moneda al comprar un sobre premium. */
-  function openPackChooser(packKey) {
+  function openPackChooser(packKey, qty) {
+    qty = qty || 1;
     var st = OU.STATE.state;
     var p = OU.PACKS[packKey];
-    var canGold = st.gold >= p.cost.gold;
-    var canGems = st.gems >= p.cost.gems;
+    var canGold = st.gold >= p.cost.gold * qty;
+    var canGems = st.gems >= p.cost.gems * qty;
     I.openModal(
-      '<div class="sec-title" style="margin-top:10px">🎁 ' + p.name + '</div>' +
+      '<div class="sec-title" style="margin-top:10px">🎁 ' + p.name + ' ×' + qty + '</div>' +
       '<p style="font-size:12.5px;color:var(--dim);text-align:center;margin:4px 0 12px">¿Con qué moneda deseas pagar?</p>' +
       '<div class="chooser-row" style="border-color:' + (canGold ? 'var(--gold2)' : 'var(--line)') + ';opacity:' + (canGold ? 1 : 0.4) + '" data-pay="gold">' +
       '<span class="ch-ic">🪙</span>' +
-      '<span class="ch-txt">' + (canGold ? 'Pagar con oro' : 'Oro insuficiente (necesitas ' + U.fmt(p.cost.gold) + ')') + '</span>' +
-      '<span class="ch-price">' + U.fmt(p.cost.gold) + '</span>' +
+      '<span class="ch-txt">' + (canGold ? 'Pagar con oro' : 'Oro insuficiente (necesitas ' + U.fmt(p.cost.gold * qty) + ')') + '</span>' +
+      '<span class="ch-price">' + U.fmt(p.cost.gold * qty) + '</span>' +
       '</div>' +
       '<div class="chooser-row" style="border-color:' + (canGems ? 'var(--blue)' : 'var(--line)') + ';opacity:' + (canGems ? 1 : 0.4) + '" data-pay="gems">' +
       '<span class="ch-ic">💎</span>' +
-      '<span class="ch-txt">' + (canGems ? 'Pagar con gemas' : 'Gemas insuficientes (necesitas ' + p.cost.gems + ')') + '</span>' +
-      '<span class="ch-price">' + p.cost.gems + '</span>' +
+      '<span class="ch-txt">' + (canGems ? 'Pagar con gemas' : 'Gemas insuficientes (necesitas ' + (p.cost.gems * qty) + ')') + '</span>' +
+      '<span class="ch-price">' + (p.cost.gems * qty) + '</span>' +
       '</div>' +
       '<button class="btn btn-ghost btn-block" id="chClose" style="margin-top:12px">Cancelar</button>', true);
     U.$$('[data-pay]', U.$('#overlay')).forEach(function (row) {
       row.addEventListener('click', function () {
         var cur = row.dataset.pay;
-        if (cur === 'gold' && st.gold < p.cost.gold) { I.toast('No tienes suficiente oro 🪙'); return; }
-        if (cur === 'gems' && st.gems < p.cost.gems) { I.toast('No tienes suficientes gemas 💎'); return; }
+        if (cur === 'gold' && st.gold < p.cost.gold * qty) { I.toast('No tienes suficiente oro 🪙'); return; }
+        if (cur === 'gems' && st.gems < p.cost.gems * qty) { I.toast('No tienes suficientes gemas 💎'); return; }
         I.closeModal();
-        buyPack(packKey, cur);
+        buyPack(packKey, cur, qty);
       });
     });
     var cl = U.$('#chClose'); if (cl) cl.addEventListener('click', I.closeModal);
@@ -382,14 +459,14 @@
       '</div>';
   }
 
-  async function showPackOpening(p, pulls) {
+  async function showPackOpenings(p, opens) {
     openingBusy = true;
     var cls = p.cls;
     I.openModal(
       '<div class="pack-stage">' +
       '<div class="pc-name" style="font-size:20px;font-weight:800;letter-spacing:0.5px;color:var(--gold2)">' + p.name + '</div>' +
       '<div class="pack-box ' + cls + '" id="packBox">' +
-      '<div class="pb-ray"></div><div class="pb-inner"><div class="pb-glyph">⚡</div></div><div class="pb-vib"></div>' +
+      '<img class="pb-img" src="' + PACK_IMG[cls] + '" alt="' + p.name + '">' +
       '</div>' +
       '<div class="pack-msg" id="packMsg">Toca el sobre para abrirlo</div>' +
       '<div class="reveal-big" id="revealBig"></div>' +
@@ -401,45 +478,58 @@
     var box = U.$('#packBox'), msg = U.$('#packMsg'), big = U.$('#revealBig');
     var grid = U.$('#revealGrid'), count = U.$('#revealCount');
 
-    var opened = false;
-    box.addEventListener('click', function () { opened = true; });
-    // espera al toque
-    var guard = 60000;
-    while (!opened && guard > 0) {
-      await U.sleep(120); guard -= 120;
-    }
-    if (!opened) { openingBusy = false; I.closeModal(); return; }
+    for (var n = 0; n < opens.length; n++) {
+      var pulls = opens[n];
+      resetBox(box, msg, opens.length, n);
+      var opened = false;
+      box.addEventListener('click', function () { opened = true; });
+      // espera al toque
+      var guard = 60000;
+      while (!opened && guard > 0) {
+        await U.sleep(120); guard -= 120;
+      }
+      if (!opened) { openingBusy = false; I.closeModal(); return; }
 
-    box.classList.add('shake');
-    await U.sleep(900);
-    box.style.animation = 'none';
-    box.style.transform = 'scale(0)';
-    box.style.transition = 'transform .45s ease';
-    box.style.display = 'none';
-    msg.textContent = '¡Se revelan los augurios del destino...!';
-    await U.sleep(500);
+      box.classList.add('shake');
+      await U.sleep(900);
+      box.style.animation = 'none';
+      box.style.transform = 'scale(0)';
+      box.style.transition = 'transform .45s ease';
+      box.style.display = 'none';
+      msg.textContent = '¡Se revelan los augurios del destino...!';
+      await U.sleep(500);
 
-    for (var i = 0; i < pulls.length; i++) {
-      var pid = pulls[i];
-      big.innerHTML = bigCardHTML(pid);
-      big.classList.remove('show'); void big.offsetWidth; big.classList.add('show');
-      count.textContent = 'Carta ' + (i + 1) + ' de ' + pulls.length;
-      playPop();
-      await U.sleep(950);
-      grid.insertAdjacentHTML('beforeend', rvMiniHTML(pid));
-      playPop();
-      big.classList.remove('show');
-      await U.sleep(250);
+      for (var i = 0; i < pulls.length; i++) {
+        var pid = pulls[i];
+        big.innerHTML = bigCardHTML(pid);
+        big.classList.remove('show'); void big.offsetWidth; big.classList.add('show');
+        count.textContent = 'Carta ' + (i + 1) + ' de ' + pulls.length;
+        playPop();
+        await U.sleep(950);
+        grid.insertAdjacentHTML('beforeend', rvMiniHTML(pid));
+        playPop();
+        big.classList.remove('show');
+        await U.sleep(250);
+      }
+      big.innerHTML = '';
     }
-    big.innerHTML = '';
     count.textContent = '';
-    msg.innerHTML = '¡Recogidas añadidas a tu colección!';
+    msg.innerHTML = (opens.length > 1 ? '¡' + opens.length + ' sobres abiertos!' : '¡Sobre abierto!') + ' · Las cartas se añadieron a tu colección.';
     var btn = document.createElement('button');
     btn.className = 'btn btn-gold btn-block'; btn.id = 'collectBtn'; btn.style.marginTop = '14px';
     btn.textContent = 'Recoger y continuar';
     U.$('#packCosts').appendChild(btn);
     btn.addEventListener('click', function () { I.closeModal(); OU.MAIN.render(); });
     openingBusy = false;
+  }
+
+  function resetBox(box, msg, total, idx) {
+    box.style.display = '';
+    box.style.animation = '';
+    box.style.transform = '';
+    box.style.transition = '';
+    box.classList.remove('shake');
+    msg.innerHTML = (total > 1 ? 'Sobre ' + (idx + 1) + ' de ' + total + ' · ' : '') + 'Toca el sobre para abrirlo';
   }
 
   function doExchange(gems) {
@@ -483,6 +573,7 @@
     viewShop: viewShop,
     bindShop: bindShop,
     buyPack: buyPack,
+    openPackBuyModal: openPackBuyModal,
     doExchange: doExchange,
     buyOffer: buyOffer,
     refreshBazaar: refreshBazaar,

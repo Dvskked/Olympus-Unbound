@@ -82,9 +82,11 @@
       '<div class="detail-ig">' +
       '<div class="detail-icon _rar-' + c.r + '" style="--glow:' + r.glow + ';border-color:' + r.color + '">' + I.artHTML(id, 'detail-art') + '</div>' +
       '<div class="detail-name" style="color:' + r.color + '">' + c.n + '</div>' +
+      '<div class="detail-badges">' +
       '<span class="badge" style="color:' + r.color + ';border:1px solid ' + r.color + ';background:rgba(0,0,0,0.4)">' + r.name + '</span>' +
       '<span class="badge badge-role">' + OU.ROLES[c.role] + '</span>' +
       '<span class="badge" style="background:#151c38;border:1px solid var(--line);color:var(--gold2)">' + I.cardBadge(c, rc.lvl) + '</span>' +
+      '</div>' +
       '</div>' +
       '<div class="stat-grid">' +
       '<div class="stat-box hp"><span class="lb">Vida</span><span class="va">' + U.fmt(v.hp) + '</span></div>' +
