@@ -163,10 +163,39 @@
     return rollRarityCard(rollRarity(p));
   }
 
-  /** Genera las extracciones de un sobre, aplicando garantías. */
+  /** Rellena con una rareza inferior a la superada (respeta los topes ya alcanzados). */
+  function cappedReplacement(p, fromRarity, counts) {
+    var keys = Object.keys(OU.RAR);
+    var idx = keys.indexOf(fromRarity);
+    var avail = keys.slice(0, idx).filter(function (k) {
+      return !(p.cap && p.cap[k] !== undefined && (counts[k] || 0) >= p.cap[k]);
+    });
+    if (!avail.length) avail = keys.slice(0, idx);
+    var w = {}, total = 0, i;
+    avail.forEach(function (k) { var v = p.w[k] || 0.01; w[k] = v; total += v; });
+    var r = Math.random() * total, acc = 0;
+    for (i = 0; i < avail.length; i++) {
+      acc += w[avail[i]];
+      if (r <= acc) return rollRarityCard(avail[i]);
+    }
+    return rollRarityCard(avail[0]);
+  }
+
+  /** Genera las extracciones de un sobre, aplicando garantías y topes por rareza. */
   function generatePulls(p) {
     var arr = [];
     for (var i = 0; i < p.count; i++) arr.push(rollCard(p));
+    if (p.cap) {
+      var counts = {};
+      Object.keys(p.cap).forEach(function (r) { counts[r] = 0; });
+      for (var j = 0; j < arr.length; j++) {
+        var r = OU.CARD_BY_ID[arr[j]].r;
+        if (p.cap[r] !== undefined) {
+          if (counts[r] >= p.cap[r]) arr[j] = cappedReplacement(p, r, counts);
+          else counts[r]++;
+        }
+      }
+    }
     if (p.guarantee > 0 && !arr.some(function (id) {
       return OU.RAR[OU.CARD_BY_ID[id].r].order >= p.guarantee;
     })) {

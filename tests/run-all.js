@@ -277,12 +277,13 @@ function check(name, cond, extra) {
   check('bazaar gold lot purchase adds gold', (() => {
     const idx = o.STATE.state.shopItems.findIndex(x => x && x.t === 'gold');
     if (idx < 0) return true; // sin oferta de oro, no hay nada que probar
-    const g = o.STATE.state.shopItems[idx].g;
-    const cost = o.STATE.state.shopItems[idx].cost.gems;
-    o.STATE.state.gems = cost + 5;
+    const item = o.STATE.state.shopItems[idx];
+    const g = item.g;
+    const cost = item.cost.gems;
+    o.STATE.state.gems = Math.max(o.STATE.state.gems, cost + 5);
     const before = o.STATE.state.gold;
     o.SHOP.buyOffer(idx);
-    return o.STATE.state.gold === before + g && !o.STATE.state.shopItems[idx];
+    return o.STATE.state.gold === before + g && !o.STATE.state.shopItems.some(x => x === item);
   })());
 
   // Equipo: equipar los mejores por poder

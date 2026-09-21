@@ -27,6 +27,30 @@
     return new Date().toISOString().slice(0, 10);
   }
 
+  /* Logos de los minijuegos (imágenes locales), con respaldo de emoji. */
+  var GAME_IMG = {
+    oracle: 'img/minijuegos/oraculo.png',
+    ppt: 'img/minijuegos/desafio-dios.png',
+    wheel: 'img/minijuegos/ruleta-destino.png',
+    dice: 'img/minijuegos/dado-zeus.png',
+    mem: 'img/minijuegos/memoria-orfeo.png'
+  };
+  var GAME_EMOJI = { oracle: '🔮', ppt: '🪨📄✂️', wheel: '🎡', dice: '🎲', mem: '🧠' };
+
+  /** Logo grande para la tarjeta del minijuego. */
+  function gameLogo(id, name) {
+    return '<img class="gc-img" src="' + GAME_IMG[id] + '" alt="' + name + '" loading="lazy"' +
+      ' onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">' +
+      '<span class="gc-emo" style="display:none">' + GAME_EMOJI[id] + '</span>';
+  }
+
+  /** Logo pequeño para títulos e historial. */
+  function miniLogo(id) {
+    return '<img class="sec-img" src="' + GAME_IMG[id] + '" alt="" loading="lazy"' +
+      ' onerror="this.style.display=\'none\';this.nextSibling.style.display=\'inline\'">' +
+      '<span class="sec-img-emo" style="display:none">' + GAME_EMOJI[id] + '</span>';
+  }
+
   // ---------- VISTA PRINCIPAL ----------
   function viewGames() {
     var mg = mgStats();
@@ -34,26 +58,26 @@
     return '<div class="sec-title">Minijuegos</div>' +
       '<p class="battle-hint">Gana oro poco a poco para mejorar tus cartas más rápido. Minijuegos avanzados también dan 💎 gemas.</p>' +
       '<div class="games-grid">' +
-      gameCard('oracle', '🔮', 'El Oráculo', 'Adivina el veredicto de 7 monedas. Apuesta y gana x2 si aciertas la mayoría.', 'Por 🪙 150', oracleWinsHTML(mg)) +
-      gameCard('ppt', '🪨📄✂️', 'Desafío del Dios', 'Enfréntate a un Dios en Piedra, Papel o Tijera. Empatar te devuelve la apuesta.', 'Gana x2.1', pptWinsHTML(mg)) +
-      gameCard('wheel', '🎡', 'Ruleta del Destino', 'Gira la ruleta para ganar oro o gemas. ¡Un giro gratis por día!', freeLeft ? '¡Giro gratis!' : '🪙 80 por giro', wheelWinsHTML(mg, freeLeft)) +
-      gameCard('dice', '🎲', 'Dado de Zeus', 'Apostó Zeus los dados del destino. El 7 triplica, dobles y pares pagan.', 'Apuesta 🪙 50-600', diceWinsHTML(mg)) +
-      gameCard('mem', '🧠', 'Memoria de Orfeo', 'Encuentra las parejas de símbolos. Cada acierto da oro; completa todo para ganar gemas.', 'Entrar por 🪙 25', memWinsHTML(mg)) +
+      gameCard('oracle', 'El Oráculo', 'Adivina el veredicto de 7 monedas. Apuesta y gana x2 si aciertas la mayoría.', 'Por 🪙 150', oracleWinsHTML(mg)) +
+      gameCard('ppt', 'Desafío del Dios', 'Enfréntate a un Dios en Piedra, Papel o Tijera. Empatar te devuelve la apuesta.', 'Gana x2.1', pptWinsHTML(mg)) +
+      gameCard('wheel', 'Ruleta del Destino', 'Gira la ruleta para ganar oro o gemas. ¡Un giro gratis por día!', freeLeft ? '¡Giro gratis!' : '🪙 80 por giro', wheelWinsHTML(mg, freeLeft)) +
+      gameCard('dice', 'Dado de Zeus', 'Apostó Zeus los dados del destino. El 7 triplica, dobles y pares pagan.', 'Apuesta 🪙 50-600', diceWinsHTML(mg)) +
+      gameCard('mem', 'Memoria de Orfeo', 'Encuentra las parejas de símbolos. Cada acierto da oro; completa todo para ganar gemas.', 'Entrar por 🪙 25', memWinsHTML(mg)) +
       '</div>' +
       '<div class="sec-title">Historial</div>' +
       '<div class="mg-stats">' +
-      '<span>🔮 Aciertos: <b>' + (mg.oracle.wins || 0) + '</b></span>' +
-      '<span>🪨📄✂️ Victorias: <b>' + (mg.ppt.wins || 0) + '</b></span>' +
-      '<span>🪨📄✂️ Derrotas: <b>' + (mg.ppt.losses || 0) + '</b></span>' +
-      '<span>🎡 Giros: <b>' + (mg.wheel.spins || 0) + '</b></span>' +
-      '<span>🎲 Victorias: <b>' + (mg.dice.wins || 0) + '</b></span>' +
-      '<span>🧠 Partidas: <b>' + (mg.mem.games || 0) + '</b></span>' +
+      '<span>' + miniLogo('oracle') + 'Aciertos: <b>' + (mg.oracle.wins || 0) + '</b></span>' +
+      '<span>' + miniLogo('ppt') + 'Victorias: <b>' + (mg.ppt.wins || 0) + '</b></span>' +
+      '<span>' + miniLogo('ppt') + 'Derrotas: <b>' + (mg.ppt.losses || 0) + '</b></span>' +
+      '<span>' + miniLogo('wheel') + 'Giros: <b>' + (mg.wheel.spins || 0) + '</b></span>' +
+      '<span>' + miniLogo('dice') + 'Victorias: <b>' + (mg.dice.wins || 0) + '</b></span>' +
+      '<span>' + miniLogo('mem') + 'Partidas: <b>' + (mg.mem.games || 0) + '</b></span>' +
       '</div>';
   }
 
-  function gameCard(id, ic, name, desc, cta, winsHtml) {
+  function gameCard(id, name, desc, cta, winsHtml) {
     return '<div class="game-card" data-game="' + id + '">' +
-      '<div class="gc-ic">' + ic + '</div>' +
+      '<div class="gc-ic">' + gameLogo(id, name) + '</div>' +
       '<div class="gc-name">' + name + '</div>' +
       '<div class="gc-desc">' + desc + '</div>' +
       '<div class="gc-cta">' + cta + '</div>' +
@@ -114,7 +138,7 @@
   function openOracle() {
     var st = OU.STATE.state;
     I.openModal(
-      '<div class="sec-title" style="margin-top:8px">🔮 El Oráculo</div>' +
+      '<div class="sec-title" style="margin-top:8px">' + miniLogo('oracle') + 'El Oráculo</div>' +
       '<p style="font-size:13px;color:var(--dim);line-height:1.6">El Oráculo lanza <b>7 monedas</b>. ¿Crees que caerán <b>más CARA</b> o más <b>CRUZ</b>?<br>Acierta y multiplica tu apuesta por <b>2</b>. Sin empates.</p>' +
       '<div class="oracle-bet"><span>Apuesta:</span><b>🪙 ' + U.fmt(ORACLE_BET) + '</b><span> · Tienes: 🪙 ' + U.fmt(st.gold) + '</span></div>' +
       '<div class="oracle-cta">' +
@@ -167,7 +191,7 @@
     var st = OU.STATE.state;
     var bet = PPT_BETS[0];
     I.openModal(
-      '<div class="sec-title" style="margin-top:8px">🪨📄✂️ Desafío del Dios</div>' +
+      '<div class="sec-title" style="margin-top:8px">' + miniLogo('ppt') + 'Desafío del Dios</div>' +
       '<p style="font-size:13px;color:var(--dim);line-height:1.6">Elige tu apuesta y enfrenta a un Dios. Si ganas, te llevas <b>x' + PPT_WIN + '</b>. Si empatas, recuperas tu apuesta.</p>' +
       '<div class="ppt-bets">' + PPT_BETS.map(function (b, i) {
         return '<button class="btn btn-sm ' + (i === 0 ? 'btn-gold' : 'btn-ghost') + '" data-bet="' + b + '" data-idx="' + i + '">🪙 ' + b + '</button>';
@@ -255,7 +279,7 @@
     var mg = mgStats();
     var free = wheelFree();
     I.openModal(
-      '<div class="sec-title" style="margin-top:8px">🎡 Ruleta del Destino</div>' +
+      '<div class="sec-title" style="margin-top:8px">' + miniLogo('wheel') + 'Ruleta del Destino</div>' +
       '<p style="font-size:13px;color:var(--dim);line-height:1.6">Un giro <b>gratis</b> por día. Los siguientes cuestan 🪙 ' + WHEEL_COST + '. ¡El premio puede ser oro o gemas!</p>' +
       '<div class="wheel-zone">' +
       '<div class="wheel-dial" id="wheelDial"><span class="wd-glyph">🎡</span><span class="wd-seg">?</span></div>' +
@@ -322,7 +346,7 @@
     var st = OU.STATE.state;
     var bet = DICE_BETS[0];
     I.openModal(
-      '<div class="sec-title" style="margin-top:8px">🎲 Dado de Zeus</div>' +
+      '<div class="sec-title" style="margin-top:8px">' + miniLogo('dice') + 'Dado de Zeus</div>' +
       '<p style="font-size:13px;color:var(--dim);line-height:1.6">Lanza los dados del Olimpo. El <b>7</b> triplica tu apuesta, dobles (<b>2</b> o <b>12</b>) la cuadruplican, un <b>par</b> paga <b>x1.6</b> y un impar... la pierdes.</p>' +
       '<div class="ppt-bets">' + DICE_BETS.map(function (b, i) {
         return '<button class="btn btn-sm ' + (i === 0 ? 'btn-gold' : 'btn-ghost') + '" data-bet="' + b + '" data-idx="' + i + '">🪙 ' + b + '</button>';
@@ -410,7 +434,7 @@
     var earned = 0;
 
     I.openModal(
-      '<div class="sec-title" style="margin-top:8px">🧠 Memoria de Orfeo</div>' +
+      '<div class="sec-title" style="margin-top:8px">' + miniLogo('mem') + 'Memoria de Orfeo</div>' +
       '<p style="font-size:13px;color:var(--dim);line-height:1.6">Encuentra las <b>6 parejas</b>. Cada acierto te da 🪙 ' + MEM_MATCH_GOLD + ' y completar todo suma 💎 +' + MEM_BONUS_GEMS + '.</p>' +
       '<div class="mem-total" id="memTotal">🪙 +' + U.fmt(earned) + ' · Parejas ' + matched + '/6</div>' +
       '<div class="mem-board" id="memBoard"></div>' +

@@ -99,10 +99,11 @@
       w: { normal: .120, hero: .534, god: .322, titan: .024 }
     },
     cosmic: {
-      cls: 'cosmic', name: 'Sobre Cósmico', cost: { gems: 160, gold: 180000 }, count: 6,
-      desc: '6 cartas. Garantiza al menos 1 Dios. Los Primordiales solo aparecen aquí.', badge: 'PRIMORDIAL', guarantee: 2,
-      odds: [['Normal', '10%'], ['Héroe', '42%'], ['Dios', '34%'], ['Titán', '10%'], ['Primordial', '4%']],
-      w: { normal: .100, hero: .420, god: .340, titan: .100, primordial: .040 }
+      cls: 'cosmic', name: 'Sobre Cósmico', cost: { gems: 500, gold: 1000000 }, count: 6,
+      desc: '6 cartas. Garantiza al menos 1 Dios. Máximo 1 Titán y 1 Primordial por sobre.', badge: 'PRIMORDIAL', guarantee: 2,
+      cap: { titan: 1, primordial: 1 },
+      odds: [['Normal', '0.5%'], ['Héroe', '4.5%'], ['Dios', '25%'], ['Titán', '30%'], ['Primordial', '40%']],
+      w: { normal: .005, hero: .045, god: .250, titan: .300, primordial: .400 }
     }
   };
 

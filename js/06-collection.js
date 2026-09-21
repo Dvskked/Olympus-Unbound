@@ -78,8 +78,9 @@
         '<button class="btn btn-blue btn-sm" ' + (canGold ? '' : 'disabled') + ' id="goldBtn">💰 Mejorar solo con oro</button>' +
         '</div>';
     }
-    I.openModal(
+I.openModal(
       '<div class="detail-ig">' +
+      '<div class="detail-hero _rar-' + c.r + '" style="--glow:' + r.glow + ';border-color:' + r.color + '">' +
       '<div class="detail-icon _rar-' + c.r + '" style="--glow:' + r.glow + ';border-color:' + r.color + '">' + I.artHTML(id, 'detail-art') + '</div>' +
       '<div class="detail-name" style="color:' + r.color + '">' + c.n + '</div>' +
       '<div class="detail-badges">' +
@@ -88,18 +89,30 @@
       '<span class="badge" style="background:#151c38;border:1px solid var(--line);color:var(--gold2)">' + I.cardBadge(c, rc.lvl) + '</span>' +
       '</div>' +
       '</div>' +
+      '<div class="detail-sec">' +
+      '<div class="ds-title">⚡ Atributos</div>' +
       '<div class="stat-grid">' +
       '<div class="stat-box hp"><span class="lb">Vida</span><span class="va">' + U.fmt(v.hp) + '</span></div>' +
       '<div class="stat-box atk"><span class="lb">Ataque</span><span class="va">' + U.fmt(v.atk) + '</span></div>' +
       '<div class="stat-box def"><span class="lb">Defensa</span><span class="va">' + U.fmt(v.def) + '</span></div>' +
       '<div class="stat-box spd"><span class="lb">Velocidad</span><span class="va">' + v.spd + '</span></div>' +
       '</div>' +
+      '</div>' +
+      '<div class="detail-sec">' +
+      '<div class="ds-title">✨ Habilidad especial</div>' +
       '<div class="abil-box">' +
-      '<div class="ab-name">✨ ' + c.ab.n + '</div>' +
+      '<div class="ab-name">' + c.ab.n + '</div>' +
       '<div class="ab-desc">' + U.abDesc(c.ab, id) + '</div>' +
       '</div>' +
-      '<div class="tale-box">📜 ' + (c.d || 'Su leyenda se ha perdido en el tiempo.') + '</div>' +
-      '<div class="upgrade-row">' + costHtml + '</div>', true);
+      '</div>' +
+      '<div class="detail-sec">' +
+      '<div class="ds-title">📜 Leyenda</div>' +
+      '<div class="tale-box">' + (c.d || 'Su leyenda se ha perdido en el tiempo.') + '</div>' +
+      '</div>' +
+      '<div class="detail-sec">' +
+      '<div class="ds-title">⬆ Mejora</div>' +
+      '<div class="upgrade-row">' + costHtml + '</div>' +
+      '</div>', true);
 
     var up = U.$('#upBtn');
     if (up) up.addEventListener('click', function () {
