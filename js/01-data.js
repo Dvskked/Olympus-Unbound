@@ -41,14 +41,13 @@
   };
 
   OU.RAR = {
-    // Colores calibrados para ser legibles tanto en superficies claras
-    // (texto, bordes) como en el globo que rodea el arte de cada carta.
-    normal:     { name: 'Normal',     color: '#7d8798', glow: 'rgba(125,135,152,0.5)',       order: 0 },
-    hero:       { name: 'Héroe',      color: '#2b83c9', glow: 'rgba(43,131,201,0.55)',       order: 1 },
-    god:        { name: 'Dios',       color: '#c8891a', glow: 'rgba(200,137,26,0.55)',       order: 2 },
-    titan:      { name: 'Titán',      color: '#8e3ae0', glow: 'rgba(142,58,224,0.6)',        order: 3 },
-    primordial: { name: 'Primordial', color: '#3f7fd6', glow: 'rgba(84,150,220,0.85)',       order: 4 },
-    creator:    { name: 'Creator',    color: '#e02020', glow: 'rgba(224,32,32,0.85)',        order: 5 }
+    // Colores vivos por rareza: legibles sobre las superficies oscuras del juego.
+    normal:     { name: 'Normal',     color: '#aeb6c8', glow: 'rgba(174,182,200,0.55)',     order: 0 },
+    hero:       { name: 'Héroe',      color: '#3fb6ff', glow: 'rgba(63,182,255,0.6)',       order: 1 },
+    god:        { name: 'Dios',       color: '#ffd257', glow: 'rgba(255,210,87,0.6)',       order: 2 },
+    titan:      { name: 'Titán',      color: '#b14dff', glow: 'rgba(177,77,255,0.7)',       order: 3 },
+    primordial: { name: 'Primordial', color: '#f2f7ff', glow: 'rgba(240,247,255,0.9)',      order: 4 },
+    creator:    { name: 'Creator',    color: '#ff1a1a', glow: 'rgba(255,15,15,0.95)',       order: 5 }
   };
 
   OU.ROLES = { tanque: 'Tanque', guerrero: 'Guerrero', mago: 'Mago', soporte: 'Soporte' };

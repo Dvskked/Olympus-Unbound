@@ -4,32 +4,31 @@
    (oro, azul, verde, rojo, púrpura) para una experiencia alegre y dinámica.
    ========================================================================== */
 :root {
-  /* Paleta «Costa del Egeo»: armoniza con el fondo ilustrado
-     (cielo azul claro + blanco cálido, mar cobalto, piedra beige/arena,
-     colinas azul-púrpura y verde oliva). */
-  --gold: #d99a2b;      /* ocre cálido */
-  --gold2: #a86c0f;     /* miel oscura (legible sobre claro) */
-  --blue: #2b6fb3;      /* cobalto mar */
-  --blue2: #4496d8;     /* celeste */
-  --purple: #8f4fc4;    /* azul-púrpura (colinas) */
-  --teal: #3aa98f;
-  --gray: #8b97ac;      /* gris piedra */
+  /* Paleta «Obsidiana del Egeo»: superficies oscuras y cálidas que resaltan
+     sobre el fondo ilustrado claro; texto luminoso para máxima legibilidad. */
+  --gold: #f0b336;
+  --gold2: #ffd97e;
+  --blue: #5cc2ff;
+  --blue2: #3ba0ee;
+  --purple: #ac7bf7;
+  --teal: #41e0c4;
+  --gray: #a9b1c9;
 
-  --bg0: #eef6f9;       /* cielo muy claro */
-  --bg1: #e2f0f5;       /* celeste suave */
-  --bg2: #efe6d5;       /* arena */
-  --panel: #fdf9f0;     /* baldosa: blanco cálido / beige */
-  --panel2: #f1e8d8;    /* arena más oscura */
-  --line: #cfc3a4;      /* junta de piedra */
-  --line-soft: #e3d9c4;
+  --bg0: #0e1220;
+  --bg1: #171d2e;
+  --bg2: #131827;
+  --panel: #1f2637;
+  --panel2: #141a29;
+  --line: #35415e;
+  --line-soft: #232c43;
 
-  --text: #24304a;      /* tinta azul marino */
-  --dim: #6f7c92;       /* pizarra */
+  --text: #f2f4fa;
+  --dim: #9aa4b8;
 
-  --hp: #e0453a;
-  --hp2: #ff7a6b;
-  --en: #2b6fb3;
-  --en2: #7cc0ff;
+  --hp: #f0564a;
+  --hp2: #ff9085;
+  --en: #5cc2ff;
+  --en2: #9bdcff;
 
   --r: 12px;
   --r-sm: 9px;
@@ -2078,3 +2077,289 @@ body {
 .result-title.lose { color: #cf2f2f; }
 .tale-box { color: #40506b; }
 .ub-cost .chip.bad { color: #c92f22; }
+
+/* ==========================================================================
+   TEMA OSCURO CÁLIDO (autoritativo) + iconos grandes/limpios pegados a los
+   bordes + reset global. Se aplica por encima de cualquier bloque anterior.
+   ========================================================================== */
+
+/* ---------- Reset ---------- */
+html, body { margin: 0; padding: 0; }
+img { display: block; max-width: 100%; }
+* { touch-action: manipulation; }
+
+/* ---------- Fondo general y transporte ---------- */
+body {
+  color: var(--text);
+  background:
+    radial-gradient(1000px 520px at 82% -12%, rgba(92, 194, 255, 0.12), transparent 60%),
+    radial-gradient(760px 420px at -8% 22%, rgba(240, 179, 54, 0.06), transparent 55%),
+    radial-gradient(640px 360px at 55% 112%, rgba(172, 123, 247, 0.08), transparent 60%),
+    linear-gradient(168deg, var(--bg1), var(--bg0) 55%, var(--bg2));
+  background-attachment: fixed;
+}
+::-webkit-scrollbar-thumb { background: #2b3350; }
+::selection { background: rgba(240, 179, 54, 0.45); color: #fff; }
+
+/* ----- Barra superior ----- */
+#topbar {
+  background: linear-gradient(180deg, rgba(14, 18, 32, 0.97), rgba(14, 18, 32, 0.9));
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+.logo {
+  background: linear-gradient(120deg, #ffe9a8, var(--gold2) 40%, #ffd27a 62%, #aee4ff 140%);
+  filter: drop-shadow(0 0 14px rgba(245, 217, 126, 0.25));
+}
+.logo:hover { filter: drop-shadow(0 0 24px rgba(245, 217, 126, 0.6)); }
+.chip {
+  background: linear-gradient(180deg, #1b2138, #141a2e);
+  border-color: var(--line);
+  color: var(--text);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+.chip.gold-chip { color: var(--gold2); }
+.chip.gem-chip { color: var(--blue); }
+
+/* ----- HUD de usuario ----- */
+.user-hud {
+  background: linear-gradient(180deg, rgba(18, 24, 42, 0.92), rgba(12, 16, 29, 0.92));
+  border-color: var(--line);
+  color: var(--text);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+.user-hud:hover { border-color: var(--gold); box-shadow: 0 0 16px rgba(240, 179, 54, 0.35); }
+.uh-avatar {
+  background: radial-gradient(circle at 32% 28%, #2a3352, #12162a);
+  border-color: rgba(240, 179, 54, 0.45);
+  box-shadow: inset 0 0 10px rgba(240, 179, 54, 0.22), 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+.uh-name { color: #f4e9c8; }
+
+/* ----- Menú inferior: óvalos oscuros ---------- */
+#tabs {
+  transform: translateX(-50%);
+  background: rgba(9, 13, 23, 0.97);
+  border-top: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 8px calc(9px + env(safe-area-inset-bottom));
+  transition: transform 0.28s ease, opacity 0.28s ease;
+}
+#tabs.menu-hidden { transform: translateX(-50%) translateY(130%); opacity: 0; pointer-events: none; }
+#tabs .tab {
+  flex: 0 1 auto; width: 88px; min-width: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 8px 6px 7px;
+  color: var(--dim);
+  letter-spacing: 0.4px;
+  box-shadow: none;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease,
+              color 0.22s ease, border-color 0.22s ease;
+}
+#tabs .tab .t-ic { opacity: 0.85; filter: none; transition: transform 0.22s ease; }
+#tabs .tab:hover {
+  transform: translateY(-4px) scale(1.06);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--gold);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 16px rgba(240, 179, 54, 0.28);
+}
+#tabs .tab:hover .t-ic { transform: translateY(-2px) rotate(-5deg); }
+#tabs .tab.active {
+  color: #2a1d05;
+  background: linear-gradient(180deg, #f7ce6b, #e0a83c);
+  border-color: #f0b336;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+#tabs .tab.active .t-ic { transform: translateY(-1px) scale(1.1); }
+
+/* ----- Pantalla principal: tarjetas pegadas a las paredes ---------- */
+.home { overflow: hidden; }
+.home-shade {
+  background: linear-gradient(180deg, rgba(10, 14, 24, 0.42), rgba(10, 14, 24, 0.05) 30%,
+              rgba(10, 14, 24, 0.3) 55%, rgba(10, 14, 24, 0.6) 80%, rgba(10, 14, 24, 0.95) 100%);
+}
+.home-body { gap: 10px; padding: 8px clamp(6px, 1.6vw, 10px) 6px; }
+.home-team { grid-column: 2; grid-row: 1 / 3; align-self: center; text-align: center; }
+.home-team-title { color: rgba(244, 247, 253, 0.95); text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85); }
+.home-merk { grid-column: 1; grid-row: 2; justify-self: start; align-self: center; margin-left: clamp(4px, 1.2vw, 14px); }
+.home-camp { grid-column: 3; grid-row: 2; justify-self: end; align-self: center; margin-right: clamp(4px, 1.2vw, 14px); }
+.home-idx { grid-column: 1; grid-row: 3; justify-self: start; align-self: end; margin-left: clamp(2px, 1vw, 10px); margin-bottom: 4px; }
+
+.home-card {
+  border: none;
+  background: linear-gradient(160deg, rgba(26, 33, 52, 0.74), rgba(13, 18, 32, 0.8));
+  color: var(--text);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45);
+}
+.home-card:hover { border-color: transparent; transform: translateY(-4px); box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55), 0 0 26px rgba(240, 179, 54, 0.28); }
+.hc-ic { animation: none; filter: none; display: inline-flex; align-items: center; justify-content: center; gap: 0; }
+.hc-t { color: var(--gold2); }
+.hc-d { color: var(--dim); }
+
+/* ----- Iconos grandes, redondos, sin borde ni sombra ---------- */
+.hc-img {
+  width: clamp(84px, 11vw, 108px); height: clamp(84px, 11vw, 108px);
+  border-radius: 50%; border: none; object-fit: cover; display: block;
+  box-shadow: none;
+  animation: iconFloat 3.6s ease-in-out infinite;
+  transition: transform 0.25s ease;
+}
+.home-camp .hc-img { animation-delay: 0.4s; }
+.home-card:hover .hc-img { transform: translateY(-5px) scale(1.05); }
+@keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+.idx-book {
+  width: clamp(84px, 11vw, 112px); aspect-ratio: 1;
+  border-radius: 50%; background: none; border: none; box-shadow: none; padding: 0; margin: 0;
+}
+.idx-img {
+  width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: none; box-shadow: none;
+  animation: bookFloat 3.4s ease-in-out infinite;
+  transition: transform 0.25s ease;
+}
+.home-idx:hover .idx-img { transform: translateY(-5px) scale(1.04); }
+@keyframes bookFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.idx-lb { color: var(--gold2); background: rgba(10, 14, 24, 0.72); border: none; font-size: 11px; }
+
+/* Ingreso pasivo (pie del inicio) */
+.home-foot { bottom: calc(78px + env(safe-area-inset-bottom)); }
+.home-foot .income-banner {
+  background: rgba(10, 14, 24, 0.85);
+  border-color: var(--line);
+  color: var(--text);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* ----- Fichas de «Mi Equipo» ---- */
+.hub-squad { flex-wrap: wrap; row-gap: 12px; max-width: 380px; margin: 0 auto; }
+.hub-hero { width: 66px; gap: 4px; }
+.hub-hero .hu-disc {
+  width: 58px; height: 58px;
+  background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.1), transparent 55%), #0d1120;
+  border-color: var(--line);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55), 0 0 14px rgba(0, 0, 0, 0.4);
+}
+.hub-hero::before { top: -5px; left: -5px; width: 68px; height: 68px; }
+.hub-hero .hu-lvl { background: rgba(8, 10, 18, 0.92); border-color: #2a3352; color: var(--gold2); }
+.hub-hero .hu-name {
+  background: rgba(9, 12, 22, 0.72);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+.hub-hero.empty .hu-disc { border-style: dashed; border-color: #3a4468; background: rgba(13, 17, 32, 0.45); }
+.hub-hero.empty .hu-plus { color: #5a6280; }
+
+/* ----- Paneles de secciones ----- */
+.hero {
+  background:
+    radial-gradient(480px 200px at 20% -10%, rgba(240, 179, 54, 0.12), transparent 60%),
+    radial-gradient(420px 220px at 85% 100%, rgba(92, 194, 255, 0.08), transparent 60%),
+    linear-gradient(168deg, #1e2640, #151b32);
+  border-color: var(--line);
+  color: var(--text);
+}
+.hero h1 { color: var(--gold2); text-shadow: 0 0 30px rgba(240, 179, 54, 0.35); }
+.hstat { background: rgba(10, 12, 19, 0.55); border-color: var(--line-soft); }
+.xp-bar { background: #0a0c18; border-color: var(--line); }
+.daily-panel { background: linear-gradient(160deg, #1e263f, #141a2e); }
+.news-row { background: linear-gradient(160deg, #1e263f, #141a2e); }
+.news-x { color: #dfe3ef; }
+.story-today { background: linear-gradient(160deg, rgba(240, 179, 54, 0.12), rgba(172, 123, 247, 0.08)), var(--panel2); }
+.st-d { color: #dfe3ef; }
+.tale-box { color: #dfe3ef; }
+.abil-box .ab-desc { color: #e3e7f2; }
+
+/* ----- Modal y onboarding ----- */
+#overlay { background: rgba(5, 7, 13, 0.72); }
+.modal {
+  background: linear-gradient(170deg, #232b42, #181f33);
+  border-color: var(--line);
+  color: var(--text);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+.ob-avatar {
+  background: radial-gradient(circle at 32% 28%, #2a3352, #12162a);
+  border-color: rgba(240, 179, 54, 0.5);
+  box-shadow: 0 0 24px rgba(240, 179, 54, 0.25), inset 0 0 14px rgba(0, 0, 0, 0.4);
+}
+.ob-input { background: var(--panel2); border-color: var(--line); color: var(--text); }
+.ob-input:focus { border-color: var(--gold); box-shadow: 0 0 14px rgba(240, 179, 54, 0.3); }
+.btn-ghost { background: var(--panel2); }
+
+/* ----- Arena: discos claros -> oscuros ----- */
+.btoken .bt-circle {
+  background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.08), transparent 55%), #0d1120;
+}
+
+/* ----- Acentos de combate y colección (vivos sobre oscuro) ----- */
+.diff-0 { color: #7fe08a; } .diff-1 { color: #ffe08a; } .diff-2 { color: #ff9d6b; }
+.diff-3 { color: #ff6b6b; } .diff-4 { color: #e85bff; }
+.ccard .c-hp { color: #ff8b7d; } .ccard .c-atk { color: #ffd257; } .ccard .c-def { color: #6fd0ff; }
+.stat-box.hp .va { color: #ff8b7d; } .stat-box.atk .va { color: #ffd257; }
+.stat-box.def .va { color: #6fd0ff; } .stat-box.spd .va { color: #7fe08a; }
+.pack-msg { color: #cdd3e4; }
+.pc-name.silver { color: #cdd8ee; }
+.pack-buy-name.silver { color: #cdd8ee; }
+.btoken.enemy .bt-name { color: #ffb4a8; }
+.bt-label.en-l { color: #ff8b7d; }
+.fnum.heal { color: #67e88f; } .fnum.shield { color: #7fd6ff; } .fnum.buff { color: #ffb14d; }
+.fnum.crit { color: #ffe08a; }
+.fnum.player-dmg { color: #ff6b5e; } .fnum.enemy-dmg { color: #ff8b5e; }
+.result-title.lose { color: #ff6b6b; }
+.ub-cost .chip.bad { color: #ff8b7d; }
+
+/* ----- Responsive: tarjetas pegadas a los bordes en tablet/móvil ----- */
+@media (max-width: 767px) {
+  .home { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+  .home-bg { position: fixed; }
+  .home-shade { position: fixed; }
+  .home-body {
+    position: relative; top: auto; bottom: auto; left: 0; right: 0;
+    min-height: 100%;
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+    gap: 16px 8px;
+    padding: 74px 10px calc(160px + env(safe-area-inset-bottom));
+  }
+  .home-team { grid-column: auto; grid-row: auto; flex: 1 1 100%; }
+  .home-merk { grid-column: auto; grid-row: auto; flex: 0 1 47%; width: auto; min-width: 120px; margin: 0; }
+  .home-camp { grid-column: auto; grid-row: auto; flex: 0 1 47%; width: auto; min-height: 110px; margin: 0; }
+  .home-idx { grid-column: auto; grid-row: auto; flex: 1 1 100%; align-self: center; margin: 0; }
+  .home-foot { position: relative; left: auto; top: auto; transform: none; bottom: auto; order: 5; width: 100%; }
+  .home-card { padding: 12px; }
+  .hub-squad { max-width: 400px; }
+  #tabs .tab { width: 82px; }
+}
+
+@media (max-width: 560px) {
+  #topbar { padding: 10px 10px; }
+  .user-hud { max-width: 52vw; padding: 3px 10px 3px 4px; }
+  .uh-name { max-width: 12ch; font-size: 12px; }
+  .uh-avatar { width: 29px; height: 29px; font-size: 15px; }
+  .chip { padding: 4px 9px; font-size: 12px; }
+  .home-body { gap: 14px 8px; padding: 60px 10px calc(150px + env(safe-area-inset-bottom)); }
+  .home-team-title { font-size: 9px; letter-spacing: 2px; margin-bottom: 6px; }
+  .hub-squad { max-width: 300px; row-gap: 9px; padding: 4px; }
+  .hub-hero { width: 58px; }
+  .hub-hero .hu-disc { width: 50px; height: 50px; }
+  .hub-hero::before { width: 60px; height: 60px; top: -5px; left: -5px; }
+  .hub-hero .card-emo { font-size: 22px; }
+  .hub-hero .hu-plus { font-size: 22px !important; top: 2px !important; }
+  .hub-hero .hu-lvl { font-size: 7px; padding: 1px 6px; }
+  .hub-hero .hu-name { font-size: 9px; max-width: 58px; }
+  .home-merk, .home-camp { flex-basis: 47%; }
+  .home-card { border-radius: 16px; }
+  .hc-img { width: clamp(72px, 21vw, 92px); height: clamp(72px, 21vw, 92px); }
+  .idx-book { width: clamp(72px, 21vw, 92px); }
+  .hc-t { font-size: 13px; }
+  .hc-d { display: none; }
+  .idx-lb { font-size: 9px; padding: 2px 8px; }
+  #tabs { gap: 5px; padding: 7px 6px calc(8px + env(safe-area-inset-bottom)); }
+  #tabs .tab { flex: 1 1 0; width: auto; padding: 7px 0 6px; font-size: 8.5px; }
+  #tabs .tab .t-ic { font-size: 17px; }
+  .home-foot { width: calc(100% - 16px); }
+}
