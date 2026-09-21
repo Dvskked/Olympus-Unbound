@@ -103,11 +103,11 @@
     "hemer": ["img/personajes/primordiales/hemera.png", "img/hemer.png", "img/hemer.jpg", "img/hemer.webp"],
     "eros": ["img/personajes/primordiales/eros.png", "img/eros.png", "img/eros.jpg", "img/eros.webp"],
     "anank": ["img/personajes/primordiales/ananke.png", "img/anank.png", "img/anank.jpg", "img/anank.webp"],
-    "tifon": ["img/personajes/primordiales/tifon.png", "img/tifon.png", "img/tifon.jpg", "img/tifon.webp"],
-    "ofion": ["img/personajes/primordiales/ofion.png", "img/ofion.png", "img/ofion.jpg", "img/ofion.webp"],
-    "eurin": ["img/personajes/primordiales/eurinome.png", "img/eurin.png", "img/eurin.jpg", "img/eurin.webp"],
+    "tifon": ["img/personajes/titanes/tifon.png", "img/tifon.png", "img/tifon.jpg", "img/tifon.webp"],
+    "ofion": ["img/personajes/titanes/ofion.png", "img/ofion.png", "img/ofion.jpg", "img/ofion.webp"],
+    "eurin": ["img/personajes/titanes/eurinome.png", "img/eurin.png", "img/eurin.jpg", "img/eurin.webp"],
     "fanes": ["img/personajes/primordiales/fanes.png", "img/fanes.png", "img/fanes.jpg", "img/fanes.webp"],
-    "ekidna": ["img/personajes/primordiales/equidna.png", "img/ekidna.png", "img/ekidna.jpg", "img/ekidna.webp"],
+    "ekidna": ["img/personajes/titanes/equidna.png", "img/ekidna.png", "img/ekidna.jpg", "img/ekidna.webp"],
     "andre": ["img/personajes/creador/creador.png", "img/andre.png", "img/creator.png", "img/andres.png"]
   };
 })();
