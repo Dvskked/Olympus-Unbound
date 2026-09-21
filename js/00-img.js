@@ -97,15 +97,15 @@
     "eris": ["img/eris.png", "img/eris.jpg", "img/eris.webp"],
     "hebe": ["img/hebe.png", "img/hebe.jpg", "img/hebe.webp"],
     "hipno": ["img/hipno.png", "img/hipno.jpg", "img/hipno.webp"],
-    "chaos": ["img/chaos.png", "img/chaos.jpg", "img/chaos.webp"],
-    "eter": ["img/eter.png", "img/eter.jpg", "img/eter.webp"],
-    "hemer": ["img/hemer.png", "img/hemer.jpg", "img/hemer.webp"],
-    "eros": ["img/eros.png", "img/eros.jpg", "img/eros.webp"],
-    "anank": ["img/anank.png", "img/anank.jpg", "img/anank.webp"],
-    "tifon": ["img/tifon.png", "img/tifon.jpg", "img/tifon.webp"],
-    "ofion": ["img/ofion.png", "img/ofion.jpg", "img/ofion.webp"],
-    "eurin": ["img/eurin.png", "img/eurin.jpg", "img/eurin.webp"],
-    "fanes": ["img/fanes.png", "img/fanes.jpg", "img/fanes.webp"],
-    "ekidna": ["img/ekidna.png", "img/ekidna.jpg", "img/ekidna.webp"]
+    "chaos": ["img/primordiales/caos.png", "img/chaos.png", "img/chaos.jpg", "img/chaos.webp"],
+    "eter": ["img/primordiales/eter.png", "img/eter.png", "img/eter.jpg", "img/eter.webp"],
+    "hemer": ["img/primordiales/hemera.png", "img/hemer.png", "img/hemer.jpg", "img/hemer.webp"],
+    "eros": ["img/primordiales/eros.png", "img/eros.png", "img/eros.jpg", "img/eros.webp"],
+    "anank": ["img/primordiales/ananke.png", "img/anank.png", "img/anank.jpg", "img/anank.webp"],
+    "tifon": ["img/primordiales/tifon.png", "img/tifon.png", "img/tifon.jpg", "img/tifon.webp"],
+    "ofion": ["img/primordiales/ofion.png", "img/ofion.png", "img/ofion.jpg", "img/ofion.webp"],
+    "eurin": ["img/primordiales/eurinome.png", "img/eurin.png", "img/eurin.jpg", "img/eurin.webp"],
+    "fanes": ["img/primordiales/fanes.png", "img/fanes.png", "img/fanes.jpg", "img/fanes.webp"],
+    "ekidna": ["img/primordiales/equidna.png", "img/ekidna.png", "img/ekidna.jpg", "img/ekidna.webp"]
   };
 })();
