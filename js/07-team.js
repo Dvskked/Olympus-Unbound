@@ -106,6 +106,29 @@
     if (cl) cl.addEventListener('click', I.closeModal);
   }
 
+  /** Modal «Editar Mi Equipo»: desde el inicio o la colección, sin salir de la pantalla. */
+  function openTeamEditorModal() {
+    function draw() {
+      var st = OU.STATE.state;
+      var slots = st.team.map(function (id, i) { return teamSlotHTML(id, i); }).join('');
+      I.openModal(
+        '<div class="sec-title" style="margin-top:8px">🛡️ Editar Mi Equipo</div>' +
+        '<button class="btn btn-blue btn-block" id="tEqBest" style="margin-bottom:12px">⚡ Equipar los mejores</button>' +
+        '<div class="squad-wrap">' + slots + '</div>' +
+        '<p class="battle-hint">Toca una ranura para asignar o cambiar una carta de tu equipo.</p>' +
+        '<button class="btn btn-gold btn-block" id="tDone">Listo</button>', true);
+      U.$$('.slot', U.$('#overlay')).forEach(function (s) {
+        s.addEventListener('click', function () { openTeamPicker(parseInt(s.dataset.slot, 10)); });
+      });
+      var eq = U.$('#tEqBest');
+      if (eq) eq.addEventListener('click', function () { equipBest(); draw(); });
+      var dn = U.$('#tDone');
+      if (dn) dn.addEventListener('click', I.closeModal);
+      OU.MAIN.render();
+    }
+    draw();
+  }
+
   function equipBest() {
     var st = OU.STATE.state;
     var owned = OU.STATE.ownedList();
@@ -134,6 +157,7 @@
     bindTeam: bindTeam,
     teamHubHTML: teamHubHTML,
     openTeamPicker: openTeamPicker,
+    openTeamEditorModal: openTeamEditorModal,
     equipBest: equipBest
   };
 })();

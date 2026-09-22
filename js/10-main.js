@@ -34,7 +34,7 @@
   screen('team', '🛡️ Mi Equipo', function () { return OU.TEAM.viewTeam(); }, function (root) { OU.TEAM.bindTeam(root); });
   screen('games', '🎪 Minijuegos', function () { return OU.GAMES.viewGames(); }, function (root) { OU.GAMES.bindGames(root); });
   screen('daily', '🎁 Recompensas', viewDaily, bindDaily);
-  screen('story', '🏺 Historia', viewStory, null);
+  screen('story', 'Historia', viewStory, null);
   screen('news', '📰 Noticias', viewNews, null);
 
   // El menú inferior (tabs) solo existe en la pantalla de inicio;
@@ -232,7 +232,10 @@
       '<div class="home-shade" aria-hidden="true"></div>' +
       '<div class="home-body">' +
       '<section class="home-cell home-team">' +
+      '<div class="home-team-head">' +
       '<div class="home-team-title">Mi Equipo</div>' +
+      '<button class="home-team-edit" id="editTeamBtn" title="Cambiar a tus personajes">✏️ Editar</button>' +
+      '</div>' +
       '<div class="hub-squad">' + OU.TEAM.teamHubHTML() + '</div>' +
       '</section>' +
       '<button class="home-cell home-card home-merk" data-go="shop" title="Abrir el Mercadeo">' +
@@ -264,6 +267,8 @@
     U.$$('[data-hero]', root).forEach(function (h) {
       h.addEventListener('click', function () { OU.COLLECTION.openCardDetail(h.dataset.hero); });
     });
+    var editBtn = U.$('#editTeamBtn', root);
+    if (editBtn) editBtn.addEventListener('click', function () { OU.TEAM.openTeamEditorModal(); });
     OU.TRAIN.bindIncome(root);
   }
 
@@ -408,36 +413,36 @@
   /* =============== HISTORIA (mitología) =============== */
 
   var MYTHS = [
-    { ic: '⚡', t: 'El rayo de Zeus', d: 'Zeus, rey del Olimpo, empuña un rayo forjado por los Cíclopes. Con él castiga a quienes desafían la voluntad divina.' },
-    { ic: '🦉', t: 'Atenea, nacida del pensamiento', d: 'Atenea, diosa de la sabiduría y la guerra justa, nació ya adulta y con armadura desde la cabeza de Zeus.' },
-    { ic: '🌊', t: 'Poseidón y el primer caballo', d: 'Poseidón, señor de mares y terremotos, hizo brotar el primer caballo de una roca con su tridente.' },
-    { ic: '⛓️', t: 'Hades no es el diablo', d: 'Hades gobierna el inframundo con justicia y serenidad; no era malvado, sino el guardián equilibrado de los muertos.' },
-    { ic: '🌅', t: 'El nacimiento de Afrodita', d: 'Afrodita, diosa del amor y la belleza, nació de la espuma del mar alrededor de la isla de Chipre.' },
-    { ic: '🔥', t: 'Prometeo, el amigo de los mortales', d: 'Prometeo robó el fuego a los dioses y se lo dio a la humanidad. Zeus lo encadenó a una roca donde un águila devoraba su hígado cada día.' },
-    { ic: '📦', t: 'La caja de Pandora', d: 'Pandora abrió la caja prohibida y liberó todos los males. En el fondo quedó una cosa: la esperanza.' },
-    { ic: '🪞', t: 'Narciso y el estanque', d: 'Narciso, hermoso y orgulloso, se enamoró de su reflejo en un lago y se consumió mirándolo. Ahí nació la flor del narciso.' },
-    { ic: '☀️', t: 'Ícaro y las alas de cera', d: 'Ícaro escapó del laberinto con alas de cera, pero voló tan alto que el sol las derritió y cayó al mar.' },
-    { ic: '🛡️', t: 'Perseo y la mirada de Medusa', d: 'Perseo venció a Medusa guiándose por su reflejo en un escudo pulido, sin mirarla jamás de frente.' },
-    { ic: '💪', t: 'Los doce trabajos de Heracles', d: 'Heracles, el héroe más fuerte de Grecia, cumplió 12 trabajos imposibles: desde el león de Nemea hasta el can Cerbero.' },
-    { ic: '🗡️', t: 'Teseo y el Minotauro', d: 'Teseo venció al Minotauro en el laberinto de Creta siguiendo el hilo de Ariadna para no perderse.' },
-    { ic: '🎶', t: 'Orfeo y Eurídice', d: 'Orfeo conmovió a Hades con su lira para rescatar a Eurídice, pero la perdió al girarse antes de salir del inframundo.' },
-    { ic: '🦶', t: 'El talón de Aquiles', d: 'Aquiles era invencible salvo por el talón por el que su madre lo sostuvo al bañarlo en el río Estigia.' },
-    { ic: '🐴', t: 'El caballo de Troya', d: 'Odiseo ocultó guerreros dentro de un enorme caballo de madera; los troyanos lo aceptaron y así cayó la ciudad.' },
-    { ic: '⏳', t: 'El viaje de Odiseo', d: 'Tras la guerra de Troya, Odiseo tardó diez años en volver a Ítaca: cíclopes, sirenas y magas poblaron su regreso.' },
-    { ic: '⌛', t: 'Cronos y la Titanomaquia', d: 'Cronos devoraba a sus hijos al nacer. Zeus, salvado por su madre, lo destronó y derrocó a los Titanes.' },
-    { ic: '🎭', t: 'Las nueve Musas', d: 'Las Musas, hijas de Zeus y Mnemósine, protegen las artes y las ciencias: poesía, historia, astronomía y más.' },
-    { ic: '🌑', t: 'El río Estigia', d: 'El Estigia rodeaba el Hades. Los dioses juraban por él y, si rompían el juramento, caían del Olimpo nueve años.' },
-    { ic: '🐏', t: 'El vellocino de oro', d: 'Era la piel de un carnero alado enviado por Hermes. Jasón y los Argonautas remaron hasta conseguirlo.' },
-    { ic: '🌺', t: 'Perséfone y las estaciones', d: 'Perséfone pasa medio año con Hades: por eso llega el invierno. Al volver con su madre, la tierra reverdece.' },
-    { ic: '⛰️', t: 'Los Titanes', d: 'Eran hijos de Urano (el Cielo) y Gea (la Tierra), y precedieron a los dioses olímpicos tras la gran guerra.' },
-    { ic: '👢', t: 'Hermes, el mensajero', d: 'Con sus sándalos alados era mensajero de los dioses, y también patrón de viajeros, comerciantes y astutos.' },
-    { ic: '🌍', t: 'Atlas y el cielo', d: 'Atlas fue condenado a sostener la bóveda del cielo sobre sus hombros por luchar contra Zeus.' },
-    { ic: '🐍', t: 'La Hidra de Lerna', d: 'La Hidra regeneraba cada cabeza que le cortaban. Heracles la venció quemando los cuellos con una antorcha.' },
-    { ic: '👁️', t: 'Las tres Gorgonas', d: 'Eran tres hermanas de cabellera de serpientes; Medusa, la única mortal, convertía en piedra a quien la mirara.' },
-    { ic: '🕷️', t: 'Aracne, la tejedora retada', d: 'Aracne retó a Atenea a un concurso de tejido. Ofendida, la diosa la transformó en araña.' },
-    { ic: '🏹', t: 'Quirón, el centauro sabio', d: 'Quirón fue mentor de Aquiles, Jasón y Heracles, y renunció a su inmortalidad para curar a Prometeo.' },
-    { ic: '💨', t: 'Eolo y los vientos', d: 'Eolo, señor de los vientos, guardaba las tormentas en un odre de cuero y las soltaba a voluntad.' },
-    { ic: '🏺', t: 'La ambrosía y el néctar', d: 'La ambrosía era el alimento de los dioses y el néctar su bebida: ambos otorgaban inmortalidad.' }
+    { ic: '⚡', i: 'rayo-zeus.png', t: 'El rayo de Zeus', d: 'Zeus, rey del Olimpo, empuña un rayo forjado por los Cíclopes. Con él castiga a quienes desafían la voluntad divina.' },
+    { ic: '🦉', i: 'atenea.png', t: 'Atenea, nacida del pensamiento', d: 'Atenea, diosa de la sabiduría y la guerra justa, nació ya adulta y con armadura desde la cabeza de Zeus.' },
+    { ic: '🌊', i: 'poseidon.png', t: 'Poseidón y el primer caballo', d: 'Poseidón, señor de mares y terremotos, hizo brotar el primer caballo de una roca con su tridente.' },
+    { ic: '⛓️', i: 'hades.png', t: 'Hades no es el diablo', d: 'Hades gobierna el inframundo con justicia y serenidad; no era malvado, sino el guardián equilibrado de los muertos.' },
+    { ic: '🌅', i: 'afrodita.png', t: 'El nacimiento de Afrodita', d: 'Afrodita, diosa del amor y la belleza, nació de la espuma del mar alrededor de la isla de Chipre.' },
+    { ic: '🔥', i: 'prometeo.png', t: 'Prometeo, el amigo de los mortales', d: 'Prometeo robó el fuego a los dioses y se lo dio a la humanidad. Zeus lo encadenó a una roca donde un águila devoraba su hígado cada día.' },
+    { ic: '📦', i: 'caja-pandora.png', t: 'La caja de Pandora', d: 'Pandora abrió la caja prohibida y liberó todos los males. En el fondo quedó una cosa: la esperanza.' },
+    { ic: '🪞', i: 'narciso.jpg', t: 'Narciso y el estanque', d: 'Narciso, hermoso y orgulloso, se enamoró de su reflejo en un lago y se consumió mirándolo. Ahí nació la flor del narciso.' },
+    { ic: '☀️', i: 'icaro-alas.png', t: 'Ícaro y las alas de cera', d: 'Ícaro escapó del laberinto con alas de cera, pero voló tan alto que el sol las derritió y cayó al mar.' },
+    { ic: '🛡️', i: 'perseo-medusa.jpg', t: 'Perseo y la mirada de Medusa', d: 'Perseo venció a Medusa guiándose por su reflejo en un escudo pulido, sin mirarla jamás de frente.' },
+    { ic: '💪', i: 'heracles.jpg', t: 'Los doce trabajos de Heracles', d: 'Heracles, el héroe más fuerte de Grecia, cumplió 12 trabajos imposibles: desde el león de Nemea hasta el can Cerbero.' },
+    { ic: '🗡️', i: 'teseo-minotauro.jpg', t: 'Teseo y el Minotauro', d: 'Teseo venció al Minotauro en el laberinto de Creta siguiendo el hilo de Ariadna para no perderse.' },
+    { ic: '🎶', i: 'orfeo.jpg', t: 'Orfeo y Eurídice', d: 'Orfeo conmovió a Hades con su lira para rescatar a Eurídice, pero la perdió al girarse antes de salir del inframundo.' },
+    { ic: '🦶', i: 'aquiles.png', t: 'El talón de Aquiles', d: 'Aquiles era invencible salvo por el talón por el que su madre lo sostuvo al bañarlo en el río Estigia.' },
+    { ic: '🐴', i: 'caballo-troya.jpg', t: 'El caballo de Troya', d: 'Odiseo ocultó guerreros dentro de un enorme caballo de madera; los troyanos lo aceptaron y así cayó la ciudad.' },
+    { ic: '⏳', i: 'odiseo.jpg', t: 'El viaje de Odiseo', d: 'Tras la guerra de Troya, Odiseo tardó diez años en volver a Ítaca: cíclopes, sirenas y magas poblaron su regreso.' },
+    { ic: '⌛', i: 'cronos.jpg', t: 'Cronos y la Titanomaquia', d: 'Cronos devoraba a sus hijos al nacer. Zeus, salvado por su madre, lo destronó y derrocó a los Titanes.' },
+    { ic: '🎭', i: 'nueve-musas.jpg', t: 'Las nueve Musas', d: 'Las Musas, hijas de Zeus y Mnemósine, protegen las artes y las ciencias: poesía, historia, astronomía y más.' },
+    { ic: '🌑', i: 'rio-estigia.png', t: 'El río Estigia', d: 'El Estigia rodeaba el Hades. Los dioses juraban por él y, si rompían el juramento, caían del Olimpo nueve años.' },
+    { ic: '🐏', i: 'vellocino-oro.png', t: 'El vellocino de oro', d: 'Era la piel de un carnero alado enviado por Hermes. Jasón y los Argonautas remaron hasta conseguirlo.' },
+    { ic: '🌺', i: 'persefone.jpg', t: 'Perséfone y las estaciones', d: 'Perséfone pasa medio año con Hades: por eso llega el invierno. Al volver con su madre, la tierra reverdece.' },
+    { ic: '⛰️', i: 'titanes.jpg', t: 'Los Titanes', d: 'Eran hijos de Urano (el Cielo) y Gea (la Tierra), y precedieron a los dioses olímpicos tras la gran guerra.' },
+    { ic: '👢', i: 'hermes.jpg', t: 'Hermes, el mensajero', d: 'Con sus sándalos alados era mensajero de los dioses, y también patrón de viajeros, comerciantes y astutos.' },
+    { ic: '🌍', i: 'atlas.jpg', t: 'Atlas y el cielo', d: 'Atlas fue condenado a sostener la bóveda del cielo sobre sus hombros por luchar contra Zeus.' },
+    { ic: '🐍', i: 'hidra-lerna.jpg', t: 'La Hidra de Lerna', d: 'La Hidra regeneraba cada cabeza que le cortaban. Heracles la venció quemando los cuellos con una antorcha.' },
+    { ic: '👁️', i: 'tres-gorgonas.png', t: 'Las tres Gorgonas', d: 'Eran tres hermanas de cabellera de serpientes; Medusa, la única mortal, convertía en piedra a quien la mirara.' },
+    { ic: '🕷️', i: 'aracne.jpg', t: 'Aracne, la tejedora retada', d: 'Aracne retó a Atenea a un concurso de tejido. Ofendida, la diosa la transformó en araña.' },
+    { ic: '🏹', i: 'quiron.jpg', t: 'Quirón, el centauro sabio', d: 'Quirón fue mentor de Aquiles, Jasón y Heracles, y renunció a su inmortalidad para curar a Prometeo.' },
+    { ic: '💨', i: 'eolo.png', t: 'Eolo y los vientos', d: 'Eolo, señor de los vientos, guardaba las tormentas en un odre de cuero y las soltaba a voluntad.' },
+    { ic: '🏺', i: 'ambrosia.jpg', t: 'La ambrosía y el néctar', d: 'La ambrosía era el alimento de los dioses y el néctar su bebida: ambos otorgaban inmortalidad.' }
   ];
 
   function storyIndex() {
@@ -448,23 +453,21 @@
   }
 
   function viewStory() {
-    var cur = MYTHS[storyIndex()];
-    var list = MYTHS.map(function (x) {
-      return '<div class="myth-row">' +
-        '<div class="my-ic">' + x.ic + '</div>' +
-        '<div class="my-info"><div class="my-t">' + x.t + '</div><div class="my-d">' + x.d + '</div></div>' +
-        '</div>';
-    }).join('');
-    return '<div class="sec-title">🏺 Historias del Olimpo</div>' +
-      '<div class="story-today">' +
-      '<div class="st-tag">Dato curioso del día</div>' +
-      '<div class="st-ic">' + cur.ic + '</div>' +
+    var si = storyIndex();
+    var cur = MYTHS[si];
+    var img = '<img class="st-img" src="img/historia/' + cur.i + '" alt="' + cur.t +
+      '" loading="lazy" decoding="async" onerror="this.style.display=\'none\'">';
+    return '<div class="story-today">' +
+      '<div class="st-head"><span class="st-line"></span>' +
+      '<span class="st-eyebrow">El misterio del día</span>' +
+      '<span class="st-line"></span></div>' +
+      '<div class="st-frame" data-t="' + esc(cur.t) + '">' + img + '</div>' +
       '<div class="st-t">' + cur.t + '</div>' +
+      '<div class="st-div"></div>' +
       '<div class="st-d">' + cur.d + '</div>' +
-      '</div>' +
-      '<p class="battle-hint" style="text-align:left;margin-top:12px">Descubre cada día una leyenda de la mitología griega que inspira las cartas del juego.</p>' +
-      '<div class="sec-title">El eco de la mitología</div>' +
-      '<div class="story-list">' + list + '</div>';
+      '<div class="st-sub">Leyenda <b>' + (si + 1) + '</b> de ' + MYTHS.length +
+      '<span class="st-dot"></span>Vuelve mañana por una nueva</div>' +
+      '</div>';
   }
 
   /* =============== NOTICIAS (novedades y cambios) =============== */
@@ -542,21 +545,76 @@
 
   /* ---------- PANTALLA DE CARGA ---------- */
 
-  /** Anima la barra de progreso del cargador; devuelve el botón Jugar. */
+  /** Recopila todas las imágenes del juego (cartas, sobres, minijuegos, extras). */
+  function loaderAssets() {
+    var urls = [];
+    function add(u) { if (u && urls.indexOf(u) === -1) urls.push(u); }
+    if (OU.CARDS) OU.CARDS.forEach(function (c) {
+      var cand = OU.IMG && OU.IMG[c.id];
+      if (cand && cand.length) add(cand[0]);
+    });
+    [
+      'img/extras/fondos/fondo.jpg',
+      'img/extras/logo/logo-olympus.png',
+      'img/extras/icons/mercadeo.png',
+      'img/extras/icons/campaña.png',
+      'img/extras/icons/indnice.png',
+      'img/sobres/sobre_bronce.jpg', 'img/sobres/sobre_plata.jpg', 'img/sobres/sobre_oro.jpg',
+      'img/sobres/sobre_epico.jpg', 'img/sobres/sobre_olimpo.png', 'img/sobres/sobre_divino.png',
+      'img/sobres/sobre_cosmico.png',
+      'img/minijuegos/oraculo.png', 'img/minijuegos/desafio-dios.png',
+      'img/minijuegos/ruleta-destino.png', 'img/minijuegos/dado-zeus.png',
+      'img/minijuegos/memoria-orfeo.png'
+    ].forEach(add);
+    return urls;
+  }
+
+  /** Carga REAL: pre-carga las imágenes del juego y solo habilita «Jugar»
+      cuando todas están listas (la barra refleja el progreso real). */
   function animateLoader() {
     var fill = U.$('#ldFill'), pct = U.$('#ldPct'), play = U.$('#ldPlay'), sub = U.$('#ldSub');
     if (!play) return null;
     play.disabled = true;
-    var p = 0;
-    var iv = setInterval(function () {
-      p = Math.min(100, p + 4 + Math.random() * 13);
+    play.classList.remove('ld-ready');
+    function setPct(p) {
+      p = Math.max(0, Math.min(100, Math.round(p)));
       if (fill) fill.style.width = p + '%';
-      if (pct) pct.textContent = Math.round(p) + '%';
-      if (p >= 100) {
-        clearInterval(iv);
-        if (sub) sub.textContent = 'El Olimpo te espera';
-        play.disabled = false;
-      }
+      if (pct) pct.textContent = p + '%';
+    }
+    function ready() {
+      setPct(100);
+      if (sub) sub.textContent = 'El Olimpo te espera';
+      play.disabled = false;
+      play.classList.add('ld-ready');
+    }
+    if (typeof Image !== 'function') {
+      var tv = 0, tiv = setInterval(function () {
+        tv = Math.min(100, tv + 7 + Math.random() * 9);
+        setPct(tv);
+        if (tv >= 100) { clearInterval(tiv); ready(); }
+      }, 150);
+      return play;
+    }
+    var urls = loaderAssets();
+    var total = urls.length, done = 0, iv = null;
+    function maybeFinish() {
+      if (done >= total) { if (iv) clearInterval(iv); ready(); }
+    }
+    urls.forEach(function (u) {
+      var im;
+      try { im = new Image(); } catch (e) { done++; maybeFinish(); return; }
+      var fin = function () { if (!im._d) { im._d = true; done++; maybeFinish(); } };
+      im.onload = fin;
+      im.onerror = fin;
+      try { im.src = u; } catch (e) { done++; maybeFinish(); }
+    });
+    iv = setInterval(function () {
+      maybeFinish();
+      if (done >= total) return;
+      var base = total ? Math.floor((done / total) * 88) : 0;
+      setPct(Math.min(92, base + 2 + Math.random() * 6));
+      if (done / total > 0.6) { if (sub && sub.textContent !== 'Forjando leyendas…') sub.textContent = 'Forjando leyendas…'; }
+      else if (sub && sub.textContent !== 'Cargando el Olimpo…') sub.textContent = 'Cargando el Olimpo…';
     }, 150);
     return play;
   }

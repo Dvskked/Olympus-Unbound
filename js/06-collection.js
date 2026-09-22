@@ -183,6 +183,10 @@ I.openModal(
       '<div class="detail-sec">' +
       '<div class="ds-title">⬆ Mejora</div>' +
       '<div class="upgrade-row">' + costHtml + '</div>' +
+      '</div>' +
+      '<div class="detail-sec">' +
+      '<div class="ds-title">🛡️ Equipo</div>' +
+      '<button class="btn btn-blue btn-block" id="detailTeamBtn">✏️ Asignar a Mi Equipo</button>' +
       '</div>', true);
 
     var up = U.$('#upBtn');
@@ -203,6 +207,12 @@ I.openModal(
       I.toast('💰 ' + c.n + ' subió a nivel ' + rc.lvl + ' sin duplicados');
       openCardDetail(id);
       OU.MAIN.render();
+    });
+
+    var teamBtn = U.$('#detailTeamBtn');
+    if (teamBtn) teamBtn.addEventListener('click', function () {
+      I.closeModal();
+      OU.TEAM.openTeamEditorModal();
     });
   }
 
