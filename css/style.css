@@ -2101,11 +2101,12 @@ body {
 ::-webkit-scrollbar-thumb { background: #2b3350; }
 ::selection { background: rgba(240, 179, 54, 0.45); color: #fff; }
 
-/* ----- Barra superior ----- */
+/* ----- Barra superior: flotante (sin barra de fondo) ---------- */
 #topbar {
-  background: linear-gradient(180deg, rgba(14, 18, 32, 0.97), rgba(14, 18, 32, 0.9));
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(10px);
+  background: none;
+  border-bottom: none;
+  backdrop-filter: none;
+  padding: 18px clamp(14px, 3vw, 28px);
 }
 .logo {
   background: linear-gradient(120deg, #ffe9a8, var(--gold2) 40%, #ffd27a 62%, #aee4ff 140%);
@@ -2116,8 +2117,12 @@ body {
   background: linear-gradient(180deg, #1b2138, #141a2e);
   border-color: var(--line);
   color: var(--text);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  padding: 9px 20px;
+  font-size: 16px;
+  gap: 9px;
 }
+.chip .ic { font-size: 18px; }
 .chip.gold-chip { color: var(--gold2); }
 .chip.gem-chip { color: var(--blue); }
 
@@ -2126,37 +2131,40 @@ body {
   background: linear-gradient(180deg, rgba(18, 24, 42, 0.92), rgba(12, 16, 29, 0.92));
   border-color: var(--line);
   color: var(--text);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  gap: 12px;
+  padding: 5px 18px 5px 6px;
 }
-.user-hud:hover { border-color: var(--gold); box-shadow: 0 0 16px rgba(240, 179, 54, 0.35); }
+.user-hud:hover { border-color: var(--gold); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), 0 0 16px rgba(240, 179, 54, 0.35); }
 .uh-avatar {
+  width: 44px; height: 44px; font-size: 22px;
   background: radial-gradient(circle at 32% 28%, #2a3352, #12162a);
   border-color: rgba(240, 179, 54, 0.45);
   box-shadow: inset 0 0 10px rgba(240, 179, 54, 0.22), 0 2px 8px rgba(0, 0, 0, 0.45);
 }
-.uh-name { color: #f4e9c8; }
+.uh-name { color: #f4e9c8; font-size: 16px; max-width: 20ch; }
 
-/* ----- Menú inferior: óvalos oscuros ---------- */
+/* ----- Menú inferior: óvalos flotantes, sin barra de fondo ---------- */
 #tabs {
   transform: translateX(-50%);
-  background: rgba(9, 13, 23, 0.97);
-  border-top: 1px solid var(--line);
-  backdrop-filter: blur(10px);
+  background: none;
+  border-top: none;
+  backdrop-filter: none;
   justify-content: center;
-  gap: 8px;
-  padding: 8px 8px calc(9px + env(safe-area-inset-bottom));
+  gap: 10px;
+  padding: 4px 8px calc(12px + env(safe-area-inset-bottom));
   transition: transform 0.28s ease, opacity 0.28s ease;
 }
 #tabs.menu-hidden { transform: translateX(-50%) translateY(130%); opacity: 0; pointer-events: none; }
 #tabs .tab {
   flex: 0 1 auto; width: 88px; min-width: 0;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(10, 14, 24, 0.5);
   border: 1px solid transparent;
   border-radius: 999px;
-  padding: 8px 6px 7px;
+  padding: 9px 6px 8px;
   color: var(--dim);
   letter-spacing: 0.4px;
-  box-shadow: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease,
               color 0.22s ease, border-color 0.22s ease;
 }
@@ -2183,7 +2191,7 @@ body {
   background: linear-gradient(180deg, rgba(10, 14, 24, 0.42), rgba(10, 14, 24, 0.05) 30%,
               rgba(10, 14, 24, 0.3) 55%, rgba(10, 14, 24, 0.6) 80%, rgba(10, 14, 24, 0.95) 100%);
 }
-.home-body { gap: 10px; padding: 8px clamp(6px, 1.6vw, 10px) 6px; }
+.home-body { gap: 10px; padding: 8px clamp(6px, 1.6vw, 10px) 6px; top: 88px; }
 .home-team { grid-column: 2; grid-row: 1 / 3; align-self: center; text-align: center; }
 .home-team-title { color: rgba(244, 247, 253, 0.95); text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85); }
 .home-merk { grid-column: 1; grid-row: 2; justify-self: start; align-self: center; margin-left: clamp(4px, 1.2vw, 14px); }
@@ -2214,7 +2222,7 @@ body {
 @keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
 .idx-book {
-  width: clamp(84px, 11vw, 112px); aspect-ratio: 1;
+  width: clamp(64px, 8vw, 82px); aspect-ratio: 1;
   border-radius: 50%; background: none; border: none; box-shadow: none; padding: 0; margin: 0;
 }
 .idx-img {
@@ -2236,20 +2244,21 @@ body {
 }
 
 /* ----- Fichas de «Mi Equipo» ---- */
-.hub-squad { flex-wrap: wrap; row-gap: 12px; max-width: 380px; margin: 0 auto; }
-.hub-hero { width: 66px; gap: 4px; }
+.hub-squad { flex-wrap: wrap; row-gap: 14px; max-width: 440px; margin: 0 auto; }
+.hub-hero { width: 74px; gap: 5px; }
 .hub-hero .hu-disc {
-  width: 58px; height: 58px;
+  width: 66px; height: 66px;
   background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.1), transparent 55%), #0d1120;
   border-color: var(--line);
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55), 0 0 14px rgba(0, 0, 0, 0.4);
 }
-.hub-hero::before { top: -5px; left: -5px; width: 68px; height: 68px; }
-.hub-hero .hu-lvl { background: rgba(8, 10, 18, 0.92); border-color: #2a3352; color: var(--gold2); }
+.hub-hero::before { top: -5px; left: -5px; width: 76px; height: 76px; }
+.hub-hero .hu-lvl { background: rgba(8, 10, 18, 0.92); border-color: #2a3352; color: var(--gold2); font-size: 9px; padding: 2px 8px; }
 .hub-hero .hu-name {
   background: rgba(9, 12, 22, 0.72);
   border-color: rgba(255, 255, 255, 0.08);
   color: var(--text);
+  font-size: 11px; max-width: 82px; padding: 3px 9px;
 }
 .hub-hero.empty .hu-disc { border-style: dashed; border-color: #3a4468; background: rgba(13, 17, 32, 0.45); }
 .hub-hero.empty .hu-plus { color: #5a6280; }
@@ -2323,7 +2332,7 @@ body {
     min-height: 100%;
     display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
     gap: 16px 8px;
-    padding: 74px 10px calc(160px + env(safe-area-inset-bottom));
+    padding: 92px 10px calc(160px + env(safe-area-inset-bottom));
   }
   .home-team { grid-column: auto; grid-row: auto; flex: 1 1 100%; }
   .home-merk { grid-column: auto; grid-row: auto; flex: 0 1 47%; width: auto; min-width: 120px; margin: 0; }
@@ -2337,24 +2346,25 @@ body {
 
 @media (max-width: 560px) {
   #topbar { padding: 10px 10px; }
-  .user-hud { max-width: 52vw; padding: 3px 10px 3px 4px; }
-  .uh-name { max-width: 12ch; font-size: 12px; }
-  .uh-avatar { width: 29px; height: 29px; font-size: 15px; }
-  .chip { padding: 4px 9px; font-size: 12px; }
-  .home-body { gap: 14px 8px; padding: 60px 10px calc(150px + env(safe-area-inset-bottom)); }
+  .user-hud { max-width: 56vw; padding: 4px 14px 4px 5px; }
+  .uh-name { max-width: 12ch; font-size: 14px; }
+  .uh-avatar { width: 36px; height: 36px; font-size: 19px; }
+  .chip { padding: 6px 12px; font-size: 14px; }
+  .chip .ic { font-size: 16px; }
+  .home-body { gap: 14px 8px; padding: 74px 10px calc(150px + env(safe-area-inset-bottom)); }
   .home-team-title { font-size: 9px; letter-spacing: 2px; margin-bottom: 6px; }
   .hub-squad { max-width: 300px; row-gap: 9px; padding: 4px; }
-  .hub-hero { width: 58px; }
-  .hub-hero .hu-disc { width: 50px; height: 50px; }
-  .hub-hero::before { width: 60px; height: 60px; top: -5px; left: -5px; }
+  .hub-hero { width: 66px; }
+  .hub-hero .hu-disc { width: 58px; height: 58px; }
+  .hub-hero::before { width: 68px; height: 68px; top: -5px; left: -5px; }
   .hub-hero .card-emo { font-size: 22px; }
   .hub-hero .hu-plus { font-size: 22px !important; top: 2px !important; }
-  .hub-hero .hu-lvl { font-size: 7px; padding: 1px 6px; }
-  .hub-hero .hu-name { font-size: 9px; max-width: 58px; }
+  .hub-hero .hu-lvl { font-size: 8px; padding: 1px 7px; }
+  .hub-hero .hu-name { font-size: 10px; max-width: 62px; }
   .home-merk, .home-camp { flex-basis: 47%; }
   .home-card { border-radius: 16px; }
   .hc-img { width: clamp(72px, 21vw, 92px); height: clamp(72px, 21vw, 92px); }
-  .idx-book { width: clamp(72px, 21vw, 92px); }
+  .idx-book { width: clamp(58px, 19vw, 76px); }
   .hc-t { font-size: 13px; }
   .hc-d { display: none; }
   .idx-lb { font-size: 9px; padding: 2px 8px; }
