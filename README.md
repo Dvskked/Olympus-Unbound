@@ -24,11 +24,11 @@ Forja tu legado entre mortales, héroes, dioses, titanes, primordiales y hasta e
 | 📜 **Colección** | Inventario completo, contador de duplicados, subida de nivel con oro + duplicados, subida solo con oro (sin duplicados) y subida por XP de entrenamiento |
 | 🛡️ **Mi Equipo** | 5 ranuras de batalla y poder total calculado en tiempo real, con el botón **"Equipar los mejores"** para auto-rellenar el equipo más fuerte |
 | 🏆 **Colección estilo arena** | 3 barras de filtros: **Rareza**, **Rol** (🏰 Tanques · ⚔️ Guerreros · 🔮 Magos · ✨ Soportes) y **Orden** (por rareza o ⚡ los mejores por poder) |
-| 🖥️ **UI renovada** | Paleta viva rediseñada, logo de Olympus con **hover que crece y brilla**, sobres/minijuegos con imágenes propias, **pantalla de carga con logo animado y botón Jugar** y **guía de bienvenida** para nuevos jugadores |
-| ⚔️ **Modo Batalla** | Auto-battler visual con fichas circulares, barras de vida/energía, poderes especiales, números voladores y **30 fases** de campaña |
+| 🖥️ **UI renovada** | Pantalla principal rediseñada según boceto: **HUD flotante** con tu perfil, oro y gemas; **Mi Equipo** al centro con fichas grandes; accesos **Mercadeo · Campaña · Índice** con iconos propios redondos (`img/extras/icons/`); menú inferior de **4 óvalos que solo aparece en el inicio**; **foto de perfil** en el onboarding; pantalla de carga con logo y botón Jugar, y **guía de bienvenida** para nuevos jugadores |
+| ⚔️ **Modo Batalla** | Auto-battler visual con fichas circulares, barras de vida/energía, poderes especiales, números voladores y **100 fases** de campaña |
 | 📈 **Progresión** | Hasta 100 niveles por carta con curva de costes suave y duplicados limitados: subir de nivel siempre es alcanzable con el oro de batallas y del Ágora |
 | 💾 **Guardado** | Todo el progreso persistido con `localStorage` (clave `olympus_unbound_v2`) |
-| 🖥️ **Responsive** | Interfaz adaptada a móviles y desktop con barra de navegación inferior |
+| 🖥️ **Responsive** | Interfaz adaptada a móviles, tablets y desktop con **tema oscuro cálido**: en pantallas pequeñas el inicio se recoloca en una columna desplazable y el menú de 4 óvalos se mantiene flotante solo en el inicio |
 
 ---
 
@@ -36,7 +36,7 @@ Forja tu legado entre mortales, héroes, dioses, titanes, primordiales y hasta e
 
 1. **Compra sobres** 🏛️ en la Tienda para conseguir cartas (empiezas con 🪙 3.000 y 💎 50, además de 3 cartas de arranque).
 2. **Asigna cartas** a "Mi Equipo" 🛡️ (máximo 5 integrantes) tocando cada ranura, o usa **"Equipar los mejores"** para auto-rellenarlo con tus cartas más fuertes.
-3. **Combate** ⚔️ en la campaña y vence las 30 fases de dificultad creciente.
+3. **Combate** ⚔️ en la campaña y vence las 100 fases de dificultad creciente.
 4. **Entrena** 🏋️ hasta 3 cartas a la vez antes de una batalla difícil: vuelve cuando el reloj acabe y recoge XP, 🪙 y a veces 💎 (o acelera al instante gastando gemas).
 5. **Recoge el Ágora** 💰 cada vez que estés fuera: el oro pasivo se acumula hasta un tope.
 6. **Mejora tus cartas** 📜 consumiendo duplicados + oro, o con XP de entrenamiento (¡no gasta duplicados!), o pagando solo oro como acceso directo.
@@ -141,7 +141,7 @@ Cada carta emana un aura visible según su rango, tanto en la colección y el í
 - Cuando la vida de una ficha llega a 0, esta se **desvanece** del campo de batalla.
 - Botón de **velocidad ×1 / ×2**, sonido sintetizado y opción de retirarse.
 - **Recompensas** por victoria: oro, XP y posiblemente gemas. Al perder puedes **reintentar** la fase.
-- **30 fases**: desde *Bandidos de la Ruta* hasta *Tifón, el Devorador de Dioses*, coronado por los Primordiales.
+- **100 fases**: desde *Bandidos de la Ruta* hasta *Tifón, el Devorador de Dioses*, coronado por los Primordiales.
 
 ---
 
@@ -186,7 +186,8 @@ Olympus Unbound/
 │   ├── personajes/     #   <rareza>/<id>.png (normal · heroe · dios · titan · primordial · creador)
 │   ├── sobres/         #   arte de los 7 sobres (sobre_bronce.jpg → sobre_cosmico.png)
 │   ├── minijuegos/     #   logos de los 5 minijuegos
-│   └── extras/logo/    #   logo-olympus.png (favicon e inicio)
+│   ├── extras/logo/    #   logo-olympus.png (favicon e inicio)
+│   └── extras/icons/   #   iconos del inicio: campaña, índice (indnice) y mercadeo
 ├── js/                 # Módulos (namespace global window.OU)
 │   ├── 00-img.js       # Mapa de arte real por carta (OU.IMG)
 │   ├── 01-data.js      # Constantes, cartas, sobres, fases, entrenamiento (OU.CONST/RAR/PACKS/CARDS/STAGES/TRAIN)
@@ -230,6 +231,8 @@ npm run check     # npx tsc — valida tipos sobre los módulos JS
 - [x] **Reorganización mitológica**: los seis primordiales desubicados vuelven a Primordial y los monstruos pasan a Titán.
 - [x] **Imágenes por carpetas** (`img/personajes/<rareza>/`, `img/sobres/`, `img/minijuegos/`, `img/extras/logo/`).
 - [x] **Colección con filtros** por rareza, rol y orden (estilo Clash Royale).
+- [x] **Pantalla principal según boceto**: HUD de usuario flotante (perfil, oro, gemas), **Mi Equipo** central grande, accesos Mercadeo/Campaña/Índice con iconos propios redondos y **menú inferior de 4 óvalos** que solo aparece en el inicio.
+- [x] **Onboarding con foto de perfil**, tema oscuro cálido y rediseño responsive móvil/tablet/desktop.
 - [ ] Modo PvP contra equipos de otros reinos.
 - [ ] Eventos diarios y misiones con recompensas.
 - [ ] BGM de ambientación y más efectos de sonido.
@@ -245,6 +248,7 @@ npm run check     # npx tsc — valida tipos sobre los módulos JS
 - **Sobres:** `img/sobres/` — un arte por tipo de sobre.
 - **Minijuegos:** `img/minijuegos/` — logo de cada minijuego.
 - **Logo:** `img/extras/logo/logo-olympus.png` — inicio y favicon con hover brillante.
+- **Iconos del inicio:** `img/extras/icons/` — campaña, índice (índide) y mercadeo como **anillos redondos flotantes** sin borde (`campaña.png`, `indnice.png`, `mercadeo.png`).
 
 Todo funciona 100% offline, sin fuentes ni recursos externos.
 
