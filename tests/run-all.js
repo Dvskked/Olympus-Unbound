@@ -286,14 +286,18 @@ function check(name, cond, extra) {
     return o.STATE.state.gold === before + g && !o.STATE.state.shopItems.some(x => x === item);
   })());
 
-  // Equipo: equipar los mejores por poder
-  check('equip best fills team by power', (() => {
+  // Equipo: equipar los mejores respetando topes por rol y el orden 1-2-2-1
+  check('equip best respects role caps + formation', (() => {
     const owned = Object.keys(o.STATE.state.cards);
     if (owned.length < 2) return true;
     o.TEAM.equipBest();
-    const t = o.STATE.state.team.filter(Boolean);
-    const sorted = owned.slice().sort((a, b) => o.UTIL.powerOf(b, o.STATE.state.cards[b].lvl) - o.UTIL.powerOf(a, o.STATE.state.cards[a].lvl));
-    return t.length === Math.min(o.CONST.MAX_TEAM, owned.length) && t[0] === sorted[0];
+    const t = o.STATE.state.team;
+    const count = (r) => t.filter(id => id && o.CARD_BY_ID[id].role === r).length;
+    const filled = t.filter(Boolean).length;
+    const slotRoles = o.CONST.TEAM_SLOT_ROLES;
+    const orderOk = slotRoles.every((r, i) => t[i] == null || o.CARD_BY_ID[t[i]].role === r);
+    const capsOk = ['tanque', 'guerrero', 'mago', 'soporte'].every(r => count(r) <= o.CONST.ROLE_CAPS[r]);
+    return filled <= o.CONST.MAX_TEAM && orderOk && capsOk && t.length === o.CONST.TEAM_SLOT_ROLES.length;
   })(), 'team=' + o.STATE.state.team.join(','));
 
   // Nuevos minijuegos

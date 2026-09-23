@@ -110,4 +110,24 @@
     "ekidna": ["img/personajes/titanes/equidna.png", "img/ekidna.png", "img/ekidna.jpg", "img/ekidna.webp"],
     "andre": ["img/personajes/creador/creador.png", "img/andre.png", "img/creator.png", "img/andres.png"]
   };
+
+  /**
+   * Sprites animados de batalla (hoja 6 columnas × 5 filas, PNG transparente).
+   * Cada personaje con sprite tiene su hoja en img/sprites/<id>/sprite.png.
+   * `frames` son los 30 rectángulos [x, y, ancho, alto] de cada celda, en orden
+   * de filas: FILA 1 reposo, 2 avance, 3 ataque, 4 daño(1-3)+muerte(4-6), 5 habilidad.
+   * Mientras el retrato de la carta sigue en img/, aquí SOLO vive el combate.
+   */
+  OU.SPRITES = {
+    andre: {
+      src: 'img/sprites/creador/creador.png',
+      frames: [
+        [22, 13, 48, 91], [112, 13, 48, 78], [205, 13, 48, 91], [296, 13, 48, 78], [387, 13, 48, 91], [478, 13, 48, 78],
+        [27, 104, 51, 77], [115, 104, 56, 78], [202, 104, 58, 89], [293, 104, 59, 78], [384, 104, 59, 89], [479, 104, 55, 89],
+        [22, 199, 90, 84], [112, 194, 90, 89], [202, 193, 70, 90], [279, 195, 103, 78], [382, 193, 53, 80], [474, 193, 49, 80],
+        [22, 283, 90, 88], [112, 283, 49, 88], [205, 283, 48, 88], [283, 289, 99, 71], [382, 312, 91, 51], [473, 296, 64, 68],
+        [22, 371, 90, 83], [112, 371, 90, 83], [202, 371, 77, 83], [279, 372, 103, 82], [382, 371, 91, 79], [473, 371, 71, 83]
+      ]
+    }
+  };
 })();

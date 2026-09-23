@@ -54,7 +54,7 @@
     var c = OU.CARD_BY_ID[cardId];
     var F = OU.RARITY_FACTOR[c.r];
     var base = (c.hp * 0.2 + c.atk + c.def * 1.2);
-    var lvlFactor = Math.pow(1.012, level) * (1.3 + Math.sqrt(level) * 0.55);
+    var lvlFactor = Math.pow(1.008, level) * (1.25 + Math.sqrt(level) * 0.45);
     var gold = Math.max(40, Math.round(base * lvlFactor * (0.5 + F * 0.26)));
     var dupes = Math.max(1, Math.round(Math.min(level, 24) * (0.6 + F * 0.18)));
     return { dupes: dupes, gold: gold };
@@ -62,24 +62,25 @@
 
   /**
    * Costo para subir 1 nivel usando SOLO oro (sin duplicados).
-   * Pagas más oro pero no dependes del azar; el recargo se aplana a partir
-   * del nivel 40 para que nunca se vuelva un muro.
+   * Pagas más oro pero no dependes del azar; el recargo es moderado y se
+   * aplana a partir del nivel 40 para que nunca se vuelva un muro.
    */
   function goldOnlyCost(cardId, level) {
     var st = upgradeCost(cardId, level);
-    var mult = 2.2 + Math.min(level, 40) * 0.025;
+    var mult = 2.0 + Math.min(level, 40) * 0.018;
     return Math.max(150, Math.round(st.gold * mult));
   }
 
   /**
    * Costo de entrenamiento: para subir 1 nivel necesitamos acumular XP.
-   * Subir con XP es más lento pero no gasta duplicados.
+   * El crecimiento es progresivo pero suave: subir de nivel por XP sigue
+   * siendo rentable a niveles altos sin volverse inalcanzable.
    */
   function trainCost(cardId, level) {
     var c = OU.CARD_BY_ID[cardId];
     var F = OU.RARITY_FACTOR[c.r];
     var base = (c.hp * 0.2 + c.atk + c.def * 1.2);
-    return Math.round(base * 0.45 * Math.pow(level, 1.05) * (0.5 + F * 0.14));
+    return Math.round(base * 0.44 * Math.pow(level, 0.95) * (0.5 + F * 0.14));
   }
 
   /* ---------- TECNOLOGÍAS (Templo del Conocimiento) ---------- */
@@ -222,7 +223,7 @@
     return o || (a < b ? 1 : -1);
   }
 
-  function xpNeed(lvl) { return Math.round(80 + lvl * 140); }
+  function xpNeed(lvl) { return Math.round(80 + lvl * 125); }
 
   function imgAlt(cardId) {
     var chain = OU.IMG[cardId];

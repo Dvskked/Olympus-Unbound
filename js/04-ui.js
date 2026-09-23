@@ -103,6 +103,41 @@
     return 'NV ' + lvl + (maxed ? ' · MÁX' : ' / ' + OU.CONST.MAX_LEVEL);
   }
 
+  /* ---------- SPRITES EN EL INICIO (hub «Mi Equipo») ---------- */
+  var hubSprs = new Map();
+  var hubSprTimer = null;
+
+  function applyHubFrame(el) {
+    var st = hubSprs.get(el); if (!st) return;
+    var f = st.idle[st.f];
+    el.style.backgroundPosition = (-f[0]) + 'px ' + (-f[1]) + 'px';
+  }
+
+  function spriteHub(root) {
+    if (!OU.SPRITES) return;
+    U.$$('.hub-hero.has-spr', root).forEach(function (h) {
+      var el = U.$('.hu-spr', h);
+      if (!el || hubSprs.has(el)) return;
+      var spr = OU.SPRITES[el.dataset.spr || h.dataset.hero];
+      if (!spr) return;
+      var mw = 0, mh = 0;
+      spr.frames.slice(0, 6).forEach(function (f) { if (f[2] > mw) mw = f[2]; if (f[3] > mh) mh = f[3]; });
+      el.style.backgroundImage = 'url(' + spr.src + ')';
+      el.style.backgroundRepeat = 'no-repeat';
+      el.style.width = mw + 'px';
+      el.style.height = mh + 'px';
+      hubSprs.set(el, { idle: spr.frames.slice(0, 6), f: 0 });
+      applyHubFrame(el);
+    });
+    if (!hubSprTimer) hubSprTimer = setInterval(function () {
+      hubSprs.forEach(function (st, el) {
+        if (!document.documentElement.contains(el)) { hubSprs.delete(el); return; }
+        st.f = (st.f + 1) % st.idle.length;
+        applyHubFrame(el);
+      });
+    }, 150);
+  }
+
   OU.UI = {
     artHTML: artHTML,
     rarityHTML: rarityHTML,
@@ -112,6 +147,7 @@
     openModal: openModal,
     closeModal: closeModal,
     cardBadge: cardBadge,
+    spriteHub: spriteHub,
     imgNext: imgNext
   };
 })();

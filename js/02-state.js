@@ -25,6 +25,7 @@
       incomeAcc: 0,             // oro acumulado pendiente de recoger
       shopRefresh: 0,           // timestamp de renovación de ofertas
       shopItems: [],            // ofertas actuales del Bazar
+      freeDaily: '',            // día (YYYY-MM-DD) en que se regaló la carta gratuita del Bazar
       boostUntil: 0,            // multiplicador de ingreso activo hasta aquí
       seen: {},                 // ids descubiertos (aunque se vendan)
       techs: {},                // niveles de tecnologías del Templo (id → nivel)
@@ -43,6 +44,27 @@
   }
 
   var state = defaultState();
+
+  /** Poder bruto (sin niveles), para ordenar sin depender de OU.UTIL. */
+  function estimatePower(id) {
+    var c = OU.CARD_BY_ID[id];
+    return c ? c.hp * 0.2 + c.atk + c.def * 1.2 : 0;
+  }
+
+  /** Recompone el equipo a la formación 1-2-2-1 respetando los topes por rol. */
+  function normalizeTeam() {
+    var byRole = { tanque: [], guerrero: [], mago: [], soporte: [] };
+    (state.team || []).forEach(function (id) {
+      if (id && state.cards[id] && OU.CARD_BY_ID[id]) byRole[OU.CARD_BY_ID[id].role].push(id);
+    });
+    ['tanque', 'guerrero', 'mago', 'soporte'].forEach(function (r) {
+      byRole[r].sort(function (a, b) { return estimatePower(b) - estimatePower(a); });
+      byRole[r] = byRole[r].slice(0, OU.CONST.ROLE_CAPS[r]);
+    });
+    state.team = OU.CONST.TEAM_SLOT_ROLES.map(function (r) {
+      return byRole[r].length ? byRole[r].shift() : null;
+    });
+  }
 
   function applyDefaults() {
     var d = defaultState();
@@ -75,6 +97,7 @@
     if (!state.daily) state.daily = { last: '', streak: 0 };
     if (!state.creatorFollows || typeof state.creatorFollows !== 'object') state.creatorFollows = { github: false, instagram: false };
     if (typeof state._tutorial !== 'boolean') state._tutorial = false;
+    normalizeTeam();
   }
 
   function load() {

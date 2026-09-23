@@ -270,6 +270,7 @@
     var editBtn = U.$('#editTeamBtn', root);
     if (editBtn) editBtn.addEventListener('click', function () { OU.TEAM.openTeamEditorModal(); });
     OU.TRAIN.bindIncome(root);
+    I.spriteHub(root);
   }
 
   /* =============== RECOMPENSAS DIARIAS =============== */

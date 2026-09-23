@@ -83,7 +83,7 @@
       return { t: 'upgrade', cost: { gold: Math.round(2000 * prg) }, cid: null };
     }
     if (type === 'freeGod') {
-      // Regalo gratuito: 1 dios aleatorio por cada renovación del Bazar (12 h).
+      // Regalo gratuito: 1 dios aleatorio, máximo UNA carta gratuita al día.
       var god = U.pick(OU.CARDS_BY_RAR.god);
       return { t: 'freeGod', id: god.id, cost: { gold: 0 }, tag: 'god' };
     }
@@ -91,14 +91,23 @@
     return { t: 'boost', cost: { gold: Math.round(2600 * prg) } };
   }
 
+  function todayStrShop() { return new Date().toISOString().slice(0, 10); }
+
   /** Asegura que el Bazar esté generado y vigente (12 h). */
   function ensureBazaar() {
     var st = OU.STATE.state;
     if (st.shopItems.length && st.shopRefresh > Date.now()) return;
     var items = [];
     for (var i = 0; i < 4; i++) items.push(makeOffer(weightedType()));
-    // La 5.ª oferta SIEMPRE es un dios gratis (una por renovación de 12 h).
-    items.push(makeOffer('freeGod'));
+    // La 5.ª oferta es un dios gratis, pero SOLO una vez por día (no por
+    // renovación): así no se puede farmear refrescando con gemas.
+    var today = todayStrShop();
+    if (st.freeDaily !== today) {
+      items.push(makeOffer('freeGod'));
+      st.freeDaily = today;
+    } else {
+      items.push(makeOffer(weightedType()));
+    }
     st.shopItems = items;
     st.shopRefresh = Date.now() + OU.CONST.SHOP_REFRESH_MS;
     OU.STATE.save();
@@ -132,7 +141,7 @@
         '<div class="oc-badge" style="color:' + fr.color + ';border-color:' + fr.color + '">DON GRATIS DE LOS DIOSES</div>' +
         '<div class="oc-art" style="border-color:' + fr.color + '">' + I.artHTML(o.id, 'pick-art') + '</div>' +
         '<div class="oc-name" style="color:' + fr.color + '">' + fc.n + '</div>' +
-        '<div class="oc-cost free">🆓 GRATIS · 1 por renovación</div>' +
+        '<div class="oc-cost free">🆓 GRATIS · 1 por día</div>' +
         '<div class="oc-cta">Reclamar ➜</div>' +
         '</div>';
     }
@@ -328,7 +337,9 @@
     U.$$('[data-offer]', root).forEach(function (e) {
       e.addEventListener('click', function () { buyOffer(parseInt(e.dataset.offer, 10)); });
     });
-    bindCreator(root);
+    U.$$('[data-creator-link]', root).forEach(function (e) {
+      e.addEventListener('click', function () { noteCreatorLink(e.dataset.creatorLink); });
+    });
     var rf = U.$('#refreshShopBtn');
     if (rf) rf.addEventListener('click', refreshBazaar);
   }
@@ -586,67 +597,61 @@
 
   /* ---------- EL CREADOR (exclusivo · 1 carta) ---------- */
 
-  /** Panel de desbloqueo del Creador: requiere seguir a Andrés en GitHub e Instagram. */
+  /**
+   * Visita a una de las redes del Creador (se abre el perfil en otra pestaña).
+   * Al visitar las 2, la carta única «Andrés» se desbloquea de inmediato.
+   * Devuelve true si la carta acaba de desbloquearse.
+   */
+  function noteCreatorLink(net) {
+    var st = OU.STATE.state;
+    if (!st.creatorFollows || typeof st.creatorFollows !== 'object') st.creatorFollows = { github: false, instagram: false };
+    if (!st.creatorFollows[net]) st.creatorFollows[net] = true;
+    OU.STATE.save();
+    if (!st.cards.andre && st.creatorFollows.github && st.creatorFollows.instagram) {
+      st.cards.andre = { lvl: 1, dup: 0, xp: 0 };
+      st.seen.andre = true;
+      OU.STATE.save();
+      I.updateTopRes();
+      OU.MAIN.render();
+      I.toast('👑 Andrés, el Creador, se une a tu altar ⚡');
+      return true;
+    }
+    OU.MAIN.render();
+    return false;
+  }
+
+  /** Panel del Creador: la carta solo llega al visitar los 2 enlaces. */
   function creatorPanelHTML() {
     var st = OU.STATE.state;
-    if (!st.cards.andre) {
-      st.creatorFollows = st.creatorFollows || {};
+    var has = !!st.cards.andre;
+    var f = (st.creatorFollows && typeof st.creatorFollows === 'object') ? st.creatorFollows : { github: false, instagram: false };
+    var done = (f.github ? 1 : 0) + (f.instagram ? 1 : 0);
+    function link(net, label) {
+      var visited = !!f[net];
+      return '<a href="' + (net === 'github' ? OU.CONST.CREATOR_GITHUB : OU.CONST.CREATOR_INSTAGRAM) +
+        '" target="_blank" rel="noopener" data-creator-link="' + net + '"' + (visited ? ' class="visited"' : '') + '>' +
+        label + (visited ? ' ✓' : '') + '</a>';
     }
-    var f = st.creatorFollows || {};
-    var ready = !!f.github && !!f.instagram;
-    function row(key, emoji, name, handle, url, val) {
-      return '<div class="follow-row">' +
-        '<a class="fr-link" href="' + url + '" target="_blank" rel="noopener">' +
-        '<span class="fr-emoji">' + emoji + '</span>' +
-        '<span class="fr-txt"><b>' + name + '</b><br><span class="fr-handle">' + handle + '</span></span>' +
-        '</a>' +
-        '<button class="fr-check' + (val ? ' on' : '') + '" data-foll="' + key + '">' + (val ? '✓ ¡Hecho!' : 'Seguido ✓') + '</button>' +
-        '</div>';
-    }
-    if (st.cards.andre) {
+    var links = link('github', '🐙 GitHub') + ' · ' + link('instagram', '📸 Instagram');
+    if (has) {
       return '<div class="creator-panel ok">' +
         '<div class="cp-art">' + I.artHTML('andre', 'pick-art') + '</div>' +
         '<div class="cp-body">' +
         '<div class="cp-t">👑 ¡Andrés, el Creador, ya está en tu colección!</div>' +
-        '<div class="cp-d">Carta única: solo existe esta copia. Para mejorarla usa <b>solo oro</b> (su coste de oro es elevado y no acepta duplicados).</div>' +
+        '<div class="cp-d">Carta única: no acepta duplicados ni entrenamiento; se mejora <b>solo con oro</b>. Llegó a tu altar porque visitaste sus 2 redes.</div>' +
+        '<div class="cp-support">Apóyame (opcional): ' + links + '</div>' +
         '</div>' +
         '</div>';
     }
     return '<div class="creator-panel">' +
       '<div class="cp-art">' + I.artHTML('andre', 'pick-art') + '</div>' +
       '<div class="cp-body">' +
-      '<div class="cp-t">🧑‍💻 Desbloquea al Creador (stock: 1)</div>' +
-      '<div class="cp-d">La única carta del juego que no saldrá jamás por sobres. Sigue a Andrés en <b>GitHub</b> e <b>Instagram</b>, vuelve aquí, confirma y recíbelo.</div>' +
-      row('github', '🐙', 'GitHub', 'github.com/Dvskked', OU.CONST.CREATOR_GITHUB, f.github) +
-      row('instagram', '📸', 'Instagram', '@_andres.nox', OU.CONST.CREATOR_INSTAGRAM, f.instagram) +
-      '<button class="btn btn-gold btn-block' + (ready ? '' : ' disabled') + '" id="creatorClaim"' + (ready ? '' : ' disabled') + '><div class="cp-claim">👑 Reclamar 1 carta (stock único)</div></button>' +
+      '<div class="cp-t">👑 Desbloquea a Andrés, el Creador</div>' +
+      '<div class="cp-d">Carta única y exclusiva. Visita los <b>2 enlaces</b> de abajo y, al completarlos, Andrés se unirá a tu altar de inmediato. No aparece en sobres ni en el Bazar.</div>' +
+      '<div class="cp-support">Sígueme: ' + links + '</div>' +
+      '<div class="cp-progress">Enlaces visitados: ' + done + '/2</div>' +
       '</div>' +
       '</div>';
-  }
-
-  function bindCreator(root) {
-    U.$$('[data-foll]', root).forEach(function (b) {
-      b.addEventListener('click', function () {
-        var st = OU.STATE.state;
-        st.creatorFollows = st.creatorFollows || {};
-        st.creatorFollows[b.dataset.foll] = true;
-        OU.STATE.save();
-        I.toast(b.dataset.foll === 'github' ? '✓ Confirmaste que sigues a Andrés en GitHub 🐙' : '✓ Confirmaste que sigues a Andrés en Instagram 📸');
-        OU.MAIN.render();
-      });
-    });
-    var cc = U.$('#creatorClaim', root);
-    if (cc) cc.addEventListener('click', function () {
-      var st = OU.STATE.state;
-      var f = st.creatorFollows || {};
-      if (!f.github || !f.instagram) { I.toast('Primero sigue al Creador en GitHub e Instagram 💌'); return; }
-      if (st.cards.andre) { I.toast('Ya posees al Creador'); return; }
-      st.cards.andre = { lvl: 1, dup: 0, xp: 0 };
-      st.seen.andre = true;
-      OU.STATE.save(); I.updateTopRes();
-      OU.MAIN.render();
-      I.toast('👑 Andrés, el Creador, se une a tu altar ⚡');
-    });
   }
 
   /* Reloj del Bazar: actualiza la cuenta atrás mientras la tienda está abierta. */
@@ -688,6 +693,7 @@
     makeOffer: makeOffer,
     playPop: playPop,
     audio: audio,
+    noteCreatorLink: noteCreatorLink,
     startShopTimer: startShopTimer,
     get openingBusy() { return openingBusy; }
   };

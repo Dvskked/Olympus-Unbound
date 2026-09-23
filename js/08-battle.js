@@ -147,6 +147,7 @@
       '</div>';
     en.forEach(function (u) { U.$('#enemyCol').appendChild(unitEl(u)); });
     my.forEach(function (u) { U.$('#allyCol').appendChild(unitEl(u)); });
+    bootSprites();
     U.$('#speedBtn').addEventListener('click', function () {
       battleFast = battleFast === 1 ? 2 : 1;
       U.$('#speedBtn').textContent = '⏩ x' + battleFast;
@@ -159,22 +160,89 @@
 
   function unitEl(u) {
     var div = document.createElement('div');
-    div.className = 'btoken ' + (u.side === 'e' ? 'enemy' : 'ally') + ' r-' + u.r;
+    div.className = 'btoken ' + (u.side === 'e' ? 'enemy' : 'ally') + ' r-' + u.r + ' role-' + u.role;
     div.dataset.uid = u.uid;
     div.style.setProperty('--c', OU.RAR[u.r].color);
+    var spr = OU.SPRITES && OU.SPRITES[u.cardId];
     div.innerHTML =
       '<span class="bt-sd"></span>' +
       '<span class="bt-bf"></span>' +
       '<div class="bt-hpbar"><div class="bt-fill" style="width:100%"></div></div>' +
       '<div class="bt-circle">' +
-      '<div class="bt-wrap">' + I.artHTML(u.cardId, 'bt-img') + '</div>' +
+      (spr ? '' : '<div class="bt-wrap">' + I.artHTML(u.cardId, 'bt-img') + '</div>') +
       '<span class="bt-rarity" style="color:' + OU.RAR[u.r].color + '"></span>' +
       '<span class="bt-lv">NV ' + u.level + '</span>' +
       '</div>' +
       '<div class="bt-name">' + u.name + '</div>' +
       '<div class="bt-hpnum">' + U.fmt(u.hp) + ' / ' + U.fmt(u.maxHp) + '</div>' +
       '<div class="bt-enbar"><div class="bt-fill" style="width:' + u.energy + '%"></div></div>';
+    if (spr) initSprite(div, u, spr, u.side === 'e');
     return div;
+  }
+
+  /* ---------- SPRITES ANIMADOS ---------- */
+  var sprTickMs = 110;
+  var sprStates = new WeakMap();
+  var sprEls = new Set();
+  var sprTimer = null;
+
+  function initSprite(el, u, spr, isEnemy) {
+    var wrap = document.createElement('div');
+    wrap.className = 'bt-sprite-wrap' + (isEnemy ? ' enemy-spr' : '');
+    var box = document.createElement('div');
+    box.className = 'bt-sprite';
+    box.style.backgroundImage = 'url(' + spr.src + ')';
+    box.style.backgroundRepeat = 'no-repeat';
+    wrap.appendChild(box);
+    el.appendChild(wrap);
+    el.classList.add('has-sprite');
+    sprStates.set(el, { spr: spr, box: box, row: 0, col: 0, n: 6, mode: 'idle', ready: false });
+    sprEls.add(el);
+    return el;
+  }
+
+  function bootSprites() {
+    sprEls.forEach(function (el) {
+      var st = sprStates.get(el);
+      if (!st || st.ready) return;
+      var token = el.offsetWidth || 64;
+      st.scale = (token * 1.08) / st.spr.frames[0][3];
+      st.ready = true;
+      applyFrame(el);
+    });
+    if (!sprTimer) sprTimer = setInterval(function () {
+      if (!battleRunning) return;
+      sprEls.forEach(function (el) {
+        if (!document.documentElement.contains(el)) { sprEls.delete(el); return; }
+        stepSprite(el);
+      });
+    }, sprTickMs);
+  }
+
+  function stepSprite(el) {
+    var st = sprStates.get(el); if (!st) return;
+    if (st.mode === 'idle') {
+      st.col = (st.col + 1) % 6;
+    } else {
+      st.col++;
+      if (st.col >= st.n) { st.col = -1; st.row = 0; st.n = 6; st.mode = 'idle'; }
+    }
+    applyFrame(el);
+  }
+
+  function applyFrame(el) {
+    var st = sprStates.get(el); if (!st || !st.ready) return;
+    var f = st.spr.frames[st.row * 6 + Math.max(0, st.col)];
+    st.box.style.width = f[2] + 'px';
+    st.box.style.height = f[3] + 'px';
+    st.box.style.backgroundPosition = (-f[0]) + 'px ' + (-f[1]) + 'px';
+    st.box.style.transform = 'scale(' + st.scale + ')';
+    st.box.style.transformOrigin = '50% 50%';
+  }
+
+  function sprPlay(el, row, n) {
+    var st = sprStates.get(el); if (!st) return;
+    st.row = row; st.col = -1; st.n = n; st.mode = 'run';
   }
 
   /* Helpers reutilizados del monolito */
@@ -235,10 +303,12 @@
     const dx = (tR.left + tR.width / 2) - (aR.left + aR.width / 2);
     aEl.style.setProperty('--dx', Math.max(-160, Math.min(160, Math.round(dx * 0.4))) + 'px');
     aEl.classList.remove('dash'); void aEl.offsetWidth; aEl.classList.add('dash');
+    if (sprStates.get(aEl)) sprPlay(aEl, 2, 6);
   };
   const hitFx = (u) => {
     const el = unitElOf(u); if (!el) return;
     el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+    if (sprStates.get(el)) sprPlay(el, 3, 3);
     const c = $('.bt-circle', el);
     if (c) {
       c.classList.remove('impact'); void c.offsetWidth; c.classList.add('impact');
@@ -258,11 +328,15 @@
     setTimeout(() => s.remove(), 660);
     const c = $('.bt-circle', el);
     if (c) { c.classList.add('cast'); setTimeout(() => c.classList.remove('cast'), 600); }
+    if (sprStates.get(el)) sprPlay(el, 4, 6);
   };
   const killUnit = (u) => {
     u.dead = true;
     const el = unitElOf(u);
-    if (el) el.classList.add('dead');
+    if (el) {
+      el.classList.add('dead');
+      if (sprStates.get(el)) sprPlay(el, 3, 6);
+    }
   };
   const aliveCount = (units) => units.filter((u) => !u.dead).length;
   const randomAlive = (units) => {
@@ -270,6 +344,16 @@
     const b = units.filter((u) => !u.dead);
     const pool = a.length ? a : b;
     return pool.length ? U.pick(pool) : null;
+  };
+  // La formación pone al tanque al frente (primer elemento vivo): absorbe la
+  // mayoría de los ataques cuerpo a cuerpo y los golpes de habilidad dirigidos.
+  const pickBattleTarget = (foes) => {
+    const a = foes.filter((u) => !u.dead && u.shield <= 0);
+    const b = foes.filter((u) => !u.dead);
+    const pool = a.length ? a : b;
+    if (!pool.length) return null;
+    if (pool.length >= 2 && Math.random() < 0.55) return pool[0];
+    return U.pick(pool);
   };
   const calcDamage = (att, def2, mult) => {
     const variance = U.rnd(0.85, 1.15);
@@ -294,7 +378,7 @@
   }
   async function basicAttack(u) {
     const foes = u.side === 'p' ? enUnits : myUnits;
-    const t = randomAlive(foes);
+    const t = pickBattleTarget(foes);
     if (!t) return;
     lungeFx(u, t);
     const dmg = calcDamage(u, t, 1);
@@ -309,7 +393,7 @@
     const allies = u.side === 'p' ? myUnits : enUnits;
     await U.sleep(420 / battleFast);
     if (a.t === 'strike') {
-      const t = randomAlive(foes);
+      const t = pickBattleTarget(foes);
       if (t) { lungeFx(u, t); const dmg = calcDamage(u, t, a.s); await dealDamage(u, t, dmg); }
     } else if (a.t === 'aoe') {
       const alive = foes.filter((f) => !f.dead);
@@ -433,6 +517,12 @@
       if (gC) gC.addEventListener('click', () => OU.MAIN.setTab('shop'));
     },
     startBattle: startBattle,
+    _spr: {
+      framesOf: function (id) { return (OU.SPRITES && OU.SPRITES[id]) ? OU.SPRITES[id].frames : null; },
+      frameOf: function (el) { return sprStates.get(el) || null; },
+      play: sprPlay,
+      step: stepSprite
+    },
     get running() { return battleRunning; },
     set running(v) { battleRunning = v; }
   };

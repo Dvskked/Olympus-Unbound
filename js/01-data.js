@@ -13,7 +13,7 @@
   OU.CONST = {
     SAVE_KEY: 'olympus_unbound_v2',
     MAX_LEVEL: 100,
-    MAX_TEAM: 5,
+    MAX_TEAM: 6,
     MAX_TRAIN: 3,
     INITIAL_GOLD: 3000,
     INITIAL_GEMS: 50,
@@ -37,7 +37,12 @@
     DAILY_GEMS_CAP: 10,
     // Creador exclusivo: solo se desbloquea siguiendo estos perfiles.
     CREATOR_GITHUB: 'https://github.com/Dvskked',
-    CREATOR_INSTAGRAM: 'https://www.instagram.com/_andres.nox/'
+    CREATOR_INSTAGRAM: 'https://www.instagram.com/_andres.nox/',
+    // Equipo de 6 en formación 1-2-2-1: el tanque al frente, los 2 guerreros
+    // a los lados, los 2 magos detrás y el soporte al final. Cada ranura
+    // exige un rol fijo y ningún rol supera su tope.
+    TEAM_SLOT_ROLES: ['tanque', 'guerrero', 'guerrero', 'mago', 'mago', 'soporte'],
+    ROLE_CAPS: { tanque: 1, guerrero: 2, mago: 2, soporte: 1 }
   };
 
   OU.RAR = {
@@ -424,6 +429,20 @@
     ['Tifón, el Devorador de Dioses', 'La última prueba: enfrenta al monstruo que hizo temblar al Olimpo.', ['tifon', 'tifon', 'chaos', 'anank', 'eter']]
   ];
 
+  // Sexto rival de cada fase (100 en orden): la campaña ahora se libra 6v6.
+  OU.STAGE_6TH = [
+    'mirm', 'pirit', 'hop', 'lan', 'polix', 'arq', 'teu', 'mirm', 'sat', 'gc',
+    'polix', 'delf', 'mirm', 'ant', 'pirit', 'cas', 'arq', 'lan', 'teu', 'polix',
+    'jas', 'orf', 'pele', 'anti', 'ant', 'dri', 'sire', 'qui', 'fil', 'uli',
+    'apo', 'dion', 'iris', 'hebe', 'nike', 'art', 'dem', 'eos', 'hef', 'hebe',
+    'art', 'afr', 'hebe', 'dion', 'eos', 'hebe', 'ate', 'apo', 'pos', 'dion',
+    'hebe', 'nike', 'afr', 'pos', 'dem', 'ate', 'nike', 'dem', 'afr', 'pos',
+    'phoeb', 'oce', 'astra', 'pers', 'phoeb', 'jap', 'mnem', 'thes', 'hip', 'cri',
+    'phoeb', 'cri', 'mnem', 'jap', 'nix', 'gaya', 'epim', 'ofion', 'teth', 'phoeb',
+    'hemer', 'nix', 'ereb', 'ekidna', 'tar', 'nix', 'ereb', 'tifon', 'eurin', 'hemer',
+    'tar', 'fanes', 'nix', 'ereb', 'tifon', 'fanes', 'ereb', 'ekidna', 'ofion', 'fanes'
+  ];
+
   OU.STAGES = OU.STAGE_ROWS.map(function (row, i) {
     var idx = i + 1;
     var scale = 1 + i * 0.0012;
@@ -432,7 +451,7 @@
     return {
       n: row[0],
       story: row[1],
-      roster: row[2],
+      roster: row[2].concat(OU.STAGE_6TH[i] ? [OU.STAGE_6TH[i]] : []),
       level: Math.min(OU.CONST.MAX_LEVEL, idx),
       scale: Math.round(scale * 1000) / 1000
     };
