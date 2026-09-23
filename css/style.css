@@ -224,7 +224,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .diff-0 { color: #7fe08a; } .diff-1 { color: #ffe08a; } .diff-2 { color: #ff9d6b; } .diff-3 { color: #ff6b6b; } .diff-4 { color: #e85bff; }
 
 /* ---------- Equipo ---------- */
-.squad-wrap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.squad-wrap { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .power-box {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   background: linear-gradient(160deg, #1c2134, #141829); border: 1px solid var(--line);
@@ -498,7 +498,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   grid-template-columns: 1fr 60px 1fr; align-items: center; gap: 6px;
   min-height: 460px; padding: 16px 12px;
 }
-.bt-side { display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; gap: 12px; min-height: 420px; }
+.bt-side { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: auto; justify-items: center; align-content: space-evenly; gap: 10px 14px; min-height: 420px; }
 .bt-mid { display: flex; align-items: center; justify-content: center; }
 .vs-badge {
   width: 42px; height: 42px; border-radius: 50%; border: 1px solid #3a4a6e;
@@ -1223,10 +1223,10 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 
 /* ---------- Responsive ---------- */
 @media (max-width: 560px) {
-  .squad-wrap { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.squad-wrap { grid-template-columns: repeat(2, 1fr); gap: 6px; }
   .arena { padding: 6px; min-height: 400px; }
   .bt-field { grid-template-columns: 1fr 44px 1fr; gap: 2px; min-height: 380px; padding: 14px 8px; }
-  .bt-side { gap: 9px; min-height: 350px; }
+  .bt-side { gap: 5px 6px; min-height: 350px; }
   .btoken { --t-size: clamp(40px, 12vw, 50px); gap: 2px; }
   .btoken .bt-name { font-size: 8px; }
   .ccard-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 9px; }
@@ -1333,20 +1333,14 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .creator-panel .cp-t { font-weight: 800; color: var(--gold2); font-size: 13.5px; }
 .creator-panel .cp-d { font-size: 11.5px; color: var(--dim); line-height: 1.55; }
 .creator-panel .cp-claim { font-size: 13px; }
-.follow-row {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  background: rgba(10, 12, 19, 0.55); border: 1px solid var(--line-soft); border-radius: var(--r-sm); padding: 9px 12px;
+.creator-panel .cp-support {
+  font-size: 11px; color: var(--dim); margin-top: 4px; line-height: 1.7;
+  border-top: 1px dashed var(--line); padding-top: 10px;
 }
-.follow-row .fr-link { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-size: 12.5px; }
-.follow-row .fr-link .fr-emoji { font-size: 20px; }
-.follow-row .fr-link .fr-handle { font-size: 11px; color: var(--dim); }
-.follow-row .fr-check {
-  padding: 6px 12px; border-radius: 99px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.5px;
-  background: rgba(92, 194, 255, 0.12); color: var(--blue); border: 1px solid rgba(92, 194, 255, 0.4);
-  transition: background 0.2s, color 0.2s, transform 0.15s; white-space: nowrap;
+.creator-panel .cp-support a {
+  color: var(--gold2); font-weight: 700; text-decoration: none; white-space: nowrap;
 }
-.follow-row .fr-check.on { background: rgba(65, 224, 196, 0.16); color: var(--teal); border-color: rgba(65, 224, 196, 0.55); }
-.follow-row .fr-check:hover { transform: translateY(-1px); }
+.creator-panel .cp-support a:hover { text-decoration: underline; }
 
 /* ==========================================================================
    CIUDAD (hub 2.5D � estilo Hero Wars)
@@ -2066,7 +2060,109 @@ body {
   #tabs { gap: 5px; padding: 7px 6px calc(8px + env(safe-area-inset-bottom)); }
   #tabs .tab { flex: 1 1 0; width: auto; padding: 7px 0 6px; font-size: 8.5px; }
   #tabs .tab .t-ic { font-size: 17px; }
-  .home-foot { width: calc(100% - 16px); }
+.home-foot { width: calc(100% - 16px); }
+}
+
+/* ----- Formación 1-2-2-1 en batalla -----
+   Soporte (arriba = atrás) · Magos detrás de los guerreros · Guerreros a
+   los lados del tanque · TANQUE AL FRENTE (abajo, pegado al enemigo). */
+.bt-side { grid-template-areas: "S S" "M1 M2" "G1 G2" "T T"; }
+.bt-side .btoken:nth-child(1) { grid-area: T; }
+.bt-side .btoken:nth-child(2) { grid-area: G1; }
+.bt-side .btoken:nth-child(3) { grid-area: G2; }
+.bt-side .btoken:nth-child(4) { grid-area: M1; }
+.bt-side .btoken:nth-child(5) { grid-area: M2; }
+.bt-side .btoken:nth-child(6) { grid-area: S; }
+.bt-side .btoken { max-width: 96%; }
+
+/* ----- Formación 1-2-2-1 en el editor de equipo ----- */
+.squad-wrap { grid-template-areas: "S S" "M1 M2" "G1 G2" "T T"; }
+.squad-wrap .slot:nth-child(1) { grid-area: T; }
+.squad-wrap .slot:nth-child(2) { grid-area: G1; }
+.squad-wrap .slot:nth-child(3) { grid-area: G2; }
+.squad-wrap .slot:nth-child(4) { grid-area: M1; }
+.squad-wrap .slot:nth-child(5) { grid-area: M2; }
+.squad-wrap .slot:nth-child(6) { grid-area: S; }
+.squad-wrap .slot:nth-child(1),
+.squad-wrap .slot:nth-child(6) { justify-self: center; width: 38%; }
+@media (max-width: 560px) {
+  .squad-wrap .slot:nth-child(1),
+  .squad-wrap .slot:nth-child(6) { width: 44%; }
+}
+
+/* Minidiagrama de la formación sobre la lista de ranuras */
+.formation-hint { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 0 0 14px; }
+.formation-hint .fh-row { display: flex; gap: 5px; justify-content: center; }
+.formation-hint span {
+  font-size: 8.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim); border: 1px solid var(--line); border-radius: 999px;
+  padding: 3px 10px; background: rgba(13, 17, 32, 0.6);
+}
+.formation-hint .fh-front span { color: var(--gold2); border-color: rgba(227, 176, 79, 0.55); }
+.formation-hint .fh-back span { color: #6fd3ff; border-color: rgba(111, 211, 255, 0.4); }
+
+/* Creador: estado de desbloqueo (visitar 2 enlaces) */
+.creator-panel .cp-progress {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 1px; color: var(--gold2);
+  border-top: 1px dashed var(--line); padding-top: 8px; text-align: center;
+  text-transform: uppercase; margin-top: 2px;
+}
+.creator-panel .cp-support a.visited { opacity: 0.55; text-decoration: line-through; }
+
+/* ----- Sprites animados en batalla (hojas 6x5 por personaje) ----- */
+.btoken.has-sprite { --t-size: clamp(74px, 17vw, 104px); }
+.btoken .bt-sprite-wrap {
+  position: absolute; left: 50%; top: 50%; z-index: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.btoken .bt-sprite {
+  background-size: auto;
+  filter: drop-shadow(0 5px 7px rgba(0, 0, 0, 0.6));
+  image-rendering: auto;
+}
+.btoken.enemy.has-sprite .bt-sprite-wrap { transform: translate(-50%, -50%) scaleX(-1); }
+.btoken.has-sprite .bt-circle { background: transparent; }
+@media (max-width: 560px) {
+  .btoken.has-sprite { --t-size: clamp(56px, 15vw, 78px); }
+}
+
+/* ----- Tamaño por rol (batalla): tanque grande, soporte mediano, resto normal ----- */
+.btoken.role-tanque { --t-size: clamp(88px, 20vw, 132px); }
+.btoken.role-soporte { --t-size: clamp(78px, 18vw, 112px); }
+.btoken.role-guerrero,
+.btoken.role-mago { --t-size: clamp(70px, 16vw, 100px); }
+.btoken.has-sprite.role-tanque { --t-size: clamp(96px, 22vw, 148px); }
+.btoken.has-sprite.role-soporte { --t-size: clamp(84px, 19vw, 124px); }
+.btoken.has-sprite.role-guerrero,
+.btoken.has-sprite.role-mago { --t-size: clamp(74px, 17vw, 108px); }
+
+/* Sin la bola/aura detrás del sprite: solo se ve el personaje */
+.btoken.has-sprite .bt-circle { background: transparent; border: none; box-shadow: none; }
+.btoken.has-sprite .bt-circle::before,
+.btoken.has-sprite .bt-circle::after { display: none; }
+
+/* ----- Hub del inicio: personaje completo con sprite (sin carta ni aura) ----- */
+.hub-hero.has-spr::before { display: none; }
+.hub-hero .hu-spr {
+  position: relative;
+  background-repeat: no-repeat;
+  transform: scale(var(--ts, 1));
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.55));
+  image-rendering: auto;
+}
+.hub-hero.has-spr .hu-name { margin-top: -2px; }
+
+@media (max-width: 560px) {
+  .btoken.role-tanque { --t-size: clamp(66px, 19vw, 90px); }
+  .btoken.role-soporte { --t-size: clamp(58px, 17vw, 78px); }
+  .btoken.role-guerrero,
+  .btoken.role-mago { --t-size: clamp(52px, 15vw, 70px); }
+  .btoken.has-sprite.role-tanque { --t-size: clamp(74px, 21vw, 100px); }
+  .btoken.has-sprite.role-soporte { --t-size: clamp(64px, 18vw, 88px); }
+  .btoken.has-sprite.role-guerrero,
+  .btoken.has-sprite.role-mago { --t-size: clamp(58px, 16vw, 80px); }
 }
 
 /* ==========================================================================
