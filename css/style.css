@@ -316,18 +316,18 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 }
 
 .ccard._rar-god .c-icon-wrap {
-  box-shadow: 0 0 24px rgba(255, 210, 87, 0.65);
-  animation: cardAuraPulse 1.9s ease-in-out infinite;
+  background: radial-gradient(circle at 50% 42%, rgba(255, 210, 87, 0.26), rgba(10, 12, 24, 0.65) 70%), #0a0c18;
+  border-color: rgba(255, 210, 87, 0.55);
+  box-shadow: 0 0 26px rgba(255, 210, 87, 0.55), inset 0 0 18px rgba(255, 210, 87, 0.2);
+  animation: cardAuraPulse 3.2s ease-in-out infinite;
 }
 .ccard._rar-god .c-icon-wrap::before {
-  content: ''; position: absolute; inset: -6px; border-radius: 12px; pointer-events: none; z-index: 2;
-  opacity: 0.85;
-  background: repeating-conic-gradient(from 0deg,
-    rgba(255, 210, 87, 0) 0deg 14deg, rgba(255, 210, 87, 0.55) 14deg 24deg);
-  -webkit-mask: radial-gradient(circle, transparent 30%, #000 34%);
-  mask: radial-gradient(circle, transparent 30%, #000 34%);
-  animation: cardRaysSpin 8s linear infinite;
+  content: ''; position: absolute; inset: -3px; border-radius: 13px; pointer-events: none; z-index: 2;
+  border: 2px solid rgba(255, 210, 87, 0.75); box-shadow: 0 0 16px rgba(255, 210, 87, 0.45);
+  background: radial-gradient(rgba(255, 210, 87, 0.12), transparent 72%);
+  animation: cardPrimordialGlow 3.2s ease-in-out infinite;
 }
+.ccard._rar-god .c-icon-wrap .card-art { object-fit: contain; }
 
 .ccard._rar-titan .c-icon-wrap {
   box-shadow: 0 0 28px rgba(177, 77, 255, 0.55), inset 0 0 22px rgba(177, 77, 255, 0.28);
@@ -728,16 +728,19 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   border: 1px solid rgba(63, 182, 255, 0.55); box-shadow: 0 0 14px rgba(63, 182, 255, 0.5);
   animation: cardPrimordialGlow 2.6s ease-in-out infinite;
 }
-.detail-icon._rar-god { box-shadow: 0 0 26px rgba(255, 210, 87, 0.65); animation: floatY 3s ease-in-out infinite, cardAuraPulse 1.9s ease-in-out infinite; }
-.detail-icon._rar-god::before {
-  content: ''; position: absolute; inset: 2px; border-radius: 13px; pointer-events: none; z-index: 2;
-  opacity: 0.8;
-  background: repeating-conic-gradient(from 0deg,
-    rgba(255, 210, 87, 0) 0deg 14deg, rgba(255, 210, 87, 0.4) 14deg 24deg);
-  -webkit-mask: radial-gradient(circle, transparent 30%, #000 34%);
-  mask: radial-gradient(circle, transparent 30%, #000 34%);
-  animation: cardRaysSpin 8s linear infinite;
+.detail-icon._rar-god {
+  background: radial-gradient(circle at 50% 40%, rgba(255, 210, 87, 0.28), rgba(10, 12, 24, 0.65) 72%), #0a0c18;
+  border-color: rgba(255, 210, 87, 0.6);
+  box-shadow: 0 0 26px rgba(255, 210, 87, 0.6), inset 0 0 22px rgba(255, 210, 87, 0.2);
+  animation: floatY 3s ease-in-out infinite, cardAuraPulse 3.2s ease-in-out infinite;
 }
+.detail-icon._rar-god::before {
+  content: ''; position: absolute; inset: 3px; border-radius: 11px; pointer-events: none; z-index: 2;
+  border: 2px solid rgba(255, 210, 87, 0.8); box-shadow: 0 0 16px rgba(255, 210, 87, 0.5);
+  background: radial-gradient(rgba(255, 210, 87, 0.12), transparent 70%);
+  animation: cardPrimordialGlow 3.2s ease-in-out infinite;
+}
+.detail-icon._rar-god .detail-art { object-fit: contain; }
 .detail-icon._rar-titan { box-shadow: 0 0 32px rgba(177, 77, 255, 0.6), inset 0 0 24px rgba(177, 77, 255, 0.3); animation: floatY 3s ease-in-out infinite, cardTitanQuake 1.1s ease-in-out infinite; }
 .detail-icon._rar-titan::before {
   content: ''; position: absolute; inset: 5px; border-radius: 20% 12% 26% 14% / 15% 22% 13% 20%;
@@ -1466,11 +1469,8 @@ button.logo-block { background: none; border: none; padding: 0; text-align: left
   animation: heroAuraPulse 1.9s ease-in-out infinite;
 }
 .hub-hero._rar-god::before {
-  opacity: 0.85;
-  background: repeating-conic-gradient(from 0deg, rgba(255, 210, 87, 0) 0deg 14deg, rgba(255, 210, 87, 0.6) 14deg 24deg);
-  -webkit-mask: radial-gradient(circle, transparent 34%, #000 38%);
-  mask: radial-gradient(circle, transparent 34%, #000 38%);
-  animation: cardRaysSpin 8s linear infinite;
+  border: 2px solid rgba(255, 210, 87, 0.8); box-shadow: 0 0 20px rgba(255, 210, 87, 0.55);
+  animation: heroRingPulse 3.2s ease-in-out infinite;
 }
 .hub-hero._rar-titan .hu-disc {
   border-color: #b14dff;
@@ -2127,15 +2127,16 @@ body {
   .btoken.has-sprite { --t-size: clamp(56px, 15vw, 78px); }
 }
 
-/* ----- Tamaño por rol (batalla): tanque grande, soporte mediano, resto normal ----- */
-.btoken.role-tanque { --t-size: clamp(88px, 20vw, 132px); }
-.btoken.role-soporte { --t-size: clamp(78px, 18vw, 112px); }
+/* ----- Tamaño por rol (batalla): TANQUE el más grande · SOPORTE casi del tamaño
+   del tanque · GUERRERO/MAGO pequeños pero siempre visibles ----- */
+.btoken.role-tanque { --t-size: clamp(96px, 22vw, 150px); }
+.btoken.role-soporte { --t-size: clamp(88px, 20vw, 136px); }
 .btoken.role-guerrero,
-.btoken.role-mago { --t-size: clamp(70px, 16vw, 100px); }
-.btoken.has-sprite.role-tanque { --t-size: clamp(96px, 22vw, 148px); }
-.btoken.has-sprite.role-soporte { --t-size: clamp(84px, 19vw, 124px); }
+.btoken.role-mago { --t-size: clamp(58px, 13vw, 80px); }
+.btoken.has-sprite.role-tanque { --t-size: clamp(104px, 24vw, 162px); }
+.btoken.has-sprite.role-soporte { --t-size: clamp(94px, 22vw, 146px); }
 .btoken.has-sprite.role-guerrero,
-.btoken.has-sprite.role-mago { --t-size: clamp(74px, 17vw, 108px); }
+.btoken.has-sprite.role-mago { --t-size: clamp(62px, 14vw, 84px); }
 
 /* Sin la bola/aura detrás del sprite: solo se ve el personaje */
 .btoken.has-sprite .bt-circle { background: transparent; border: none; box-shadow: none; }
@@ -2155,14 +2156,14 @@ body {
 .hub-hero.has-spr .hu-name { margin-top: -2px; }
 
 @media (max-width: 560px) {
-  .btoken.role-tanque { --t-size: clamp(66px, 19vw, 90px); }
-  .btoken.role-soporte { --t-size: clamp(58px, 17vw, 78px); }
+  .btoken.role-tanque { --t-size: clamp(66px, 20vw, 90px); }
+  .btoken.role-soporte { --t-size: clamp(60px, 18vw, 82px); }
   .btoken.role-guerrero,
-  .btoken.role-mago { --t-size: clamp(52px, 15vw, 70px); }
-  .btoken.has-sprite.role-tanque { --t-size: clamp(74px, 21vw, 100px); }
-  .btoken.has-sprite.role-soporte { --t-size: clamp(64px, 18vw, 88px); }
+  .btoken.role-mago { --t-size: clamp(46px, 13vw, 60px); }
+  .btoken.has-sprite.role-tanque { --t-size: clamp(84px, 24vw, 112px); }
+  .btoken.has-sprite.role-soporte { --t-size: clamp(76px, 22vw, 102px); }
   .btoken.has-sprite.role-guerrero,
-  .btoken.has-sprite.role-mago { --t-size: clamp(58px, 16vw, 80px); }
+  .btoken.has-sprite.role-mago { --t-size: clamp(54px, 15vw, 72px); }
 }
 
 /* ==========================================================================
@@ -2531,4 +2532,58 @@ body {
   #tabs .tab { flex: 1 1 0; width: auto; padding: 7px 0 6px; font-size: 8.5px; }
   #tabs .tab .t-ic { font-size: 17px; }
   .home-foot { width: calc(100% - 16px); }
+}
+
+/* ==========================================================================
+   AJUSTES MÓVIL · pasada final (gana siempre sobre los bloques anteriores)
+   ========================================================================== */
+@media (max-width: 767px) {
+  html, body { max-width: 100%; overflow-x: hidden; }
+  #app { max-width: 100%; }
+  #view { min-width: 0; }
+  .page { min-width: 0; }
+  .arena-screen { min-height: 0; }
+  .bt-field { min-width: 0; }
+  .bt-side { min-width: 0; }
+}
+
+@media (max-width: 560px) {
+  /* ----- Sin scroll horizontal ----- */
+  html, body { max-width: 100%; overflow-x: hidden; }
+
+  /* ----- Barra superior ajustada a pantallas angostas ----- */
+  #topbar { padding: 8px 8px; gap: 8px; }
+  .user-hud { max-width: 42vw; padding: 3px 8px 3px 4px; }
+  .uh-avatar { width: 30px; height: 30px; font-size: 15px; }
+  .uh-name { font-size: 12px; max-width: 11ch; }
+  #resRow { gap: 5px; }
+  .chip { font-size: 12px; padding: 5px 9px; gap: 4px; }
+  .chip .ic { font-size: 13px; }
+
+  /* ----- Menú inferior: las 6 fichas en fila, sin desbordes ----- */
+  #tabs { padding: 6px 3px calc(6px + env(safe-area-inset-bottom)); }
+  #tabs .tab { min-width: 0; padding: 6px 0 5px; font-size: 8px; letter-spacing: 0; gap: 2px; }
+  #tabs .tab .t-ic { font-size: 16px; }
+
+  /* ----- Contenido: aire y destinos táctiles cómodos ----- */
+  .view { padding: 12px 10px 30px; }
+  .page { padding: 12px 10px 30px; }
+  .btn { min-height: 42px; }
+
+  /* ----- Modal a pantalla completa ----- */
+  .modal { max-width: 100%; padding: 16px 12px; max-height: 88vh; border-radius: 14px; }
+  #overlay { padding: 8px; }
+
+  /* ----- Arena de batalla compacta ----- */
+  .arena { min-height: 0; padding: 8px 6px; border-radius: 14px; }
+  .bt-field { min-height: 330px; padding: 12px 6px 10px; gap: 4px; }
+  .bt-side { min-height: 290px; gap: 6px 4px; }
+  .bt-side .btoken { max-width: 100%; }
+  .btoken .bt-name { font-size: 8px; }
+  .btoken .bt-hpnum { font-size: 7.5px; }
+  .arena-head { align-items: flex-start; }
+  .arena-ctrls { flex-wrap: wrap; }
+
+  /* ----- Hub «Mi Equipo» del inicio ----- */
+  .hub-squad { max-width: 100%; gap: 8px 10px; padding: 4px 2px; }
 }

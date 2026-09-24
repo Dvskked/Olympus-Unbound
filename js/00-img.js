@@ -48,22 +48,22 @@
     "pele": ["img/pele.png", "img/pele.jpg", "img/pele.webp"],
     "mele": ["img/mele.png", "img/mele.jpg", "img/mele.webp"],
     "anti": ["img/anti.png", "img/anti.jpg", "img/anti.webp"],
-    "zus": ["img/zus.png", "img/zus.jpg", "img/zus.webp"],
-    "pos": ["img/pos.png", "img/pos.jpg", "img/pos.webp"],
-    "had": ["img/had.png", "img/had.jpg", "img/had.webp"],
-    "ate": ["img/ate.png", "img/ate.jpg", "img/ate.webp"],
-    "ars": ["img/ars.png", "img/ars.jpg", "img/ars.webp"],
-    "art": ["img/art.png", "img/art.jpg", "img/art.webp"],
-    "hef": ["img/hef.png", "img/hef.jpg", "img/hef.webp"],
-    "apo": ["img/apo.png", "img/apo.jpg", "img/apo.webp"],
-    "hera": ["img/hera.png", "img/hera.jpg", "img/hera.webp"],
-    "herm": ["img/herm.png", "img/herm.jpg", "img/herm.webp"],
-    "dion": ["img/dion.png", "img/dion.jpg", "img/dion.webp"],
-    "dem": ["img/dem.png", "img/dem.jpg", "img/dem.webp"],
-    "afr": ["img/afr.png", "img/afr.jpg", "img/afr.webp"],
-    "eol": ["img/eol.png", "img/eol.jpg", "img/eol.webp"],
-    "eos": ["img/eos.png", "img/eos.jpg", "img/eos.webp"],
-    "iris": ["img/iris.png", "img/iris.jpg", "img/iris.webp"],
+    "zus": ["img/personajes/dioses/zeus-removebg-preview.png", "img/zus.png", "img/zus.jpg", "img/zus.webp"],
+    "pos": ["img/personajes/dioses/poseidon-removebg-preview.png", "img/pos.png", "img/pos.jpg", "img/pos.webp"],
+    "had": ["img/personajes/dioses/hades-removebg-preview.png", "img/had.png", "img/had.jpg", "img/had.webp"],
+    "ate": ["img/personajes/dioses/atenea-removebg-preview.png", "img/ate.png", "img/ate.jpg", "img/ate.webp"],
+    "ars": ["img/personajes/dioses/ares-removebg-preview.png", "img/ars.png", "img/ars.jpg", "img/ars.webp"],
+    "art": ["img/personajes/dioses/artemisa-removebg-preview.png", "img/art.png", "img/art.jpg", "img/art.webp"],
+    "hef": ["img/personajes/dioses/hefesto-removebg-preview.png", "img/hef.png", "img/hef.jpg", "img/hef.webp"],
+    "apo": ["img/personajes/dioses/apolo-removebg-preview.png", "img/apo.png", "img/apo.jpg", "img/apo.webp"],
+    "hera": ["img/personajes/dioses/hera-removebg-preview.png", "img/hera.png", "img/hera.jpg", "img/hera.webp"],
+    "herm": ["img/personajes/dioses/hermes-removebg-preview.png", "img/herm.png", "img/herm.jpg", "img/herm.webp"],
+    "dion": ["img/personajes/dioses/dioniso-removebg-preview.png", "img/dion.png", "img/dion.jpg", "img/dion.webp"],
+    "dem": ["img/personajes/dioses/demeter-removebg-preview.png", "img/dem.png", "img/dem.jpg", "img/dem.webp"],
+    "afr": ["img/personajes/dioses/afrodita-removebg-preview.png", "img/afr.png", "img/afr.jpg", "img/afr.webp"],
+    "eol": ["img/personajes/dioses/eolo-removebg-preview.png", "img/eol.png", "img/eol.jpg", "img/eol.webp"],
+    "eos": ["img/personajes/dioses/eos-removebg-preview.png", "img/eos.png", "img/eos.jpg", "img/eos.webp"],
+    "iris": ["img/personajes/dioses/iris-removebg-preview.png", "img/iris.png", "img/iris.jpg", "img/iris.webp"],
     "cro": ["img/personajes/titanes/cronos.png", "img/cro.png", "img/cro.jpg", "img/cro.webp"],
     "oce": ["img/personajes/titanes/oceano.png", "img/oce.png", "img/oce.jpg", "img/oce.webp"],
     "hip": ["img/personajes/titanes/hiperion.png", "img/hip.png", "img/hip.jpg", "img/hip.webp"],
@@ -92,12 +92,12 @@
     "teocl": ["img/teocl.png", "img/teocl.jpg", "img/teocl.webp"],
     "ido": ["img/ido.png", "img/ido.jpg", "img/ido.webp"],
     "polix": ["img/polix.png", "img/polix.jpg", "img/polix.webp"],
-    "pan": ["img/pan.png", "img/pan.jpg", "img/pan.webp"],
-    "hekat": ["img/hekat.png", "img/hekat.jpg", "img/hekat.webp"],
-    "nike": ["img/nike.png", "img/nike.jpg", "img/nike.webp"],
-    "eris": ["img/eris.png", "img/eris.jpg", "img/eris.webp"],
-    "hebe": ["img/hebe.png", "img/hebe.jpg", "img/hebe.webp"],
-    "hipno": ["img/hipno.png", "img/hipno.jpg", "img/hipno.webp"],
+    "pan": ["img/personajes/dioses/pan-removebg-preview.png", "img/pan.png", "img/pan.jpg", "img/pan.webp"],
+    "hekat": ["img/personajes/dioses/hecate-removebg-preview.png", "img/hekat.png", "img/hekat.jpg", "img/hekat.webp"],
+    "nike": ["img/personajes/dioses/nike-removebg-preview.png", "img/nike.png", "img/nike.jpg", "img/nike.webp"],
+    "eris": ["img/personajes/dioses/eris-removebg-preview.png", "img/eris.png", "img/eris.jpg", "img/eris.webp"],
+    "hebe": ["img/personajes/dioses/hebe-removebg-preview.png", "img/hebe.png", "img/hebe.jpg", "img/hebe.webp"],
+    "hipno": ["img/personajes/dioses/hipnos-removebg-preview.png", "img/hipno.png", "img/hipno.jpg", "img/hipno.webp"],
     "chaos": ["img/personajes/primordiales/caos.png", "img/chaos.png", "img/chaos.jpg", "img/chaos.webp"],
     "eter": ["img/personajes/primordiales/eter.png", "img/eter.png", "img/eter.jpg", "img/eter.webp"],
     "hemer": ["img/personajes/primordiales/hemera.png", "img/hemer.png", "img/hemer.jpg", "img/hemer.webp"],
@@ -118,16 +118,17 @@
    * de filas: FILA 1 reposo, 2 avance, 3 ataque, 4 daño(1-3)+muerte(4-6), 5 habilidad.
    * Mientras el retrato de la carta sigue en img/, aquí SOLO vive el combate.
    */
+  // Sprites animados: hoja 6 col × 5 filas (548×455) sobre la misma cuadrícula.
+  // FILA 1 reposo, 2 avance, 3 ataque, 4 daño(1-3)+muerte(4-6), 5 habilidad.
+  var gridFrames = [
+    [22, 13, 48, 91], [112, 13, 48, 78], [205, 13, 48, 91], [296, 13, 48, 78], [387, 13, 48, 91], [478, 13, 48, 78],
+    [27, 104, 51, 77], [115, 104, 56, 78], [202, 104, 58, 89], [293, 104, 59, 78], [384, 104, 59, 89], [479, 104, 55, 89],
+    [22, 199, 90, 84], [112, 194, 90, 89], [202, 193, 70, 90], [279, 195, 103, 78], [382, 193, 53, 80], [474, 193, 49, 80],
+    [22, 283, 90, 88], [112, 283, 49, 88], [205, 283, 48, 88], [283, 289, 99, 71], [382, 312, 91, 51], [473, 296, 64, 68],
+    [22, 371, 90, 83], [112, 371, 90, 83], [202, 371, 77, 83], [279, 372, 103, 82], [382, 371, 91, 79], [473, 371, 71, 83]
+  ];
   OU.SPRITES = {
-    andre: {
-      src: 'img/sprites/creador/creador.png',
-      frames: [
-        [22, 13, 48, 91], [112, 13, 48, 78], [205, 13, 48, 91], [296, 13, 48, 78], [387, 13, 48, 91], [478, 13, 48, 78],
-        [27, 104, 51, 77], [115, 104, 56, 78], [202, 104, 58, 89], [293, 104, 59, 78], [384, 104, 59, 89], [479, 104, 55, 89],
-        [22, 199, 90, 84], [112, 194, 90, 89], [202, 193, 70, 90], [279, 195, 103, 78], [382, 193, 53, 80], [474, 193, 49, 80],
-        [22, 283, 90, 88], [112, 283, 49, 88], [205, 283, 48, 88], [283, 289, 99, 71], [382, 312, 91, 51], [473, 296, 64, 68],
-        [22, 371, 90, 83], [112, 371, 90, 83], [202, 371, 77, 83], [279, 372, 103, 82], [382, 371, 91, 79], [473, 371, 71, 83]
-      ]
-    }
+    andre: { src: 'img/sprites/creador/creador.png', frames: gridFrames },
+    ponto: { src: 'img/sprites/primordial/ponto.png', frames: gridFrames }
   };
 })();
