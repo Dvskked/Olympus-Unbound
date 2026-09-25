@@ -45,12 +45,42 @@
     tabs.classList.toggle('menu-hidden', currentTab !== 'home');
   }
 
+  /* En móvil/tablet el menú inferior se retira al hacer scroll hacia abajo
+     (y vuelve al subir), para que nunca tape el botón «Recoger» del Ágora
+     ni ningún elemento del pie de pantalla. Clase CSS: #tabs.menu-scroll-hide. */
+  var menuScrollY = 0;
+
+  function menuScrollTop(target) {
+    if (target === document || target === window || target === document.documentElement ||
+        target === document.body) {
+      return window.pageYOffset || document.documentElement.scrollTop || 0;
+    }
+    return target.scrollTop || 0;
+  }
+
+  function onMenuScroll(e) {
+    var tabs = U.$('#tabs');
+    if (!tabs || currentTab !== 'home' || tabs.classList.contains('menu-hidden')) return;
+    var y = menuScrollTop(e.target);
+    var delta = y - menuScrollY;
+    if (delta > 12) tabs.classList.add('menu-scroll-hide');
+    else if (delta < -12 || y <= 8) tabs.classList.remove('menu-scroll-hide');
+    menuScrollY = y;
+  }
+
+  function resetMenuScroll() {
+    menuScrollY = 0;
+    var tabs = U.$('#tabs');
+    if (tabs) tabs.classList.remove('menu-scroll-hide');
+  }
+
   function setTab(name) {
     if (OU.BATTLE.running) OU.BATTLE.running = false;
     currentTab = name;
     U.$$('#tabs .tab').forEach(function (t) {
       t.classList.toggle('active', t.dataset.tab === name);
     });
+    resetMenuScroll();
     render();
   }
 
@@ -258,6 +288,7 @@
   }
 
   function bindHome(root) {
+    resetMenuScroll();
     U.$$('[data-go]', root).forEach(function (b) {
       b.addEventListener('click', function () { setTab(b.dataset.go); });
     });
@@ -516,6 +547,7 @@
       t.addEventListener('click', function () { setTab(t.dataset.tab); });
     });
     window.addEventListener('beforeunload', OU.STATE.save);
+    document.addEventListener('scroll', onMenuScroll, true);
     var uh = U.$('#userHud');
     if (uh) uh.addEventListener('click', openProfileModal);
     U.$$('#resRow .chip').forEach(function (c) {
