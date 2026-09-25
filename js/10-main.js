@@ -269,17 +269,17 @@
       '<div class="hub-squad">' + OU.TEAM.teamHubHTML() + '</div>' +
       '</section>' +
       '<button class="home-cell home-card home-merk" data-go="shop" title="Abrir el Mercadeo">' +
-      '<span class="hc-ic"><img class="hc-img" src="img/extras/icons/mercadeo.png" alt="Mercadeo"></span>' +
+      '<span class="hc-ic"><img class="hc-img" src="img/optimized/extras/icons/mercadeo.png" alt="Mercadeo"></span>' +
       '<span class="hc-t">Mercadeo</span>' +
       '<span class="hc-d">Sobres · ofertas · El Creador</span>' +
       '</button>' +
       '<button class="home-cell home-card home-camp" data-go="campaign" title="Ir a la Campaña">' +
-      '<span class="hc-ic"><img class="hc-img" src="img/extras/icons/campaña.png" alt="Campaña"></span>' +
+      '<span class="hc-ic"><img class="hc-img" src="img/optimized/extras/icons/campaña.png" alt="Campaña"></span>' +
       '<span class="hc-t">Campaña</span>' +
       '<span class="hc-d">Fase ' + (stag + 1) + ' · ' + OU.STAGES[stag].n + '</span>' +
       '</button>' +
       '<button class="home-cell home-idx" data-go="index" title="Índice de Leyendas">' +
-      '<span class="idx-book"><img class="idx-img" src="img/extras/icons/indnice.png" alt="Índice"></span>' +
+      '<span class="idx-book"><img class="idx-img" src="img/optimized/extras/icons/indnice.png" alt="Índice"></span>' +
       '<span class="idx-lb">Índice</span>' +
       '</button>' +
       '</div>' +
@@ -566,6 +566,7 @@
       setTimeout(showOnboarding, 600);
       return;
     }
+    warmAssets();
     var hasLoader = !!(document.getElementById && document.getElementById('loader'));
     if (hasLoader) {
       var di = I.dailyInfo();
@@ -578,28 +579,53 @@
 
   /* ---------- PANTALLA DE CARGA ---------- */
 
-  /** Recopila todas las imágenes del juego (cartas, sobres, minijuegos, extras). */
+  /** Imágenes esenciales de la primera pantalla (carga rápida).
+      El resto (sobres, minijuegos, todas las cartas) se precarga en segundo
+      plano con warmAssets() y con loading="lazy" al navegar. */
   function loaderAssets() {
+    var urls = [];
+    function add(u) { if (u && urls.indexOf(u) === -1) urls.push(u); }
+    add('img/extras/fondos/fondo.jpg');
+    add('img/extras/logo/logo-olympus.png');
+    add('img/optimized/extras/icons/mercadeo.png');
+    add('img/optimized/extras/icons/campaña.png');
+    add('img/optimized/extras/icons/indnice.png');
+    add('img/historia/' + MYTHS[storyIndex()].i);
+    return urls;
+  }
+
+  /** Precarga en segundo plano (sin bloquear): cartas optimizadas, sobres,
+      minijuegos e historias, en tandas pequeñas con prioridad de inactividad. */
+  function warmAssets() {
+    if (typeof Image !== 'function') return;
     var urls = [];
     function add(u) { if (u && urls.indexOf(u) === -1) urls.push(u); }
     if (OU.CARDS) OU.CARDS.forEach(function (c) {
       var cand = OU.IMG && OU.IMG[c.id];
-      if (cand && cand.length) add(cand[0]);
+      if (cand && cand.length) add(I.optOf(cand[0]));
     });
     [
-      'img/extras/fondos/fondo.jpg',
-      'img/extras/logo/logo-olympus.png',
-      'img/extras/icons/mercadeo.png',
-      'img/extras/icons/campaña.png',
-      'img/extras/icons/indnice.png',
-      'img/sobres/sobre_bronce.jpg', 'img/sobres/sobre_plata.jpg', 'img/sobres/sobre_oro.jpg',
-      'img/sobres/sobre_epico.jpg', 'img/sobres/sobre_olimpo.png', 'img/sobres/sobre_divino.png',
-      'img/sobres/sobre_cosmico.png',
-      'img/minijuegos/oraculo.png', 'img/minijuegos/desafio-dios.png',
-      'img/minijuegos/ruleta-destino.png', 'img/minijuegos/dado-zeus.png',
-      'img/minijuegos/memoria-orfeo.png'
+      'img/optimized/sobres/sobre_bronce.jpg', 'img/optimized/sobres/sobre_plata.jpg', 'img/optimized/sobres/sobre_oro.jpg',
+      'img/optimized/sobres/sobre_epico.jpg', 'img/optimized/sobres/sobre_olimpo.png', 'img/optimized/sobres/sobre_divino.png',
+      'img/optimized/sobres/sobre_cosmico.png',
+      'img/optimized/minijuegos/oraculo.png', 'img/optimized/minijuegos/desafio-dios.png',
+      'img/optimized/minijuegos/ruleta-destino.png', 'img/optimized/minijuegos/dado-zeus.png',
+      'img/optimized/minijuegos/memoria-orfeo.png'
     ].forEach(add);
-    return urls;
+    MYTHS.forEach(function (m) { add('img/historia/' + m.i); });
+    var i = 0;
+    function step() {
+      var n = 0;
+      while (i < urls.length && n < 6) {
+        var im = new Image();
+        im.decoding = 'async';
+        im.src = urls[i];
+        i++; n++;
+      }
+      if (i < urls.length) setTimeout(step, 320);
+    }
+    if ('requestIdleCallback' in window) window.requestIdleCallback(step);
+    else setTimeout(step, 1200);
   }
 
   /** Carga REAL: pre-carga las imágenes del juego y solo habilita «Jugar»

@@ -306,10 +306,10 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .ccard._rar-normal .c-icon-wrap { box-shadow: 0 0 10px rgba(174, 182, 200, 0.3); }
 
 .ccard._rar-hero .c-icon-wrap {
+  background: radial-gradient(circle at 50% 60%, rgba(63, 182, 255, 0.25), rgba(10, 12, 24, 0.7) 72%), #0a0c18;
   box-shadow: 0 0 18px rgba(63, 182, 255, 0.5);
   animation: cardAuraPulse 2.4s ease-in-out infinite;
 }
-.ccard._rar-hero .c-icon-wrap { background: radial-gradient(circle at 50% 60%, rgba(63, 182, 255, 0.25), rgba(10, 12, 24, 0.7) 72%), #0a0c18; }
 .ccard._rar-hero .c-icon-wrap .card-art { object-fit: contain; }
 .ccard._rar-hero .c-icon-wrap::before {
   content: ''; position: absolute; inset: -2px; border-radius: 12px; pointer-events: none; z-index: 2;
@@ -730,6 +730,7 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   border: 1px solid rgba(63, 182, 255, 0.55); box-shadow: 0 0 14px rgba(63, 182, 255, 0.5);
   animation: cardPrimordialGlow 2.6s ease-in-out infinite;
 }
+.detail-icon._rar-hero .detail-art { object-fit: contain; }
 .detail-icon._rar-god {
   background: radial-gradient(circle at 50% 40%, rgba(255, 210, 87, 0.28), rgba(10, 12, 24, 0.65) 72%), #0a0c18;
   border-color: rgba(255, 210, 87, 0.6);
@@ -780,6 +781,22 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   animation: cardRaysSpin 4.5s linear infinite;
 }
 .detail-art { width: 100%; height: 100%; object-fit: cover; }
+
+/* ----- Carta «viva»: sprite animado o retrato en movimiento ----- */
+.detail-icon .detail-spr {
+  position: absolute; left: 50%; top: 50%; z-index: 1;
+  transform: translate(-50%, -50%) scale(var(--ts, 1));
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.6));
+}
+.detail-art.live {
+  animation: cardBreath 3.6s ease-in-out infinite;
+  transform-origin: 50% 82%;
+}
+@keyframes cardBreath {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.035); }
+}
 .detail-name { font-weight: 800; font-size: 22px; margin-top: 12px; line-height: 1.25; }
 .detail-badges { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; margin: 14px 0 8px; }
 .detail-badges .badge { margin: 0; }

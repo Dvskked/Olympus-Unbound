@@ -4,7 +4,8 @@
   "description": "Juego de coleccion de cartas mitologico griego. HTML + JS modular listo para TypeScript (JSDoc).",
   "scripts": {
     "check": "tsc",
-    "test": "node tests/run-all.js"
+    "test": "node tests/run-all.js",
+    "images": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/optimize-images.ps1"
   },
   "keywords": ["juego", "cartas", "mitologia", "griego", "tsc-check"],
   "license": "MIT"

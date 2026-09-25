@@ -106,6 +106,14 @@
     var canUp = !maxed && !creatorOnly && rc.dup >= cost.dupes && st.gold >= cost.gold;
     var canGold = !maxed && st.gold >= goldCost;
     var next = maxed ? null : U.valuesAt(id, rc.lvl + 1);
+    /* Si hay hoja de sprite, se anima el personaje en el detalle de la carta;
+       si no, el retrato «respira» con una animación suave (la carta vive). */
+    var spr = OU.SPRITES && OU.SPRITES[id];
+    function iconHTML() {
+      if (!spr) return I.artHTML(id, 'detail-art live');
+      var ts = c.role === 'tanque' ? 1.15 : (c.role === 'soporte' ? 1.05 : 1);
+      return '<span class="detail-spr" data-spr="' + id + '" style="--ts:' + ts + '"></span>';
+    }
     function chip(cond, txt) {
       return '<span class="chip ' + (cond ? 'ok' : 'bad') + '">' + txt + '</span>';
     }
@@ -152,7 +160,7 @@
 I.openModal(
       '<div class="detail-ig">' +
       '<div class="detail-hero _rar-' + c.r + '" style="--glow:' + r.glow + ';border-color:' + r.color + '">' +
-      '<div class="detail-icon _rar-' + c.r + '" style="--glow:' + r.glow + ';border-color:' + r.color + '">' + I.artHTML(id, 'detail-art') + '</div>' +
+      '<div class="detail-icon ' + (spr ? 'has-spr ' : '') + '_rar-' + c.r + '" style="--glow:' + r.glow + ';border-color:' + r.color + '">' + iconHTML() + '</div>' +
       '<div class="detail-name" style="color:' + r.color + '">' + c.n + '</div>' +
       '<div class="detail-badges">' +
       '<span class="badge" style="color:' + r.color + ';border:1px solid ' + r.color + ';background:rgba(0,0,0,0.4)">' + r.name + '</span>' +
@@ -188,6 +196,9 @@ I.openModal(
       '<div class="ds-title">🛡️ Equipo</div>' +
       '<button class="btn btn-blue btn-block" id="detailTeamBtn">✏️ Asignar a Mi Equipo</button>' +
       '</div>', true);
+
+    var dspr = U.$('.detail-spr');
+    if (dspr && dspr.dataset.spr) I.sprite(dspr, OU.SPRITES[dspr.dataset.spr]);
 
     var up = U.$('#upBtn');
     if (up) up.addEventListener('click', function () {

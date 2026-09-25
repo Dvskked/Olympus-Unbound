@@ -29,11 +29,11 @@
 
   /* Logos de los minijuegos (imágenes locales), con respaldo de emoji. */
   var GAME_IMG = {
-    oracle: 'img/minijuegos/oraculo.png',
-    ppt: 'img/minijuegos/desafio-dios.png',
-    wheel: 'img/minijuegos/ruleta-destino.png',
-    dice: 'img/minijuegos/dado-zeus.png',
-    mem: 'img/minijuegos/memoria-orfeo.png'
+    oracle: 'img/optimized/minijuegos/oraculo.png',
+    ppt: 'img/optimized/minijuegos/desafio-dios.png',
+    wheel: 'img/optimized/minijuegos/ruleta-destino.png',
+    dice: 'img/optimized/minijuegos/dado-zeus.png',
+    mem: 'img/optimized/minijuegos/memoria-orfeo.png'
   };
   var GAME_EMOJI = { oracle: '🔮', ppt: '🪨📄✂️', wheel: '🎡', dice: '🎲', mem: '🧠' };
 

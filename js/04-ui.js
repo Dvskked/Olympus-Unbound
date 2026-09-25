@@ -9,6 +9,15 @@
   var OU = window.OU = window.OU || {};
   var U = OU.UTIL;
 
+  /** Si existe su versión optimizada (img/optimized/…, generada con
+      npm run images), devuelve esa ruta ligera en lugar de la original.
+      El fallback onerror de artHTML llevará a la imagen completa. */
+  function optOf(src) {
+    if (!src || src.indexOf('img/') !== 0) return src;
+    if (!/^img\/(personajes|extras\/icons|minijuegos|sobres)\//.test(src)) return src;
+    return 'img/optimized/' + src.slice(4);
+  }
+
   /** Renderiza el arte de una carta con fallback en cadena (local→web→emoji). */
   function artHTML(cardId, sizeCls) {
     var c = OU.CARD_BY_ID[cardId];
@@ -16,7 +25,7 @@
     if (!chain.length) {
       return '<span class="card-emo" style="display:flex">' + c.ic + '</span>';
     }
-    var src = chain[0];
+    var src = optOf(chain[0]);
     var rest = chain.slice(1);
     var fb;
     if (rest.length) {
@@ -24,7 +33,7 @@
     } else {
       fb = ' onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"';
     }
-    return '<img class="card-art ' + (sizeCls || '') + '" src="' + src + '" alt="' + c.n + '" loading="lazy"' + fb + '>' +
+    return '<img class="card-art ' + (sizeCls || '') + '" src="' + src + '" alt="' + c.n + '" loading="lazy" decoding="async"' + fb + '>' +
       '<span class="card-emo" style="display:none">' + c.ic + '</span>';
   }
 
@@ -103,43 +112,150 @@
     return 'NV ' + lvl + (maxed ? ' · MÁX' : ' / ' + OU.CONST.MAX_LEVEL);
   }
 
-  /* ---------- SPRITES EN EL INICIO (hub «Mi Equipo») ---------- */
-  var hubSprs = new Map();
-  var hubSprTimer = null;
+  /* ---------- SPRITES ANIMADOS (inicio + detalle de carta) ----------
+     Solo algunos personajes tienen hoja de sprite (OU.SPRITES). Para que no
+     se vean borrosos al ampliarse, se re-renderizan en un canvas 2× con
+     suavizado de alta calidad + máscara de enfoque (unsharp). Un único
+     temporizador anima los fotogramas de reposo de todos los elementos vivos. */
+  var sprEls = new Map();      // el -> { spr, url, frames, f }
+  var sprTimer = null;
+  var hqCache = new Map();     // spr.src -> { canvas, frames } (fotogramas ×2)
 
-  function applyHubFrame(el) {
-    var st = hubSprs.get(el); if (!st) return;
-    var f = st.idle[st.f];
-    el.style.backgroundPosition = (-f[0]) + 'px ' + (-f[1]) + 'px';
+  function applySpriteFrame(el, st) {
+    var frames = st.frames;
+    if (!frames || !frames.length) frames = st.spr.frames;
+    var mw = 0, mh = 0, i;
+    for (i = 0; i < 6; i++) {
+      var f = frames[i];
+      if (!f) break;
+      if (f[2] > mw) mw = f[2];
+      if (f[3] > mh) mh = f[3];
+    }
+    var cur = frames[Math.min(st.f, frames.length - 1)];
+    el.style.backgroundImage = 'url(' + st.url + ')';
+    el.style.backgroundRepeat = 'no-repeat';
+    el.style.width = mw + 'px';
+    el.style.height = mh + 'px';
+    el.style.backgroundPosition = (-cur[0]) + 'px ' + (-cur[1]) + 'px';
   }
 
+  function tickSprites() {
+    sprEls.forEach(function (st, el) {
+      if (!document.documentElement || !document.documentElement.contains(el)) { sprEls.delete(el); return; }
+      st.f = (st.f + 1) % 6;
+      applySpriteFrame(el, st);
+    });
+  }
+
+  /** Convierte la hoja original a 2×, suavizada y con enfoque. */
+  function boxBlur(data, w, h) {
+    var out = new Uint8ClampedArray(data.length);
+    var x, y, dx, dy, idx, nx, ny, ri, gi, bi, ai;
+    for (y = 0; y < h; y++) {
+      for (x = 0; x < w; x++) {
+        ri = gi = bi = ai = 0;
+        for (dy = -1; dy <= 1; dy++) {
+          for (dx = -1; dx <= 1; dx++) {
+            nx = Math.max(0, Math.min(w - 1, x + dx));
+            ny = Math.max(0, Math.min(h - 1, y + dy));
+            idx = (ny * w + nx) * 4;
+            ri += data[idx]; gi += data[idx + 1]; bi += data[idx + 2]; ai += data[idx + 3];
+          }
+        }
+        idx = (y * w + x) * 4;
+        out[idx] = ri / 9; out[idx + 1] = gi / 9; out[idx + 2] = bi / 9; out[idx + 3] = ai / 9;
+      }
+    }
+    return out;
+  }
+
+  function sharpenCanvas(cv, w, h) {
+    var cx = cv.getContext('2d');
+    if (!cx) return;
+    var src = cx.getImageData(0, 0, w, h);
+    var data = src.data;
+    var blur = boxBlur(data, w, h);
+    var i;
+    for (i = 0; i < data.length; i += 4) {
+      var lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+      var blum = 0.299 * blur[i] + 0.587 * blur[i + 1] + 0.114 * blur[i + 2];
+      var d = lum - blum;
+      if (Math.abs(d) > 10) {
+        data[i] = Math.max(0, Math.min(255, data[i] + 0.6 * d));
+        data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + 0.6 * d));
+        data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + 0.6 * d));
+      }
+    }
+    src.data.set(data);
+    cx.putImageData(src, 0, 0);
+  }
+
+  function prepSpriteHQ(spr) {
+    if (!spr || hqCache.has(spr.src) || typeof Image !== 'function' || typeof document === 'undefined' || !document.createElement) return;
+    var S = 2;
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var big = document.createElement('canvas');
+        big.width = img.width * S * 2;
+        big.height = img.height * S * 2;
+        var bx = big.getContext('2d');
+        if (!bx) return;
+        bx.imageSmoothingEnabled = true;
+        if ('imageSmoothingQuality' in bx) bx.imageSmoothingQuality = 'high';
+        bx.drawImage(img, 0, 0, big.width, big.height);
+        var cv = document.createElement('canvas');
+        cv.width = img.width * S;
+        cv.height = img.height * S;
+        var cx = cv.getContext('2d');
+        if (!cx) return;
+        cx.imageSmoothingEnabled = true;
+        if ('imageSmoothingQuality' in cx) cx.imageSmoothingQuality = 'high';
+        cx.drawImage(big, 0, 0, cv.width, cv.height);
+        sharpenCanvas(cv, cv.width, cv.height);
+        hqCache.set(spr.src, {
+          canvas: cv,
+          frames: spr.frames.map(function (f) { return [f[0] * S, f[1] * S, f[2] * S, f[3] * S]; })
+        });
+        var hq = hqCache.get(spr.src);
+        sprEls.forEach(function (st, el) {
+          if (st.spr === spr) { st.url = hq.canvas.toDataURL(); st.frames = hq.frames; applySpriteFrame(el, st); }
+        });
+      } catch (e) { /* entra sin canvas: se sigue usando la hoja original */ }
+    };
+    img.onerror = function () {};
+    img.src = spr.src;
+  }
+
+  /** Activa el bucle de reposo de un sprite. Reutilizable: inicio y detalle. */
+  function spriteIdle(el, spr) {
+    if (!el || !spr || sprEls.has(el)) return;
+    var hq = hqCache.get(spr.src);
+    sprEls.set(el, {
+      spr: spr,
+      url: hq ? hq.canvas.toDataURL() : spr.src,
+      frames: hq ? hq.frames : spr.frames.slice(0, 6),
+      f: 0
+    });
+    applySpriteFrame(el, sprEls.get(el));
+    prepSpriteHQ(spr);
+    if (!sprTimer) sprTimer = setInterval(tickSprites, 150);
+  }
+
+  /** Hub del inicio: personajes con sprite (reposo animado). */
   function spriteHub(root) {
     if (!OU.SPRITES) return;
     U.$$('.hub-hero.has-spr', root).forEach(function (h) {
       var el = U.$('.hu-spr', h);
-      if (!el || hubSprs.has(el)) return;
+      if (!el) return;
       var spr = OU.SPRITES[el.dataset.spr || h.dataset.hero];
-      if (!spr) return;
-      var mw = 0, mh = 0;
-      spr.frames.slice(0, 6).forEach(function (f) { if (f[2] > mw) mw = f[2]; if (f[3] > mh) mh = f[3]; });
-      el.style.backgroundImage = 'url(' + spr.src + ')';
-      el.style.backgroundRepeat = 'no-repeat';
-      el.style.width = mw + 'px';
-      el.style.height = mh + 'px';
-      hubSprs.set(el, { idle: spr.frames.slice(0, 6), f: 0 });
-      applyHubFrame(el);
+      spriteIdle(el, spr);
     });
-    if (!hubSprTimer) hubSprTimer = setInterval(function () {
-      hubSprs.forEach(function (st, el) {
-        if (!document.documentElement.contains(el)) { hubSprs.delete(el); return; }
-        st.f = (st.f + 1) % st.idle.length;
-        applyHubFrame(el);
-      });
-    }, 150);
   }
 
   OU.UI = {
     artHTML: artHTML,
+    optOf: optOf,
     rarityHTML: rarityHTML,
     dailyInfo: dailyInfo,
     updateTopRes: updateTopRes,
@@ -147,6 +263,7 @@
     openModal: openModal,
     closeModal: closeModal,
     cardBadge: cardBadge,
+    sprite: spriteIdle,
     spriteHub: spriteHub,
     imgNext: imgNext
   };

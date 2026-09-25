@@ -13,13 +13,13 @@
 
   /* Arte de los sobres: imágenes locales por tipo de sobre. */
   var PACK_IMG = {
-    bronze: 'img/sobres/sobre_bronce.jpg',
-    silver: 'img/sobres/sobre_plata.jpg',
-    goldc: 'img/sobres/sobre_oro.jpg',
-    epic: 'img/sobres/sobre_epico.jpg',
-    olympus: 'img/sobres/sobre_olimpo.png',
-    divine: 'img/sobres/sobre_divino.png',
-    cosmic: 'img/sobres/sobre_cosmico.png'
+    bronze: 'img/optimized/sobres/sobre_bronce.jpg',
+    silver: 'img/optimized/sobres/sobre_plata.jpg',
+    goldc: 'img/optimized/sobres/sobre_oro.jpg',
+    epic: 'img/optimized/sobres/sobre_epico.jpg',
+    olympus: 'img/optimized/sobres/sobre_olimpo.png',
+    divine: 'img/optimized/sobres/sobre_divino.png',
+    cosmic: 'img/optimized/sobres/sobre_cosmico.png'
   };
 
   /* ---------- BAZAR (ofertas de 12 h) ---------- */
