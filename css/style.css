@@ -309,6 +309,8 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
   box-shadow: 0 0 18px rgba(63, 182, 255, 0.5);
   animation: cardAuraPulse 2.4s ease-in-out infinite;
 }
+.ccard._rar-hero .c-icon-wrap { background: radial-gradient(circle at 50% 60%, rgba(63, 182, 255, 0.25), rgba(10, 12, 24, 0.7) 72%), #0a0c18; }
+.ccard._rar-hero .c-icon-wrap .card-art { object-fit: contain; }
 .ccard._rar-hero .c-icon-wrap::before {
   content: ''; position: absolute; inset: -2px; border-radius: 12px; pointer-events: none; z-index: 2;
   border: 1px solid rgba(63, 182, 255, 0.55); box-shadow: 0 0 12px rgba(63, 182, 255, 0.45);
@@ -2586,4 +2588,28 @@ body {
 
   /* ----- Hub «Mi Equipo» del inicio ----- */
   .hub-squad { max-width: 100%; gap: 8px 10px; padding: 4px 2px; }
+}
+
+/* ==========================================================================
+   ÁGORA · reclamo accesible en móvil/tablet
+   El menú inferior fijo se retira al bajar (JS añade .menu-scroll-hide) para
+   que el botón «Recoger» del Ágora quede siempre tocable, y el banner recibe
+   un área de toque cómoda sin quedar oculto tras la barra de pestañas.
+   ========================================================================== */
+@media (max-width: 767px) {
+  #tabs.menu-scroll-hide {
+    transform: translateX(-50%) translateY(130%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .home-foot .income-banner { width: 100%; padding: 12px 14px; }
+  .home-foot .income-banner .ib-left { min-width: 0; }
+}
+
+@media (max-width: 560px) {
+  .home-body { padding-bottom: calc(172px + env(safe-area-inset-bottom)); }
+  .home-foot .income-banner #claimInc {
+    width: 100%; min-height: 46px; font-size: 13px; margin-top: 2px;
+  }
+  .home-foot .income-banner .ib-sub { font-size: 10.5px; }
 }
