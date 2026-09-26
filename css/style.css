@@ -1279,7 +1279,26 @@ button { font-family: inherit; cursor: pointer; border: none; outline: none; col
 .ld-track { height: 10px; border-radius: 99px; background: #0a0c18; border: 1px solid var(--line); overflow: hidden; margin: 22px 8px 8px; }
 .ld-fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, #b08a2f, var(--gold2)); box-shadow: 0 0 16px rgba(245, 217, 126, 0.6); transition: width 0.15s linear; }
 .ld-pct { font-size: 12px; color: var(--dim); letter-spacing: 2px; }
+
+/* Consejos rotativos de la pantalla de carga */
+.ld-tip {
+  display: flex; align-items: flex-start; gap: 9px; text-align: left;
+  margin: 18px 4px 0; padding: 11px 13px; min-height: 66px;
+  background: linear-gradient(160deg, rgba(30, 36, 58, 0.9), rgba(16, 20, 36, 0.9));
+  border: 1px solid var(--line); border-left: 3px solid var(--gold);
+  border-radius: 12px;
+  font-size: 12px; line-height: 1.55; color: #c8d0e4;
+  opacity: 0; transform: translateY(6px);
+}
+.ld-tip.tip-in { animation: ldTipIn 0.55s ease forwards; }
+.ld-tip-ic { font-size: 17px; line-height: 1.15; flex: 0 0 auto; }
+.ld-tip-tx b { color: var(--gold2); font-weight: 800; }
+@keyframes ldTipIn {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
 .ld-play {
+
   margin-top: 22px; width: min(240px, 80%); padding: 14px; font-size: 15px;
   opacity: 1;
   transition: opacity 0.3s, transform 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s,
@@ -2630,3 +2649,281 @@ body {
   }
   .home-foot .income-banner .ib-sub { font-size: 10.5px; }
 }
+
+/* ==========================================================================
+   FUERZA, NIVEL GENERAL Y VEREDICTOS
+   Todo lo que hace comprable la pregunta «¿puedo con esta fase?»:
+   tu poder, el poder real del rival y cuántos puntos te faltan.
+   ========================================================================== */
+
+/* Veredictos (mismo lenguaje que la insignia de la fase) */
+.v-trivial { color: #7fe08a; }
+.v-facil   { color: #ffe08a; }
+.v-justa   { color: #9fd8ff; }
+.v-aprieto { color: #ffb36b; }
+.v-dificil { color: #ff6b6b; }
+.v-trivial, .v-facil, .v-justa, .v-aprieto, .v-dificil { font-weight: 800; }
+.v-dificil { text-shadow: 0 0 14px rgba(255, 107, 107, 0.35); }
+
+/* Puntos de dificultad (1-5) junto al nombre de la fase */
+.diff-dots { display: inline-flex; gap: 3px; vertical-align: middle; }
+.diff-dots i {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--line); display: block;
+}
+.diff-dots i.on { background: var(--gold2); box-shadow: 0 0 7px rgba(255, 217, 126, 0.8); }
+.diff-dots.d-0 i.on { background: #7fe08a; box-shadow: 0 0 7px rgba(127, 224, 138, 0.8); }
+.diff-dots.d-1 i.on { background: #ffe08a; box-shadow: 0 0 7px rgba(255, 224, 138, 0.8); }
+.diff-dots.d-2 i.on { background: #9fd8ff; box-shadow: 0 0 7px rgba(159, 216, 255, 0.8); }
+.diff-dots.d-3 i.on { background: #ff9d6b; box-shadow: 0 0 7px rgba(255, 157, 107, 0.8); }
+.diff-dots.d-4 i.on { background: #ff6b6b; box-shadow: 0 0 7px rgba(255, 107, 107, 0.8); }
+
+/* ---------- Panel de fuerza de la campaña ---------- */
+.force-panel {
+  background: linear-gradient(160deg, rgba(31, 38, 55, 0.95), rgba(20, 26, 41, 0.95));
+  border: 1px solid var(--line); border-radius: var(--r);
+  padding: 14px; margin-bottom: 16px;
+}
+.fp-tlv { display: flex; align-items: center; gap: 12px; }
+.fp-lv-num {
+  font-size: 34px; font-weight: 800; line-height: 1; color: var(--gold2);
+  text-shadow: 0 0 22px rgba(245, 217, 126, 0.45);
+  min-width: 52px; text-align: center;
+}
+.fp-lv-info { flex: 1; min-width: 0; }
+.fp-lv-lab { font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--dim); }
+.fp-lv-bar {
+  height: 6px; border-radius: 99px; background: #0a0c18;
+  border: 1px solid var(--line-soft); overflow: hidden; margin: 6px 0 5px;
+}
+.fp-lv-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, #b08a2f, var(--gold2));
+  box-shadow: 0 0 12px rgba(245, 217, 126, 0.5);
+  transition: width 0.4s ease;
+}
+.fp-lv-sub { font-size: 10.5px; color: var(--dim); line-height: 1.45; }
+.fp-lv-sub b { color: var(--gold2); }
+
+.fp-vs { display: flex; align-items: center; gap: 10px; margin: 14px 0 10px; }
+.fp-side { flex: 1; min-width: 0; }
+.fp-n { font-size: 19px; font-weight: 800; line-height: 1.1; }
+.fp-l { font-size: 9.5px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--dim); margin-top: 2px; }
+.fp-mine .fp-n { color: var(--gold2); }
+.fp-theirs .fp-n { color: #ff9d6b; }
+.fp-theirs { text-align: right; }
+.fp-vs-badge {
+  flex: 0 0 auto; font-size: 10.5px; font-weight: 800; letter-spacing: 1.4px;
+  padding: 5px 10px; border-radius: 99px;
+  background: var(--panel2); border: 1px solid currentColor;
+}
+.fp-bars { display: flex; flex-direction: column; gap: 5px; }
+.fp-bar { height: 7px; border-radius: 99px; background: #0a0c18; border: 1px solid var(--line-soft); overflow: hidden; }
+.fp-bar-en { border-color: rgba(255, 122, 82, 0.35); }
+.fp-bar-me { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #b08a2f, var(--gold2)); transition: width 0.4s; }
+.fp-bar-th { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #a8462f, #ff7a52); transition: width 0.4s; }
+.fp-verdict {
+  margin-top: 11px; padding: 9px 11px; border-radius: var(--r-sm);
+  background: var(--panel2); border-left: 3px solid currentColor;
+  font-size: 11.5px; line-height: 1.5;
+}
+.fp-verdict b { color: #fff; }
+
+/* ---------- Barra de fuerza de la pantalla Mi Equipo ---------- */
+.force-mini {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 12px 14px; margin-bottom: 14px;
+}
+.fm-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-size: 10.5px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--dim);
+  margin-bottom: 4px;
+}
+.fm-row b { font-size: 15px; color: var(--text); letter-spacing: 0; }
+.fm-bar {
+  height: 7px; border-radius: 99px; background: #0a0c18;
+  border: 1px solid var(--line-soft); overflow: hidden; margin-bottom: 9px;
+}
+.fm-fill { height: 100%; border-radius: 99px; transition: width 0.4s; }
+.fm-fill.mine { background: linear-gradient(90deg, #b08a2f, var(--gold2)); box-shadow: 0 0 12px rgba(245, 217, 126, 0.45); }
+.fm-fill.foe { background: linear-gradient(90deg, #a8462f, #ff7a52); }
+.fm-verdict {
+  font-size: 11.5px; line-height: 1.5; padding: 8px 10px; border-radius: var(--r-sm);
+  background: var(--panel2); border-left: 3px solid currentColor;
+}
+.fm-verdict b { color: #fff; }
+
+/* Ampliación del power-box con veredicto y reparto */
+.power-box { align-items: stretch; }
+.power-box .pb-sub { font-size: 10.5px; color: var(--dim); margin-top: 3px; }
+.pb-verdict {
+  display: inline-block; margin-top: 7px; font-size: 10.5px; font-weight: 800;
+  letter-spacing: 1px; padding: 4px 9px; border-radius: 99px;
+  background: var(--panel2); border: 1px solid currentColor;
+}
+
+/* ---------- Panel de nivel general (Mi Equipo) ---------- */
+.tlv-panel {
+  background: linear-gradient(160deg, rgba(31, 38, 55, 0.95), rgba(20, 26, 41, 0.95));
+  border: 1px solid var(--line); border-radius: var(--r);
+  padding: 14px; margin-bottom: 12px;
+}
+.tlv-main { display: flex; align-items: center; gap: 13px; }
+.tlv-num {
+  font-size: 40px; font-weight: 800; line-height: 1; color: var(--gold2);
+  text-shadow: 0 0 24px rgba(245, 217, 126, 0.5);
+  min-width: 56px; text-align: center;
+}
+.tlv-side { flex: 1; min-width: 0; }
+.tlv-lab { font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--dim); }
+.tlv-bar {
+  height: 8px; border-radius: 99px; background: #0a0c18;
+  border: 1px solid var(--line-soft); overflow: hidden; margin: 6px 0 5px;
+}
+.tlv-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, #b08a2f, var(--gold2));
+  box-shadow: 0 0 14px rgba(245, 217, 126, 0.5);
+  transition: width 0.4s ease;
+}
+.tlv-sub { font-size: 10.5px; color: var(--dim); line-height: 1.45; }
+.tlv-sub b { color: var(--gold2); }
+.tlv-next {
+  font-size: 10.5px; color: var(--blue); margin-top: 5px;
+  background: rgba(92, 194, 255, 0.08);
+  border: 1px solid rgba(92, 194, 255, 0.25);
+  border-radius: var(--r-sm); padding: 5px 8px; display: inline-block;
+}
+.tlv-next b { color: var(--blue2); }
+.tlv-note {
+  font-size: 10.5px; color: var(--dim); line-height: 1.5;
+  margin-top: 11px; padding-top: 10px; border-top: 1px solid var(--line-soft);
+}
+.tlv-note b { color: var(--gold2); }
+.tlv-inline {
+  text-align: center; font-size: 11.5px; color: var(--dim);
+  margin-bottom: 12px; padding: 7px 10px; border-radius: var(--r-sm);
+  background: var(--panel2); border: 1px solid var(--line-soft);
+}
+.tlv-inline b { color: var(--gold2); }
+
+/* ---------- Cabecera de la colección ---------- */
+.coll-head { display: flex; gap: 10px; margin-bottom: 14px; }
+.coll-head > div {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px;
+  background: linear-gradient(160deg, rgba(31, 38, 55, 0.95), rgba(20, 26, 41, 0.95));
+  border: 1px solid var(--line); border-radius: var(--r); padding: 11px 12px;
+}
+.ch-num {
+  font-size: 27px; font-weight: 800; line-height: 1; color: var(--gold2);
+  text-shadow: 0 0 18px rgba(245, 217, 126, 0.45); min-width: 42px; text-align: center;
+}
+.ch-num.sm { font-size: 20px; }
+.ch-tx { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--dim); line-height: 1.4; }
+.ch-sub { text-transform: none; letter-spacing: 0; font-size: 9.5px; color: var(--dim); opacity: 0.85; }
+
+/* ---------- Inicio: nivel, poder y veredicto ---------- */
+.ht-lv {
+  font-size: 10.5px; font-weight: 800; letter-spacing: 1px;
+  color: var(--gold2); background: rgba(8, 10, 18, 0.55);
+  border: 1px solid var(--gold); border-radius: 99px; padding: 2px 8px; margin-left: 6px;
+}
+.home-team-force {
+  font-size: 11px; color: var(--dim); text-align: center; margin-bottom: 6px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+}
+.home-team-force b { color: var(--gold2); }
+.home-force-go {
+  display: block; width: 100%; margin: 10px auto 0; max-width: 320px;
+  font-size: 11px; padding: 9px 12px; cursor: pointer;
+  color: var(--text); background: rgba(8, 10, 18, 0.55);
+  border: 1px solid var(--gold); border-radius: 99px;
+  transition: transform 0.15s, background 0.2s;
+}
+.home-force-go:hover { transform: translateY(-1px); background: rgba(227, 176, 79, 0.18); }
+.hc-v {
+  display: inline-block; margin-top: 6px; font-size: 9.5px; font-weight: 800;
+  letter-spacing: 0.8px; padding: 3px 8px; border-radius: 99px;
+  background: rgba(8, 10, 18, 0.6); border: 1px solid currentColor;
+}
+
+/* ---------- Fases: poder rival y veredicto ---------- */
+.stage-crown { font-size: 11px; margin-left: 4px; }
+.stage-story {
+  font-size: 10.5px; color: var(--dim); line-height: 1.45; margin-top: 4px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.stage-force { display: flex; align-items: center; gap: 8px; margin-top: 7px; flex-wrap: wrap; }
+.sf-enemy { font-size: 10.5px; color: var(--dim); letter-spacing: 0.6px; }
+.sf-enemy b { color: #ff9d6b; }
+.sf-verdict {
+  font-size: 9.5px; font-weight: 800; letter-spacing: 1px;
+  padding: 3px 8px; border-radius: 99px;
+  background: var(--panel2); border: 1px solid currentColor;
+}
+.sf-verdict.locked { color: var(--dim); border-color: var(--line); font-weight: 600; }
+
+/* ---------- Resultados ---------- */
+.res-force {
+  text-align: center; font-size: 12.5px; color: var(--dim);
+  margin: 10px 0 4px; padding: 8px 10px; border-radius: var(--r-sm);
+  background: var(--panel2); border: 1px solid var(--line-soft);
+}
+.res-force b { color: var(--gold2); }
+.res-next {
+  text-align: center; font-size: 11.5px; color: var(--dim);
+  margin: 8px 0 10px; padding: 8px 10px; border-radius: var(--r-sm);
+  background: rgba(92, 194, 255, 0.08); border: 1px solid rgba(92, 194, 255, 0.25);
+}
+.res-next b { color: var(--blue); }
+.res-weak {
+  font-size: 11px; color: var(--dim); line-height: 1.5;
+  margin: 8px 0 12px; padding: 9px 11px; border-radius: var(--r-sm);
+  background: rgba(255, 157, 107, 0.08); border: 1px solid rgba(255, 157, 107, 0.3);
+}
+.res-weak b { color: #ff9d6b; }
+
+/* ---------- Ranura: poder de la carta ---------- */
+.slot .s-pow {
+  font-size: 9px; font-weight: 800; color: var(--gold2);
+  margin-top: 3px; z-index: 2; letter-spacing: 0.5px;
+}
+
+/* ---------- Cabecera de acto en la lista de fases ---------- */
+.act-head {
+  display: grid; grid-template-columns: 1fr auto; gap: 2px 10px;
+  align-items: center; margin: 18px 0 10px; padding: 10px 12px;
+  background: linear-gradient(160deg, rgba(31, 38, 55, 0.95), rgba(20, 26, 41, 0.95));
+  border: 1px solid var(--line); border-left: 3px solid var(--gold);
+  border-radius: var(--r);
+}
+.act-head.done { border-left-color: var(--teal); }
+.ah-t {
+  grid-column: 1; font-size: 11px; font-weight: 800; letter-spacing: 1.2px;
+  color: var(--gold2); text-transform: uppercase;
+}
+.act-head.done .ah-t { color: var(--teal); }
+.ah-m { grid-column: 2; font-size: 10.5px; font-weight: 800; color: var(--dim); }
+.ah-bar {
+  grid-column: 1 / -1; height: 5px; border-radius: 99px;
+  background: #0a0c18; border: 1px solid var(--line-soft);
+  overflow: hidden; margin: 4px 0 3px;
+}
+.ah-fill {
+  display: block; height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, #b08a2f, var(--gold2));
+  transition: width 0.4s;
+}
+.act-head.done .ah-fill { background: linear-gradient(90deg, #1f8f7d, var(--teal)); }
+.ah-p { grid-column: 1 / -1; font-size: 10px; color: var(--dim); }
+
+@media (max-width: 400px) {
+  .coll-head { flex-direction: column; }
+  .fp-lv-num, .tlv-num { font-size: 30px; min-width: 44px; }
+  .fp-n { font-size: 16px; }
+  .ld-tip { min-height: 84px; font-size: 11.5px; }
+  .act-head { grid-template-columns: 1fr; }
+  .ah-m { grid-column: 1; }
+}
+
+

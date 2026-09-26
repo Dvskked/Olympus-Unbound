@@ -36,8 +36,15 @@
   function viewCollection() {
     var st = OU.STATE.state;
     var cards = OU.STATE.ownedList();
+    var tlv = U.teamLevelInfo();
+    var head = '<div class="coll-head">' +
+      '<div class="ch-lv"><span class="ch-num">' + tlv.lvl + '</span>' +
+      '<span class="ch-tx">Nivel general del equipo<br><span class="ch-sub">' + U.fmt(tlv.total) + ' niveles · media ' + tlv.avg1 + ' · ' + tlv.cards + ' cartas</span></span></div>' +
+      '<div class="ch-pow"><span class="ch-num sm">' + U.fmt(U.teamPower()) + '</span>' +
+      '<span class="ch-tx">Poder de la formación<br><span class="ch-sub">Sube cualquier carta: cuenta aunque no esté equipada</span></span></div>' +
+      '</div>';
     if (!cards.length) {
-      return '<div class="empty-msg">📜 Tu colección está vacía.<br><br><button class="btn btn-gold" onclick="OU.MAIN.setTab(\'shop\')">Abrir tu primer sobre</button></div>';
+      return head + '<div class="empty-msg">📜 Tu colección está vacía.<br><br><button class="btn btn-gold" onclick="OU.MAIN.setTab(\'shop\')">Abrir tu primer sobre</button></div>';
     }
     var fbar =
       '<div class="coll-toolbar">' +
@@ -70,7 +77,7 @@
         return U.rarityOrder(a[0], b[0]);
       });
     var grid = list.map(function (ab) { return collectionCardHTML(ab[0], ab[1]); }).join('');
-    return fbar + (grid ? '<div class="ccard-grid">' + grid + '</div>' : '<div class="empty-msg">Sin cartas en esta categoría.</div>');
+    return head + fbar + (grid ? '<div class="ccard-grid">' + grid + '</div>' : '<div class="empty-msg">Sin cartas en esta categoría.</div>');
   }
 
   function collectionCardHTML(id, c) {
@@ -203,9 +210,10 @@ I.openModal(
     var up = U.$('#upBtn');
     if (up) up.addEventListener('click', function () {
       if (st.gold < cost.gold || rc.dup < cost.dupes) return I.toast('No tienes suficientes recursos');
+      var tlvBefore = U.teamLevelInfo();
       st.gold -= cost.gold; rc.dup -= cost.dupes; rc.lvl++;
       OU.STATE.save();
-      I.toast('⬆ ' + c.n + ' subió a nivel ' + rc.lvl);
+      I.toast('⬆ ' + c.n + ' subió a nivel ' + rc.lvl + U.teamLevelUpNote(tlvBefore));
       openCardDetail(id);
       OU.MAIN.render();
     });
@@ -213,9 +221,10 @@ I.openModal(
     var goldBtn = U.$('#goldBtn');
     if (goldBtn) goldBtn.addEventListener('click', function () {
       if (st.gold < goldCost) return I.toast('No tienes suficiente oro 🪙');
+      var tlvBefore = U.teamLevelInfo();
       st.gold -= goldCost; rc.lvl++;
       OU.STATE.save();
-      I.toast('💰 ' + c.n + ' subió a nivel ' + rc.lvl + ' sin duplicados');
+      I.toast('💰 ' + c.n + ' subió a nivel ' + rc.lvl + U.teamLevelUpNote(tlvBefore));
       openCardDetail(id);
       OU.MAIN.render();
     });

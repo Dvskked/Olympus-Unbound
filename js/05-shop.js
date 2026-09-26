@@ -265,12 +265,13 @@
           st.gems -= o.cost.gems;
         }
         var id = r.dataset.up;
+        var tlvBefore = U.teamLevelInfo();
         st.cards[id].lvl++;
         var idx = st.shopItems.indexOf(o);
         if (idx >= 0) st.shopItems.splice(idx, 1);
         OU.STATE.save(); I.updateTopRes();
         I.closeModal();
-        I.toast('🔨 ' + OU.CARD_BY_ID[id].n + ' subió a nivel ' + st.cards[id].lvl);
+        I.toast('🔨 ' + OU.CARD_BY_ID[id].n + ' subió a nivel ' + st.cards[id].lvl + U.teamLevelUpNote(tlvBefore));
         OU.MAIN.render();
       });
     });

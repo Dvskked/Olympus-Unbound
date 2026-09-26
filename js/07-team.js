@@ -23,17 +23,46 @@
     var st = OU.STATE.state;
     var slots = st.team.map(function (id, i) { return teamSlotHTML(id, i); }).join('');
     var ids = st.team.filter(Boolean);
-    var pow = ids.reduce(function (s, id) { return s + U.powerOf(id, st.cards[id].lvl); }, 0);
+    var pow = U.teamPower(ids);
     var cnt = ids.length;
-    return '<div class="power-box">' +
-      '<div><div class="pb-label">Poder total del equipo</div><div class="pb-val">' + U.fmt(pow) + '</div></div>' +
-      '<div style="text-align:right"><div class="pb-label">Miembros</div><div class="pb-val" style="font-size:18px;color:var(--text)">' + cnt + '/' + OU.CONST.MAX_TEAM + '</div></div>' +
+    var tlv = U.teamLevelInfo();
+    var stage = U.currentStage();
+    var v = U.verdict(pow, U.stagePower(stage));
+    var topCard = ids.slice().sort(function (a, b) { return U.powerOf(b, st.cards[b].lvl) - U.powerOf(a, st.cards[a].lvl); })[0];
+    var main = topCard ? U.powerOf(topCard, st.cards[topCard].lvl) : 0;
+    var share = pow > 0 ? Math.round(main / pow * 100) : 0;
+    return '<div class="tlv-panel">' +
+      '<div class="tlv-main">' +
+      '<div class="tlv-num">' + tlv.lvl + '</div>' +
+      '<div class="tlv-side">' +
+      '<div class="tlv-lab">Nivel general del equipo</div>' +
+      '<div class="tlv-bar"><div class="tlv-fill" style="width:' + Math.max(2, tlv.pct) + '%"></div></div>' +
+      '<div class="tlv-sub"><b>' + U.fmt(tlv.total) + '</b> niveles en <b>' + tlv.cards + '</b> cartas · media <b>' + tlv.avg1 + '</b> · carta más alta <b>NV ' + tlv.top + '</b></div>' +
+      '<div class="tlv-next">⬆ Sube <b>' + tlv.missing + '</b> niveles de carta para llegar al <b>' + tlv.next + '</b></div>' +
+      '</div></div>' +
+      '<p class="tlv-note">Cada carta que mejoras —<b>esté equipada o no</b>— suma un nivel a este equipo: el total sube siempre, y el Nivel General sube en cuanto acumulas lo suficiente. Mejorar la colección entera es la forma más lenta de crecer, pero también la más segura.</p>' +
+      '</div>' +
+      '<div class="power-box">' +
+      '<div><div class="pb-label">Poder total del equipo</div><div class="pb-val">' + U.fmt(pow) + '</div>' +
+      '<div class="pb-sub">' + (topCard ? '★ ' + OU.CARD_BY_ID[topCard].n + ' aporta el ' + share + '%' : 'Sin cartas equipadas') + '</div></div>' +
+      '<div style="text-align:right"><div class="pb-label">Miembros</div><div class="pb-val" style="font-size:18px;color:var(--text)">' + cnt + '/' + OU.CONST.MAX_TEAM + '</div>' +
+      '<div class="pb-sub" style="margin-top:4px">Rival fase ' + (stage + 1) + ': ' + U.fmt(U.stagePower(stage)) + '</div>' +
+      '<div class="pb-verdict ' + v.cls + '">' + v.n + (v.gap > 0 ? ' · faltan ' + U.fmt(v.gap) : ' · +' + U.fmt(-v.gap)) + '</div></div>' +
+      '</div>' +
+      '<div class="force-mini">' +
+      '<div class="fm-row"><span>Tu poder</span><b>' + U.fmt(pow) + '</b></div>' +
+      '<div class="fm-bar"><div class="fm-fill mine" style="width:' + Math.min(100, Math.round(pow / Math.max(pow, U.stagePower(stage), 1) * 100)) + '%"></div></div>' +
+      '<div class="fm-row"><span>Poder de la fase ' + (stage + 1) + '</span><b>' + U.fmt(U.stagePower(stage)) + '</b></div>' +
+      '<div class="fm-bar"><div class="fm-fill foe" style="width:' + Math.min(100, Math.round(U.stagePower(stage) / Math.max(pow, U.stagePower(stage), 1) * 100)) + '%"></div></div>' +
+      '<div class="fm-verdict ' + v.cls + '">' + (v.gap > 0
+        ? '💪 Te faltan <b>' + U.fmt(v.gap) + '</b> de poder: entrena tus cartas, abre sobres y vuelve.'
+        : '✅ Tienes margen: tu poder supera al rival en <b>' + U.fmt(-v.gap) + '</b>.') + '</div>' +
       '</div>' +
       '<button class="btn btn-blue btn-block" id="equipBest" style="margin-bottom:14px">⚡ Equipar los mejores</button>' +
       formationHTML() +
       '<div class="squad-wrap">' + slots + '</div>' +
       '<p class="battle-hint">Formación 1-2-2-1: el tanque al frente, los 2 guerreros a los lados, los 2 magos detrás y el soporte al final. Cada ranura acepta un rol fijo. «Equipar los mejores» arma la mejor formación con tus cartas.</p>' +
-      (cnt > 0 && OU.STAGES.length > 0 ? '<button class="btn btn-gold btn-block" style="margin-top:14px" onclick="OU.MAIN.setTab(\'home\')">⚔️ Ir a la batalla</button>' : '');
+      (cnt > 0 && OU.STAGES.length > 0 ? '<button class="btn btn-gold btn-block" style="margin-top:14px" onclick="OU.MAIN.setTab(\'campaign\')">⚔️ Ir a la batalla</button>' : '');
   }
 
   function teamSlotHTML(id, i) {
@@ -48,6 +77,7 @@
       '<div class="s-art">' + I.artHTML(id, 'slot-art') + '</div>' +
       '<div class="s-name">' + c.n + '</div>' +
       '<div class="s-role">' + OU.ROLES[c.role] + '</div>' +
+      '<div class="s-pow">⚡ ' + U.fmt(U.powerOf(id, lvl)) + '</div>' +
       '<div style="font-size:8px;color:var(--dim);margin-top:2px">💪 ' + U.fmt(v.hp) + ' · ⚔️ ' + U.fmt(v.atk) + ' · 🛡️ ' + U.fmt(v.def) + '</div>' +
       '<div class="s-bar" style="transform:scaleX(' + U.clamp(v.hp / 1500, 0.15, 1) + ')"></div>' +
       '</div>';
@@ -148,12 +178,15 @@
     function draw() {
       var st = OU.STATE.state;
       var slots = st.team.map(function (id, i) { return teamSlotHTML(id, i); }).join('');
+      var tlv = U.teamLevelInfo();
       I.openModal(
         '<div class="sec-title" style="margin-top:8px">🛡️ Editar Mi Equipo</div>' +
+        '<div class="tlv-inline">⭐ Nivel general <b>' + tlv.lvl + '</b> · Poder <b>' + U.fmt(U.teamPower()) + '</b> · ' + tlv.cards + ' cartas</div>' +
         '<button class="btn btn-blue btn-block" id="tEqBest" style="margin-bottom:12px">⚡ Equipar los mejores</button>' +
         formationHTML() +
         '<div class="squad-wrap">' + slots + '</div>' +
         '<p class="battle-hint">Formación 1-2-2-1: tanque al frente, 2 guerreros a los lados, 2 magos detrás y soporte al final. Toca una ranura para elegir la carta de ese rol.</p>' +
+        '<p class="battle-hint">Mejorar cualquier carta de tu colección, <b>da igual si está equipada</b>, sube el nivel general del equipo.</p>' +
         '<button class="btn btn-gold btn-block" id="tDone">Listo</button>', true);
       U.$$('.slot', U.$('#overlay')).forEach(function (s) {
         s.addEventListener('click', function () { openTeamPicker(parseInt(s.dataset.slot, 10)); });

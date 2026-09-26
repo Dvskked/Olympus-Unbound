@@ -443,17 +443,229 @@
     'tar', 'fanes', 'nix', 'ereb', 'tifon', 'fanes', 'ereb', 'ekidna', 'ofion', 'fanes'
   ];
 
+  /* ----------------------------------------------------------------------
+   * ACTOS. Diez actos de diez fases: cada uno tiene un nombre y un talón de
+   * Aquiles propio (el poder de su roster), así que la dificultad NO es una
+   * rampa lisa sino una montaña rusa con picos y valles.
+   * -------------------------------------------------------------------- */
+  OU.ACT_NAMES = [
+    'El Despertar de los Mortales', 'La Sombra de las Bestias', 'La Era de los Héroes',
+    'El Favor de los Dioses', 'La Ira del Olimpo', 'Descenso al Inframundo',
+    'El Despertar de los Titanes', 'La Titanomaquia', 'El Retorno de lo Primitivo',
+    'El Fin de los Tiempos'
+  ];
+  OU.PHASES_PER_ACT = 10;
+
+  /* Poder de UNA carta a un nivel dado. Es la única fórmula de poder del
+     juego: la usan el combate, la pantalla de equipo y la medición de fases,
+     de modo que el número que se muestra es exactamente el que se pelea. */
+  OU.cardPowerAt = function (cardId, level) {
+    var c = OU.CARD_BY_ID[cardId];
+    if (!c) return 0;
+    var g = 1 + (Math.max(1, level) - 1) * 0.18;
+    return Math.round(Math.round(c.hp * g) * 0.2 + Math.round(c.atk * g) + Math.round(c.def * g) * 1.2);
+  };
+
+  /* Escalones de dificultad. El nivel de cada fase se calcula midiendo el
+     poder REAL de su equipo enemigo (no por número de fase), de modo que
+     un acto de Inmortalidad duele más que uno de bandidos aunque estén
+     en la misma casilla. */
+  OU.DIFF = [
+    { n: 'SENCILLA', cls: 'diff-0' },
+    { n: 'FÁCIL',   cls: 'diff-1' },
+    { n: 'JUSTA',   cls: 'diff-2' },
+    { n: 'DIFÍCIL', cls: 'diff-3' },
+    { n: 'BRUTAL',  cls: 'diff-4' }
+  ];
+
   OU.STAGES = OU.STAGE_ROWS.map(function (row, i) {
     var idx = i + 1;
-    var scale = 1 + i * 0.0012;
-    if (idx % 10 === 0) scale *= 1.05;   // jefes de acto, más duros
-    if (i === OU.STAGE_ROWS.length - 1) scale *= 1.02; // jefe final
+    var act = Math.floor(i / OU.PHASES_PER_ACT);
+    var pos = (idx - 1) % OU.PHASES_PER_ACT;
+    var isBoss = pos === OU.PHASES_PER_ACT - 1;               // 10, 20, 30… 100
+    var isFinal = i === OU.STAGE_ROWS.length - 1;
+    /* Nivel de los enemigos: sube dentro del acto y salta al cambiar de acto. */
+    var level = Math.max(1, Math.min(OU.CONST.MAX_LEVEL, 1 + act * 9 + pos));
     return {
+      idx: idx,
+      act: act + 1,
+      actName: OU.ACT_NAMES[act] || ('Acto ' + (act + 1)),
+      pos: pos + 1,
+      boss: isBoss,
+      final: isFinal,
       n: row[0],
       story: row[1],
       roster: row[2].concat(OU.STAGE_6TH[i] ? [OU.STAGE_6TH[i]] : []),
-      level: Math.min(OU.CONST.MAX_LEVEL, idx),
-      scale: Math.round(scale * 1000) / 1000
+      level: level
     };
   });
+
+  /* ----------------------------------------------------------------------
+   * MEDICIÓN DE LA DIFICULTAD.
+   * 1) Se mide el poder REAL de cada roster (sus 6 enemigos a su nivel) con la
+   *    misma fórmula que usa el combate.
+   * 2) Cada acto tiene un presupuesto de poder: es lo que cuesta atravesarlo.
+   *    Así el paso de acto a acto es siempre parejo y no un muro.
+   * 3) DENTRO de un acto, la fuerza real del roster decide el desnivel: la
+   *    fase más poderosa del acto es un pico y la más floja un valle. Esa
+   *    diferencia se reparte de forma controlada para que haya fases
+   *    claramente más difíciles sin romper la campaña.
+   * 4) La escala resultante se aplica a las estadísticas en combate, así que
+   *    el poder que se muestra es EXACTAMENTE el poder con el que pelean.
+   * 5) Pasadas de garantía al final:
+   *      · cada acto entero es más fuerte que el anterior (nunca se retrocede);
+   *      · la fase 100 es el muro, la más powerful de la campaña;
+   *      · la fase 1 se deja al alcance del equipo inicial.
+   * -------------------------------------------------------------------- */
+  (function measureStages() {
+    var PER_ACT = OU.PHASES_PER_ACT;
+
+    /* Techo del juego: las 6 mejores cartas (sin la del Creador) al nivel máximo.
+       Es el poder máximo que un jugador puede construir, así que toda la
+       campaña se dimensiona como fracción de él: si algún día cambia el
+       balance de las cartas, la campaña se reajusta sola. */
+    var CEILING = (function () {
+      var pool = OU.CARDS.filter(function (c) { return c.r !== 5; })
+        .map(function (c) { return OU.cardPowerAt(c.id, OU.CONST.MAX_LEVEL); })
+        .sort(function (a, b) { return b - a; });
+      return pool.slice(0, OU.CONST.MAX_TEAM).reduce(function (a, b) { return a + b; }, 0);
+    })();
+    OU.POWER_CEILING = CEILING;
+
+    /* Potencia de referencia al cierre de cada acto, como fracción del techo.
+       Sube con ritmo (~1.45x) y deja el último acto por debajo del techo para
+       que la fase final sea el muro y siga siendo superable. */
+    var ACT_FRACTION = [0.012, 0.030, 0.058, 0.098, 0.150, 0.215, 0.295, 0.390, 0.500, 0.625];
+    var WALL_FRACTION = 0.88;
+
+    function rosterPower(s) {
+      return s.roster.reduce(function (acc, id) { return acc + OU.cardPowerAt(id, s.level); }, 0);
+    }
+    function teamPowerAt(ids, level) {
+      return ids.reduce(function (acc, id) { return acc + OU.cardPowerAt(id, level); }, 0);
+    }
+    /* Recalcula escala y poder de una fase con un objetivo de poder. */
+    function setPower(s, target) {
+      s.scale = Math.round((target / Math.max(1, rosterPower(s))) * 1000) / 1000;
+      s.power = Math.round(rosterPower(s) * s.scale);
+    }
+
+    var acts = Math.ceil(OU.STAGES.length / PER_ACT);
+    for (var a = 0; a < acts; a++) {
+      var seg = OU.STAGES.slice(a * PER_ACT, a * PER_ACT + PER_ACT);
+      var raws = seg.map(rosterPower);
+      var rMin = Math.min.apply(null, raws), rMax = Math.max.apply(null, raws);
+      var frac = ACT_FRACTION[a] !== undefined
+        ? ACT_FRACTION[a]
+        : ACT_FRACTION[ACT_FRACTION.length - 1] * Math.pow(1.25, a - ACT_FRACTION.length + 1);
+      var base = Math.round(CEILING * frac);
+      seg.forEach(function (s, k) {
+        /* Desnivel dentro del acto: 0.86 (valle) … 1.14 (pico), con un
+           empujón extra en el jefe y un avance suave a lo largo del acto. */
+        var rel = rMax > rMin ? (raws[k] - rMin) / (rMax - rMin) : 0.5;
+        var bump = s.boss ? 1.04 : 1;                       // el jefe de acto siempre morderá más
+        var ramp = 1 + (s.pos - 1) / Math.max(1, PER_ACT - 1) * 0.10;  // avance dentro del acto
+        s.rel = Math.round(rel * 100) / 100;
+        setPower(s, base * (0.86 + rel * 0.28) * bump * ramp);
+      });
+    }
+
+    /* --- Pasada 1: ningún acto debe sentirse más débil que el anterior.
+           Un acto empieza, como mínimo, al nivel de la mediana del anterior:
+           así los valles son excitement dentro del acto, nunca una bajada de
+           dificultad al cambiar de acto. */
+    function median(arr) {
+      var v = arr.slice().sort(function (x, y) { return x - y; });
+      var m = Math.floor(v.length / 2);
+      return v.length % 2 ? v[m] : Math.round((v[m - 1] + v[m]) / 2);
+    }
+    for (var b = 1; b < acts; b++) {
+      var prev = OU.STAGES.slice((b - 1) * PER_ACT, b * PER_ACT);
+      var cur = OU.STAGES.slice(b * PER_ACT, b * PER_ACT + PER_ACT);
+      var floorPow = median(prev.map(function (s) { return s.power; }));
+      var curMax = Math.max.apply(null, cur.map(function (s) { return s.power; }));
+      if (curMax >= floorPow) continue;
+      cur.forEach(function (s) {
+        s.scale = Math.round(s.scale * (floorPow / Math.max(1, s.power)) * 1000) / 1000;
+        s.power = Math.round(rosterPower(s) * s.scale);
+      });
+    }
+
+    /* --- Pasada 2: la última fase es el muro de la campaña. Se dimensiona
+           contra el techo del jugador (88%): hay que estar casi al máximo
+           para cerrar la campaña, pero sigue siendo ganable. */
+    var last = OU.STAGES[OU.STAGES.length - 1];
+    if (last) {
+      var wall = Math.round(CEILING * WALL_FRACTION);
+      var rest = Math.max.apply(null, OU.STAGES.slice(0, OU.STAGES.length - 1)
+        .map(function (s) { return s.power; }));
+      if (wall < rest * 1.04) wall = Math.round(rest * 1.04);
+      setPower(last, wall);
+      last.rel = 1;
+    }
+
+    /* --- Pasada 3: la primera fase tiene que caer al equipo inicial.
+           El jugador empieza con 3 cartas de nivel 1, así que la fase 1 se
+           dimensiona contra ese poder real. */
+    var first = OU.STAGES[0];
+    if (first) {
+      var start = teamPowerAt(OU.CONST.START_CARDS, 1);
+      if (first.power > Math.round(start * 0.8)) setPower(first, Math.round(start * 0.8));
+    }
+
+    /* Etiquetas de dificultad: mezcla de dos señales.
+       · `rel` (posición dentro del acto) → los picos y valles del acto.
+       · `actT` (avance en la campaña)    → la escala global.
+       Así unas fases son claramente más difíciles que sus vecinas sin que
+       la etiqueta deje de significar nada. */
+    var actsN = Math.max(1, acts - 1);
+    OU.STAGES.forEach(function (s) {
+      var actT = (s.act - 1) / actsN;
+      var t = s.rel * 0.55 + actT * 0.45;
+      var d = Math.max(0, Math.min(4, Math.round(t * 4)));
+      if (s.boss) d = Math.max(d, 2);          // un jefe de acto nunca es trivial
+      if (s.final) d = OU.DIFF.length - 1;
+      s.diff = d;
+      s.diffName = OU.DIFF[d].n;
+      s.diffCls = OU.DIFF[d].cls;
+      s.spike = s.rel >= 0.66 ? 'pico' : (s.rel <= 0.33 ? 'valle' : '');
+    });
+  })();
+
+  /* ----------------------------------------------------------------------
+   * CONSEJOS para la pantalla de carga. Explican cómo funciona el juego:
+   * poder, niveles, formación, campaña, economía y entrenamiento.
+   * -------------------------------------------------------------------- */
+  OU.TIPS = [
+    { i: '⚔️', t: 'Tu <b>Poder de equipo</b> es la suma del poder de las 6 cartas equipadas. Es lo que comparas con el poder de cada fase.' },
+    { i: '📈', t: 'Cada nivel de carta multiplica su vida, ataque y defensa por <b>+18%</b>. El poder sube exactamente lo mismo que el combate.' },
+    { i: '⭐', t: 'Mejorar <b>cualquier</b> carta sube el <b>Nivel General del Equipo</b>, aunque no esté equipada: cuenta toda tu colección.' },
+    { i: '📶', t: 'Campaña te enseña el veredicto de cada fase: <b>Trivial, Fácil, Justa, Difícil o Brutal</b> según tu poder frente al suyo.' },
+    { i: '🧗', t: 'Las fases no son una rampa lisa: cada acto tiene <b>picos de dificultad</b> y fases de respiro. Entrena antes del pico.' },
+    { i: '👑', t: 'Los <b>jefes de acto</b> (fases 10, 20, 30…) escalan su poder. Nunca llegues con el equipo justo.' },
+    { i: '🛡️', t: 'La formación es <b>1-2-2-1</b>: tanque al frente, 2 guerreros, 2 magos y 1 soporte detrás. Cada ranura acepta un rol fijo.' },
+    { i: '⚡', t: '«<b>Equipar los mejores</b>» arma la mejor formación posible respetando los topes por rol. Úsalo tras cada sobre.' },
+    { i: '🔋', t: 'Cada golpe carga energía. Al <b>100%</b> el personaje libera su habilidad especial sin que hagas nada.' },
+    { i: '🎯', t: 'El <b>tanque</b> atrae la mayoría de ataques. Ponlo en la primera ranura y tu equipo aguanta el triple.' },
+    { i: '💥', t: 'Las habilidades <b>AOE</b> golpean a TODOS los enemigos a la vez. Contra equipos cargados son letales de golpe.' },
+    { i: '💚', t: 'Los <b>soportes</b> curan al aliado más herido. Con un soporte vivo, ninguna fase se te escapa.' },
+    { i: '🛡️', t: 'Las habilidades de <b>escudo</b> dan 6× la defensa del aliado elegido: los tanques son claves para sobrevivir.' },
+    { i: '⚡', t: 'El <b>buff</b> sube el ataque de todo el equipo 2 turnos. Un solo soporte bien usado puede cerrar una pelea.' },
+    { i: '📖', t: 'Las rarezas siguen a la mitología: los <b>Héroes</b> nunca superan a los <b>Dioses</b>, ni estos a los <b>Titanes</b>.' },
+    { i: '🌌', t: 'Los <b>Primordiales</b> son la cúspide del poder. Solo salen en el Sobre Cósmico, con tope de 1 por Titan.' },
+    { i: '👑', t: 'El <b>Creador</b> es exclusivo e inalcanzable: ningún sobre, Bazar ni ritual puede contener su esencia.' },
+    { i: '📦', t: 'Los sobres Épico, Olimpo, Divino y Cósmico <b>garantizan</b> una rareza mínima. Compra con cabeza, no por costumbre.' },
+    { i: '🔁', t: 'Repetir una carta da <b>duplicados</b>: son la mitad del coste de mejorarla junto al oro.' },
+    { i: '💰', t: 'Puedes subir un nivel <b>solo con oro</b>. Cuesta más, pero no dependes del azar de los duplicados.' },
+    { i: '🏋️', t: 'Entrenar da XP a la carta. Al llenar la barra, sube de nivel <b>sin gastar duplicados</b>.' },
+    { i: '⏳', t: 'El entrenamiento sigue <b>con el juego cerrado</b>: vuelve más tarde y recoge. Cada carta tiene 5 stocks por ciclo de 12 h.' },
+    { i: '🏛️', t: 'El <b>Ágora</b> genera oro pasivo cada minuto. Recógelo seguido y sube con el Ágora al avanzar en la campaña.' },
+    { i: '🎁', t: 'La <b>racha diaria</b> da +2, +3… hasta +10 gemas. Si fallas un día, vuelve a empezar.' },
+    { i: '📋', t: 'Cada día hay <b>3 misiones</b> gratis en Recompensas: superar una fase, ganar un minijuego y abrir un sobre.' },
+    { i: '📖', t: 'El <b>Índice de Leyendas</b> muestra todas las cartas y tu progreso de descubrimiento.' },
+    { i: '⏩', t: 'En combate puedes pulsar <b>⏩ x2</b> para acelerar la pelea cuando ya conoces al rival.' },
+    { i: '🧮', t: 'El <b>Nivel General</b> es la media de los niveles de todas tus cartas. Subir una carta ancienta lo mueve igual que una equipada.' },
+    { i: '💾', t: 'Tu partida se guarda <b>solo en este dispositivo</b>. No borres los datos del navegador si quieres conservarla.' },
+    { i: '🏛️', t: 'Campaña, Mercadeo y Equipo están en la pantalla principal: <b>Mi Equipo</b> siempre en el centro.' }
+  ];
 })();

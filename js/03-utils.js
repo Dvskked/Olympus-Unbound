@@ -29,8 +29,134 @@
   }
 
   function powerOf(cardId, level) {
+    /* Delegamos en la fórmula compartida de los datos: así el poder que se
+       muestra en la campaña es, literalmente, el que entra en combate. */
+    if (OU.cardPowerAt) return OU.cardPowerAt(cardId, level);
     var v = valuesAt(cardId, level);
     return Math.round(v.hp * 0.2 + v.atk + v.def * 1.2);
+  }
+
+  /* ---------- NIVEL GENERAL DEL EQUIPO ----------
+     No es el nivel del jugador (ese solo da gemas). Son DOS medidas de la
+     MISMA cosa, la colección completa, para que nunca falle la promesa de
+     «subir una carta sube el nivel general»:
+
+       · `total`  suma de todos los niveles. Sube EXACTAMENTE +1 por cada
+                  nivel de carta que ganes, aunque la carta esté en el
+                  almacén. Es la cifra que se mueve siempre.
+       · `lvl`    promedio de esos niveles, redondeado. Es el «Nivel General»
+                  que se ve grande en la pantalla: sube por escalones, cada
+                  vez que el promedio cruza la mitad del nivel siguiente.
+
+     `pct` y `missing` se miden contra el mismo umbral que `lvl`, así que la
+     barra, el número grande y el «faltan X niveles» nunca se contradicen. */
+
+  function teamLevelInfo() {
+    var st = OU.STATE && OU.STATE.state;
+    var cards = (st && st.cards) || {};
+    var ids = Object.keys(cards);
+    var n = 0, sum = 0, top = 0;
+    ids.forEach(function (id) {
+      var rc = cards[id];
+      var l = rc && typeof rc.lvl === 'number' ? rc.lvl : 1;
+      sum += l; n++;
+      if (l > top) top = l;
+    });
+    if (!n) return { lvl: 1, avg: 0, avg1: 0, pct: 0, missing: 0, total: 0, cards: 0, top: 0, next: 1 };
+    var avg = sum / n;
+    var lvl = Math.max(1, Math.round(avg));
+    /* El nivel general es el promedio redondeado, así que sube cuando el
+       promedio llega a lvl + 0.5. La barra y los niveles que faltan se
+       miden contra ese mismo umbral para que nunca se contradigan. */
+    var lo = lvl - 0.5;
+    var pct = Math.max(0, Math.min(100, Math.round((avg - lo) * 100)));
+    var need = Math.ceil((lvl + 0.5) * n) - sum;
+    return {
+      lvl: lvl,
+      avg: avg,
+      avg1: Math.round(avg * 10) / 10,
+      pct: pct,
+      missing: Math.max(0, need),
+      total: sum,
+      cards: n,
+      top: top,
+      next: lvl + 1
+    };
+  }
+
+  function teamLevel() { return teamLevelInfo().lvl; }
+
+  /* ---------- PODER DE CAMPAÑA ---------- */
+
+  /** Poder de las 6 cartas equipadas (o el del roster si se pasan ids). */
+  function teamPower(ids) {
+    var st = OU.STATE && OU.STATE.state;
+    var list = ids || ((st && st.team) || []).filter(Boolean);
+    return list.reduce(function (s, id) {
+      var rc = st && st.cards ? st.cards[id] : null;
+      return s + powerOf(id, rc && rc.lvl ? rc.lvl : 1);
+    }, 0);
+  }
+
+  /** Poder REAL de una fase: el mismo con el que entran sus enemigos. */
+  function stagePower(idx) {
+    var s = OU.STAGES[idx];
+    if (!s) return 0;
+    if (typeof s.power === 'number') return s.power;
+    return Math.round(s.roster.reduce(function (a, id) { return a + powerOf(id, s.level); }, 0) * s.scale);
+  }
+
+  /** Índice de la fase por la que va el jugador (última desbloqueada). */
+  function currentStage() {
+    var st = OU.STATE && OU.STATE.state;
+    return Math.max(0, Math.min((st ? st.stage : 0) | 0, OU.STAGES.length - 1));
+  }
+
+  /**
+   * Veredicto: compara tu poder con el de la fase. Responde a la pregunta
+   * «¿somos fuertes o no?» sin adivinar, con umbrales explícitos.
+   */
+  var VERDICTS = [
+    { k: 'trivial', n: 'TRIVIAL', cls: 'v-trivial', min: 1.9 },
+    { k: 'facil', n: 'FÁCIL', cls: 'v-facil', min: 1.35 },
+    { k: 'justa', n: 'JUSTA', cls: 'v-justa', min: 1.08 },
+    { k: 'aprieto', n: 'AL FILO', cls: 'v-aprieto', min: 0.92 },
+    { k: 'dificil', n: 'DIFÍCIL', cls: 'v-dificil', min: 0.78 },
+    { k: 'brutal', n: 'BRUTAL', cls: 'v-brutal', min: 0.6 }
+  ];
+
+  function verdict(mine, theirs) {
+    if (!theirs) return { k: 'vacia', n: 'SIN RIVAL', cls: 'v-trivial', ratio: 0, gap: 0, mine: mine || 0, theirs: 0 };
+    var r = (mine || 0) / theirs;
+    var v = VERDICTS[VERDICTS.length - 1];
+    for (var i = 0; i < VERDICTS.length; i++) {
+      if (r >= VERDICTS[i].min) { v = VERDICTS[i]; break; }
+    }
+    return {
+      k: v.k, n: v.n, cls: v.cls,
+      ratio: r,
+      gap: Math.round((mine || 0) - theirs),
+      mine: Math.round(mine || 0),
+      theirs: Math.round(theirs)
+    };
+  }
+
+  /** Veredicto de la fase indicada frente a tu poder actual. */
+  function stageVerdict(idx) { return verdict(teamPower(), stagePower(idx)); }
+
+  /**
+   * Aviso de una mejora de carta. Recibe el `teamLevelInfo()` de ANTES del
+   * gasto y devuelve el sufijo con el crecimiento del equipo: el total de
+   * niveles sube siempre +1, y el Nivel General se announce cuando sube de
+   * escalón. Así el jugador ve el efecto de mejorar una carta aunque no esté
+   * equipada.
+   */
+  function teamLevelUpNote(before) {
+    var now = teamLevelInfo();
+    var s = ' · ⭐ ' + before.total + ' → ' + now.total + ' niveles de carta';
+    if (now.avg1 !== before.avg1) s += ' (media ' + before.avg1 + ' → ' + now.avg1 + ')';
+    if (now.lvl > before.lvl) s += ' · ¡NIVEL GENERAL ' + now.lvl + '!';
+    return s;
   }
 
   function abDesc(a, cardId) {
@@ -241,6 +367,14 @@
     fmt: fmt,
     valuesAt: valuesAt,
     powerOf: powerOf,
+    teamLevelInfo: teamLevelInfo,
+    teamLevel: teamLevel,
+    teamPower: teamPower,
+    stagePower: stagePower,
+    currentStage: currentStage,
+    verdict: verdict,
+    stageVerdict: stageVerdict,
+    teamLevelUpNote: teamLevelUpNote,
     abDesc: abDesc,
     upgradeCost: upgradeCost,
     goldOnlyCost: goldOnlyCost,

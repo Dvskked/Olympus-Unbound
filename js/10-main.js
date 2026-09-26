@@ -256,17 +256,23 @@
 
   function viewHome() {
     var st = OU.STATE.state;
-    var stag = Math.min(st.stage, OU.STAGES.length - 1);
+    var stag = U.currentStage();
+    var tlv = U.teamLevelInfo();
+    var pow = U.teamPower();
+    var v = U.verdict(pow, U.stagePower(stag));
+    var members = st.team.filter(Boolean).length;
     return '<div class="home" id="homeView">' +
       '<div class="home-bg" aria-hidden="true"></div>' +
       '<div class="home-shade" aria-hidden="true"></div>' +
       '<div class="home-body">' +
       '<section class="home-cell home-team">' +
       '<div class="home-team-head">' +
-      '<div class="home-team-title">Mi Equipo</div>' +
+      '<div class="home-team-title">Mi Equipo <span class="ht-lv" title="Nivel general del equipo">⭐ ' + tlv.lvl + '</span></div>' +
       '<button class="home-team-edit" id="editTeamBtn" title="Cambiar a tus personajes">✏️ Editar</button>' +
       '</div>' +
+      '<span class="home-team-force">⚡ Poder <b>' + U.fmt(pow) + '</b> · ' + members + '/' + OU.CONST.MAX_TEAM + ' en la formación</div>' +
       '<div class="hub-squad">' + OU.TEAM.teamHubHTML() + '</div>' +
+      '<button class="home-force-go" data-go="team">Ver nivel general, poderes y formación 🛡️</button>' +
       '</section>' +
       '<button class="home-cell home-card home-merk" data-go="shop" title="Abrir el Mercadeo">' +
       '<span class="hc-ic"><img class="hc-img" src="img/optimized/extras/icons/mercadeo.png" alt="Mercadeo"></span>' +
@@ -277,6 +283,7 @@
       '<span class="hc-ic"><img class="hc-img" src="img/optimized/extras/icons/campaña.png" alt="Campaña"></span>' +
       '<span class="hc-t">Campaña</span>' +
       '<span class="hc-d">Fase ' + (stag + 1) + ' · ' + OU.STAGES[stag].n + '</span>' +
+      '<span class="hc-v ' + v.cls + '">Rival ' + U.fmt(U.stagePower(stag)) + ' · ' + v.n + '</span>' +
       '</button>' +
       '<button class="home-cell home-idx" data-go="index" title="Índice de Leyendas">' +
       '<span class="idx-book"><img class="idx-img" src="img/optimized/extras/icons/indnice.png" alt="Índice"></span>' +
@@ -577,6 +584,52 @@
     startTutorialOnce();
   }
 
+  /* ---------- CONSEJOS EN LA PANTALLA DE CARGA ----------
+     Mientras se precargan los recursos se van encadenando consejos sobre cómo
+     funciona el juego (poder, niveles, formación, campaña, economía). Nunca se
+     repite el mismo dos veces seguidas y se detiene al pulsar «Jugar». */
+
+  var tipTimer = null;
+  var tipOrder = [];
+
+  function nextTip() {
+    var tips = OU.TIPS || [];
+    if (!tips.length) return null;
+    if (!tipOrder.length) {
+      tipOrder = tips.map(function (_, i) { return i; });
+      for (var i = tipOrder.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = tipOrder[i]; tipOrder[i] = tipOrder[j]; tipOrder[j] = tmp;
+      }
+    }
+    return tips[tipOrder.pop()];
+  }
+
+  function showTip() {
+    var wrap = U.$('#ldTip'), ic = U.$('#ldTip .ld-tip-ic'), tx = U.$('#ldTipTx');
+    var t = nextTip();
+    if (!t) return;
+    if (ic) ic.textContent = t.i;
+    if (tx) tx.innerHTML = t.t;
+    if (wrap) {
+      wrap.classList.remove('tip-in');
+      void wrap.offsetWidth;
+      wrap.classList.add('tip-in');
+    }
+  }
+
+  function startTips() {
+    if (tipTimer) return;
+    showTip();
+    tipTimer = setInterval(showTip, 4600);
+  }
+
+  function stopTips() {
+    if (!tipTimer) return;
+    clearInterval(tipTimer);
+    tipTimer = null;
+  }
+
   /* ---------- PANTALLA DE CARGA ---------- */
 
   /** Imágenes esenciales de la primera pantalla (carga rápida).
@@ -635,6 +688,7 @@
     if (!play) return null;
     play.disabled = true;
     play.classList.remove('ld-ready');
+    startTips();
     function setPct(p) {
       p = Math.max(0, Math.min(100, Math.round(p)));
       if (fill) fill.style.width = p + '%';
@@ -732,6 +786,7 @@
       if (play) {
         animateLoader();
         play.addEventListener('click', function () {
+          stopTips();
           var ld = U.$('#loader');
           if (ld) {
             ld.classList.add('hide');

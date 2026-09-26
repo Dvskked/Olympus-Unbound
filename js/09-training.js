@@ -319,6 +319,7 @@
     var rc = st.cards[cardId];
     var c = OU.CARD_BY_ID[cardId];
     if (!rc) return;
+    var tlvBefore = U.teamLevelInfo();
     adaptStock(rc);
     var budget = OU.CONST.TRAIN_MAX_UPS - rc.tUses;
     var consec = OU.CONST.TRAIN_UPS_CONSEC;
@@ -333,7 +334,7 @@
       ups++;
     }
     if (ups > 0) setTimeout(function () {
-      I.toast('⭐ ' + c.n + ' subió a nivel ' + rc.lvl + ' gracias al entrenamiento!');
+      I.toast('⭐ ' + c.n + ' subió a nivel ' + rc.lvl + U.teamLevelUpNote(tlvBefore));
     }, 900);
   }
 

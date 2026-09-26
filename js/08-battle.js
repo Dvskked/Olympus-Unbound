@@ -15,16 +15,77 @@
 
   /* ---------- VISTA CAMPAÑA ---------- */
 
+  /** Puntos de dificultad (●○○○○) para la etiqueta de una fase. */
+  /** 5 puntos de dificultad. `diff` va de 0 (SENCILLA) a 4 (BRUTAL). */
+  function diffDots(diff) {
+    var n = Math.max(0, Math.min(OU.DIFF.length - 1, diff | 0));
+    var out = '<span class="diff-dots d-' + n + '" title="Dificultad ' + (n + 1) + '/' + OU.DIFF.length + '">';
+    for (var i = 0; i < OU.DIFF.length; i++) out += '<i' + (i <= n ? ' class="on"' : '') + '></i>';
+    return out + '</span>';
+  }
+
+  /**
+   * Panel «Estado de fuerzas»: la respuesta directa a «¿somos fuertes?».
+   * Nivel general del equipo + tu poder frente al poder real de la fase.
+   */
+  function forcePanelHTML() {
+    var st = OU.STATE.state;
+    var lvl = U.teamLevelInfo();
+    var mine = U.teamPower();
+    var idx = U.currentStage();
+    var s = OU.STAGES[idx];
+    var theirs = U.stagePower(idx);
+    var v = U.verdict(mine, theirs);
+    var cnt = st.team.filter(Boolean).length;
+    /* Barra de fuerza: tu poder (verde/oro) contra el de la fase (rojo). */
+    var max = Math.max(mine, theirs, 1);
+    var wMe = Math.round(mine / max * 100);
+    var wTh = Math.round(theirs / max * 100);
+    var gap = theirs - mine;
+    return '<div class="force-panel">' +
+      '<div class="fp-tlv">' +
+      '<div class="fp-lv-num">' + lvl.lvl + '</div>' +
+      '<div class="fp-lv-info">' +
+      '<div class="fp-lv-lab">Nivel general del equipo</div>' +
+      '<div class="fp-lv-bar"><div class="fp-lv-fill" style="width:' + Math.max(2, lvl.pct) + '%"></div></div>' +
+      '<div class="fp-lv-sub">' + (lvl.cards
+        ? '<b>' + lvl.total + '</b> niveles repartidos en <b>' + lvl.cards + '</b> cartas · faltan <b>' + lvl.missing + '</b> para el <b>' + lvl.next + '</b>'
+        : 'Sin cartas todavía: abre tu primer sobre 🏛️') + '</div>' +
+      '</div></div>' +
+      '<div class="fp-vs">' +
+      '<div class="fp-side fp-mine"><div class="fp-n">' + U.fmt(mine) + '</div><div class="fp-l">Tu poder ⚔️</div></div>' +
+      '<div class="fp-vs-badge ' + v.cls + '">' + v.n + '</div>' +
+      '<div class="fp-side fp-theirs"><div class="fp-n">' + U.fmt(theirs) + '</div><div class="fp-l">Fase ' + (idx + 1) + ' 🛡️</div></div>' +
+      '</div>' +
+      '<div class="fp-bars">' +
+      '<div class="fp-bar"><div class="fp-bar-me" style="width:' + wMe + '%"></div></div>' +
+      '<div class="fp-bar fp-bar-en"><div class="fp-bar-th" style="width:' + wTh + '%"></div></div>' +
+      '</div>' +
+      '<div class="fp-verdict ' + v.cls + '">' + forceAdviceHTML(v, gap, cnt) + '</div>' +
+      '</div>';
+  }
+
+  /** Texto accionable según el veredicto: siempre dice qué hacer. */
+  function forceAdviceHTML(v, gap, cnt) {
+    if (cnt < OU.CONST.MAX_TEAM) {
+      return 'Te faltan <b>' + (OU.CONST.MAX_TEAM - cnt) + '</b> ranuras: cada carta extra suma su poder al total.';
+    }
+    if (v.gap <= 0) {
+      return 'Tu poder supera al rival por <b>' + U.fmt(-v.gap) + '</b>. Margen amplio: entra sin miedo.';
+    }
+    return 'Te faltan <b>' + U.fmt(v.gap) + '</b> de poder. <b>Entrena tus cartas</b>, abre sobres y vuelve.';
+  }
+
   function viewHome() {
     var st = OU.STATE.state;
     var unique = OU.STATE.ownedList().length;
-    var unitIds = st.team.filter(Boolean);
-    var pow = unitIds.reduce(function (s, id) { return s + U.powerOf(id, st.cards[id].lvl); }, 0);
-    var stag = st.stage;
+    var mine = U.teamPower();
+    var lvl = U.teamLevelInfo();
+    var stag = U.currentStage();
     var last = OU.STAGES.length - 1;
     var done = stag >= last;
-    var cur = OU.STAGES[Math.min(stag, last)];
-    var progressPct = Math.min(100, Math.round(U.xpNeed(st.lvl) === 0 ? 0 : st.xp / U.xpNeed(st.lvl) * 100));
+    var cur = OU.STAGES[stag];
+    var progressPct = Math.min(100, Math.round(st.xp / U.xpNeed(st.lvl) * 100));
     var dl = st.daily || { last: '', streak: 0 };
     var today = OU.STATE.todayStr(0);
     var nextReward = Math.min(OU.CONST.DAILY_GEMS_BASE + dl.streak + 1, OU.CONST.DAILY_GEMS_CAP);
@@ -42,49 +103,85 @@
       '<div class="hstat"><div class="v">' + st.lvl + '</div><div class="l">Nivel</div>' +
       '<div class="xp-bar"><div class="xp-fill" style="width:' + progressPct + '%"></div></div></div>' +
       '<div class="hstat"><div class="v">' + unique + '<span style="font-size:11px;color:var(--dim)">/' + OU.CARDS.length + '</span></div><div class="l">Cartas</div></div>' +
-      '<div class="hstat"><div class="v">' + U.fmt(pow) + '</div><div class="l">Poder</div></div>' +
+      '<div class="hstat"><div class="v">' + lvl.lvl + '</div><div class="l">Nivel equipo</div>' +
+      '<div class="xp-bar"><div class="xp-fill" style="width:' + lvl.pct + '%"></div></div></div>' +
+      '<div class="hstat"><div class="v">' + U.fmt(mine) + '</div><div class="l">Poder</div></div>' +
       '<div class="hstat"><div class="v">' + (done ? OU.STAGES.length : stag + 1) + '<span style="font-size:11px;color:var(--dim)">/' + OU.STAGES.length + '</span></div><div class="l">Campaña</div></div>' +
       '</div>' +
-      '<button class="btn btn-gold big-cta" data-play="' + Math.min(stag, last) + '">' + (done ? '⚔️ Volver a desafiar jefes' : '⚔️ Continuar campaña') + '</button>' +
+      '<button class="btn btn-gold big-cta" data-play="' + stag + '">' + (done ? '⚔️ Volver a desafiar jefes' : '⚔️ Continuar campaña') + '</button>' +
       '<button class="btn btn-ghost btn-sm home-creator" id="goCreator">👑 El Creador</button>' +
       '</div>' +
+      forcePanelHTML() +
       OU.TRAIN.incomeBannerHTML() +
       '<div class="sec-title">' + (done ? 'Todas las fases completadas' : 'Próxima batalla') + '</div>' +
-      stageCardHTML(cur, Math.min(stag, last), true) +
-      '<div class="sec-title">Campaña</div>' +
-      OU.STAGES.map(function (s, i) { return stageCardHTML(s, i, i <= stag); }).join('') +
+      stageCardHTML(cur, stag, true, true) +
+      '<div class="sec-title">Campaña · ' + OU.STAGES.length + ' fases</div>' +
+      '<p class="battle-hint" style="text-align:left;margin-top:0">Cada fase muestra su <b>poder real</b> y el veredicto frente al tuyo. Los actos tienen picos (fases más duras) y valles: aprovecha los valles para entrenar.</p>' +
+      campaignListHTML() +
       '<button class="btn btn-ghost btn-block" style="margin-top:6px" onclick="OU.MAIN.setTab(\'training\')">🏋️ Entrenamiento y ganancia pasiva 💰</button>';
   }
 
-  function stageCardHTML(s, idx, unlocked) {
+  /** Lista de fases agrupada por acto, con cabecera de acto y estado del acto. */
+  function campaignListHTML() {
+    var mine = U.teamPower();
+    var out = [];
+    var acts = [];
+    OU.STAGES.forEach(function (s, i) {
+      if (!acts[s.act - 1]) acts[s.act - 1] = [];
+      acts[s.act - 1].push(i);
+    });
+    acts.forEach(function (list, k) {
+      if (!list || !list.length) return;
+      var act = OU.STAGES[list[0]].act;
+      var name = OU.STAGES[list[0]].actName;
+      var cleared = list.filter(function (i) { return i < U.currentStage(); }).length;
+      var beatable = list.filter(function (i) { return mine >= U.stagePower(i) * 0.92; }).length;
+      var open = list.filter(function (i) { return i <= U.currentStage(); }).length;
+      out.push('<div class="act-head ' + (cleared === list.length ? 'done' : '') + '">' +
+        '<span class="ah-t">ACTO ' + act + ' · ' + name + '</span>' +
+        '<span class="ah-m">' + cleared + '/' + list.length + ' 🏆</span>' +
+        '<span class="ah-bar"><span class="ah-fill" style="width:' + Math.round(cleared / list.length * 100) + '%"></span></span>' +
+        '<span class="ah-p">' + open + ' abiertas · ' + beatable + ' a tu alcance</span>' +
+        '</div>');
+      out.push(list.map(function (i) {
+        return stageCardHTML(OU.STAGES[i], i, i <= U.currentStage(), i === U.currentStage());
+      }).join(''));
+    });
+    return out.join('');
+  }
+
+  function stageCardHTML(s, idx, unlocked, big) {
     var st = OU.STATE.state;
-    var isCurrent = idx === Math.min(st.stage, OU.STAGES.length - 1);
+    var isCurrent = idx === U.currentStage();
+    var mine = U.teamPower();
+    var theirs = U.stagePower(idx);
+    var v = U.verdict(mine, theirs);
     var enIcons = s.roster.map(function (id) {
       return '<span class="ep" title="' + OU.CARD_BY_ID[id].n + '">' + OU.CARD_BY_ID[id].ic + '</span>';
     }).join('');
-    var goldReward = U.rewardOf(idx).gold;
+    var rw = U.rewardOf(idx);
     var lock = unlocked ? '' : '<span class="stage-lock">🔒</span>';
-    return '<div class="stage-card ' + (unlocked ? 'open' + (isCurrent ? ' current' : '') : '') + '"' + (unlocked ? ' data-play="' + idx + '"' : '') + '>' +
+    return '<div class="stage-card ' + (unlocked ? 'open' + (isCurrent ? ' current' : '') : '') + (big ? ' big' : '') + '"' +
+      (unlocked ? ' data-play="' + idx + '"' : '') + '>' +
       '<div class="stage-num">' + String(idx + 1).padStart(2, '0') + '</div>' +
       '<div class="stage-info">' +
-      '<div class="stage-name">' + s.n + '</div>' +
+      '<div class="stage-name">' + s.n + (s.boss ? ' <span class="stage-crown">👑</span>' : '') + '</div>' +
+      (big ? '<div class="stage-story">' + s.story + '</div>' : '') +
       '<div class="stage-meta">' +
-      '<span>⚔️ ' + U.fmt(goldReward) + ' oro</span>' +
-      '<span>✨ ' + U.fmt(U.rewardOf(idx).xp) + ' XP</span>' +
-      '<span class="stage-diff ' + diffClass(idx) + '">' + (idx >= 9 ? 'ÉPICA' : idx >= 6 ? 'ALTA' : idx >= 3 ? 'MEDIA' : 'BAJA') + '</span>' +
+      '<span>🏛️ Acto ' + s.act + '</span>' +
+      '<span>⚔️ ' + U.fmt(rw.gold) + ' oro</span>' +
+      '<span>✨ ' + U.fmt(rw.xp) + ' XP</span>' +
+      '<span class="stage-diff ' + s.diffCls + '" title="Dificultad ' + (s.diff + 1) + '/' + OU.DIFF.length + '"> ' + s.diffName + ' ' + diffDots(s.diff) + '</span>' +
+      '</div>' +
+      '<div class="stage-force">' +
+      '<span class="sf-enemy">🛡️ Poder rival <b>' + U.fmt(theirs) + '</b></span>' +
+      (unlocked ? '<span class="sf-verdict ' + v.cls + '">' + v.n + (v.gap > 0 ? ' · faltan ' + U.fmt(v.gap) : ' · +' + U.fmt(-v.gap)) + '</span>'
+                 : '<span class="sf-verdict locked">🔒 Bloqueada</span>') +
       '</div>' +
       '<div class="enemy-preview">' + enIcons + '</div>' +
       '</div>' +
       lock +
       '</div>';
-  }
-
-  function diffClass(idx) {
-    if (idx >= 9) return 'diff-4';
-    if (idx >= 6) return 'diff-3';
-    if (idx >= 3) return 'diff-2';
-    if (idx >= 1) return 'diff-1';
-    return 'diff-0';
   }
 
   /* ---------- MOTOR DE COMBATE ---------- */
@@ -108,9 +205,10 @@
     if (!st.team.some(Boolean)) { I.toast('Asigna cartas a tu equipo primero 🛡️'); OU.MAIN.setTab('team'); return; }
     if (OU.SHOP.openingBusy) return;
     var stage = OU.STAGES[idx];
+    /* La escala vive en los datos de la fase: el poder que se muestra en la
+       campaña es exactamente el con el que entran estos enemigos. */
     myUnits = st.team.filter(Boolean).map(function (id) { return makeUnit(id, st.cards[id].lvl, 'p'); });
-    var scale = 1 + idx * 0.035;
-    enUnits = stage.roster.map(function (id) { return makeUnit(id, stage.level, 'e', scale); });
+    enUnits = stage.roster.map(function (id) { return makeUnit(id, stage.level, 'e', stage.scale); });
     battleScreen(stage, idx, myUnits, enUnits);
     runBattle(idx, myUnits, enUnits).catch(function (e) { console.error(e); I.toast('Error de combate'); });
   }
@@ -120,11 +218,18 @@
     var tabs = U.$$('#tabs .tab');
     tabs.forEach(function (t) { t.classList.remove('active'); });
     var v = U.$('#view');
+    var mine = U.teamPower();
+    var theirs = U.stagePower(idx);
+    var v2 = U.verdict(mine, theirs);
+    var tlv = U.teamLevelInfo();
     v.innerHTML = '<div class="arena-screen">' +
       '<div class="arena-head">' +
       '<div>' +
-      '<div class="arena-stage-name">' + stage.n + '</div>' +
-      '<div style="font-size:11px;color:var(--dim)">Fase ' + (idx + 1) + ' de ' + OU.STAGES.length + ' · Recompensa: 🪙 ' + U.fmt(U.rewardOf(idx).gold) + ' · ✨ ' + U.fmt(U.rewardOf(idx).xp) + ' XP</div>' +
+      '<div class="arena-stage-name">' + stage.n + (stage.boss ? ' 👑' : '') + '</div>' +
+      '<div style="font-size:11px;color:var(--dim)">Fase ' + (idx + 1) + ' de ' + OU.STAGES.length +
+      ' · Acto ' + stage.act + ' · ' + stage.diffName + ' ' + diffDots(stage.diff) +
+      ' · Recompensa: 🪙 ' + U.fmt(U.rewardOf(idx).gold) + ' · ✨ ' + U.fmt(U.rewardOf(idx).xp) + ' XP</div>' +
+      '<div style="font-size:11px;margin-top:2px">Tu poder <b style="color:var(--gold2)">' + U.fmt(mine) + '</b> · ' + U.fmt(theirs) + ' del rival · Nivel general <b style="color:var(--gold2)">' + tlv.lvl + '</b> · <span class="' + v2.cls + '">' + v2.n + '</span></div>' +
       '</div>' +
       '<div class="arena-ctrls">' +
       '<button class="btn btn-ghost btn-sm" id="speedBtn">⏩ x1</button>' +
@@ -451,6 +556,12 @@
       if (gems > 0) st.gems += gems;
       if (firstClear && idx < OU.STAGES.length - 1) st.stage = idx + 1;
       OU.STATE.save();
+      I.updateTopRes();
+      const nextIdx = Math.min(idx + 1, OU.STAGES.length - 1);
+      const nextV = U.stageVerdict(nextIdx);
+      const nextTxt = idx < OU.STAGES.length - 1
+        ? 'Siguiente fase: <b>' + U.fmt(U.stagePower(nextIdx)) + '</b> de poder rival · <span class="' + nextV.cls + '">' + nextV.n + '</span>'
+        : 'Eres la leyenda más poderosa del Olimpo.';
       I.openModal(
         '<div class="result-title win">VICTORIA</div>' +
         '<div style="text-align:center;color:var(--dim);font-size:13px;margin-top:6px">Has derrotado a «' + stage.n + '»</div>' +
@@ -459,8 +570,9 @@
         '<div class="reward-pill r-xp"><span class="r-ic">✨</span> +' + rw.xp + ' XP</div>' +
         (gems > 0 ? '<div class="reward-pill r-gem"><span class="r-ic">💎</span> +' + gems + ' gemas</div>' : '') +
         '</div>' +
+        '<div class="res-force">Tu poder <b>' + U.fmt(U.teamPower()) + '</b> · Rival <b>' + U.fmt(U.stagePower(idx)) + '</b></div>' +
         (firstClear ? '<div style="text-align:center;font-size:12px;color:#7fe08a;margin-bottom:6px">¡Fase superada por primera vez!</div>' : '') +
-        (idx < OU.STAGES.length - 1 ? '<button class="btn btn-gold btn-block" id="nextBtn">⚔️ Fase ' + (idx + 2) + ': ' + OU.STAGES[idx + 1].n + '</button>' : '<div class="lvup">🏆 ¡Has conquistado todas las fases de Olympus Unbound!</div>') +
+        (idx < OU.STAGES.length - 1 ? '<div class="res-next">' + nextTxt + '</div><button class="btn btn-gold btn-block" id="nextBtn">⚔️ Fase ' + (idx + 2) + ': ' + OU.STAGES[idx + 1].n + '</button>' : '<div class="lvup">🏆 ¡Has conquistado todas las fases de Olympus Unbound!</div>') +
         '<button class="btn btn-ghost btn-block" style="margin-top:8px" id="againBtn">🔁 Reintentar fase</button>' +
         '<button class="btn btn-blue btn-block" style="margin-top:8px" id="vExitBtn">🏛️ Volver al menú</button>'
       );
@@ -469,23 +581,44 @@
       const vx = U.$('#vExitBtn'); if (vx) vx.addEventListener('click', () => { I.closeModal(); OU.MAIN.setTab('home'); });
     } else {
       const rw = U.rewardOf(idx);
+      const mine = U.teamPower(), theirs = U.stagePower(idx);
+      const need = Math.max(1, Math.ceil((theirs * 0.92 - mine)));
+      const weak = weakestUnitHTML();
       I.openModal(
         '<div class="result-title lose">DERROTA</div>' +
         '<div style="text-align:center;color:var(--dim);font-size:13px;margin-top:6px">«' + stage.n + '» ha sido demasiado para tu equipo</div>' +
+        '<div class="res-force">Tu poder <b>' + U.fmt(mine) + '</b> · Rival <b>' + U.fmt(theirs) + '</b> · <span style="color:#ff9d6b">faltan ' + U.fmt(need) + '</span></div>' +
         '<div class="reward-grid">' +
         '<div class="reward-pill r-gold">🪙 Consuelo</div>' +
         '<div class="reward-pill r-xp">✨ +' + Math.round(rw.xp * 0.2) + ' XP</div>' +
         '</div>' +
-        '<div class="lvup" style="color:#ff9d6b">💪 Sube de nivel tus cartas y vuelve a intentarlo.</div>' +
+        '<div class="lvup" style="color:#ff9d6b">💪 <b>Debes entrenar tus cartas.</b> Sube de nivel a tu equipo y vuelve a intentarlo.</div>' +
+        (weak ? '<div class="res-weak">' + weak + '</div>' : '') +
         '<button class="btn btn-gold btn-block" id="retryBtn">⚔️ Reintentar</button>' +
+        '<button class="btn btn-blue btn-block" style="margin-top:8px" id="trainBtn">🏋️ Entrenar cartas</button>' +
         '<button class="btn btn-ghost btn-block" style="margin-top:8px" id="backBtn">🏛️ Volver</button>'
       );
       addXp(Math.round(rw.xp * 0.2));
       OU.STATE.save();
       const rt = U.$('#retryBtn'); if (rt) rt.addEventListener('click', () => { I.closeModal(); startBattle(idx); });
+      const tb = U.$('#trainBtn'); if (tb) tb.addEventListener('click', () => { I.closeModal(); OU.MAIN.setTab('training'); });
       const bk = U.$('#backBtn'); if (bk) bk.addEventListener('click', () => { I.closeModal(); OU.MAIN.setTab('home'); });
     }
     I.updateTopRes();
+  }
+
+  /** Sugerencia concreta: la carta más débil del equipo y cuánto ganaría. */
+  function weakestUnitHTML() {
+    var st = OU.STATE.state;
+    var worst = null;
+    st.team.filter(Boolean).forEach(function (id) {
+      var p = U.powerOf(id, st.cards[id].lvl);
+      if (!worst || p < worst.p) worst = { id: id, p: p, lvl: st.cards[id].lvl };
+    });
+    if (!worst) return '';
+    var gain = U.powerOf(worst.id, worst.lvl + 5) - worst.p;
+    return '🔻 <b>' + OU.CARD_BY_ID[worst.id].n + '</b> es tu carta más débil (NV ' + worst.lvl +
+      '). Subirla 5 niveles añadiría <b>' + U.fmt(gain) + '</b> de poder a tu equipo.';
   }
   function addXp(n) {
     const st = OU.STATE.state;
