@@ -202,6 +202,7 @@ I.openModal(
       '<div class="detail-sec">' +
       '<div class="ds-title">🛡️ Equipo</div>' +
       '<button class="btn btn-blue btn-block" id="detailTeamBtn">✏️ Asignar a Mi Equipo</button>' +
+      '</div>' +
       '</div>', true);
 
     var dspr = U.$('.detail-spr');

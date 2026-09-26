@@ -270,7 +270,7 @@
       '<div class="home-team-title">Mi Equipo <span class="ht-lv" title="Nivel general del equipo">⭐ ' + tlv.lvl + '</span></div>' +
       '<button class="home-team-edit" id="editTeamBtn" title="Cambiar a tus personajes">✏️ Editar</button>' +
       '</div>' +
-      '<span class="home-team-force">⚡ Poder <b>' + U.fmt(pow) + '</b> · ' + members + '/' + OU.CONST.MAX_TEAM + ' en la formación</div>' +
+      '<div class="home-team-force">⚡ Poder <b>' + U.fmt(pow) + '</b> · ' + members + '/' + OU.CONST.MAX_TEAM + ' en la formación</div>' +
       '<div class="hub-squad">' + OU.TEAM.teamHubHTML() + '</div>' +
       '<button class="home-force-go" data-go="team">Ver nivel general, poderes y formación 🛡️</button>' +
       '</section>' +
